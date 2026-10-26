@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "src/ascii4fun-web/**/*.ts",
+    "src/ascii4fun-web/**/*.tsx",
+    "tests/ascii4fun-web-tests/**/*.ts",
+    "tests/ascii4fun-web-tests/**/*.tsx"
+  ],
+  "exclude": ["e2e", "node_modules"]
+}

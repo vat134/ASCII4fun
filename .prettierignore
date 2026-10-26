@@ -1,0 +1,14 @@
+.agents/
+.codex/
+.git/
+.parcel-cache/
+.parcel-cache-*/
+artifacts/
+dist/
+dist-*/
+docs/project/
+node_modules/
+src/ascii4fun-server/wwwroot/
+AGENTS.md
+pnpm-lock.yaml
+
