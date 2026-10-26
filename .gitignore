@@ -1,0 +1,6 @@
+# Local project guidance; publish deliberately when the project is ready.
+/AGENTS.md
+/docs/project/
+/.agents/
+/.codex/
+
