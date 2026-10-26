@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\ascii4fun\ascii4fun.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>Ascii4Fun.Server</RootNamespace>
+    <AssemblyName>Ascii4Fun.Server</AssemblyName>
+  </PropertyGroup>
+
+</Project>

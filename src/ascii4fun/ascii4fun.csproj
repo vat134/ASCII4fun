@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>Ascii4Fun</RootNamespace>
+    <AssemblyName>Ascii4Fun</AssemblyName>
+    <IsPackable>true</IsPackable>
+    <PackageId>Ascii4Fun</PackageId>
+    <Description>Reusable image, animation, and text to ASCII conversion engine.</Description>
+  </PropertyGroup>
+
+</Project>

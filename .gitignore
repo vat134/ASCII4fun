@@ -4,3 +4,25 @@
 /.agents/
 /.codex/
 
+# .NET build output
+/artifacts/
+**/bin/
+**/obj/
+TestResults/
+*.user
+*.suo
+
+# Node and Parcel output
+/node_modules/
+/.parcel-cache/
+/.parcel-cache-*/
+/dist/
+/dist-*/
+/src/ascii4fun-server/wwwroot/
+/coverage/
+pnpm-debug.log*
+
+# Local environment and operating-system files
+.env.local
+.DS_Store
+

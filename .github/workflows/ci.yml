@@ -1,0 +1,39 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22.x
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test:web
+      - run: pnpm build:web
+      - run: dotnet restore ascii4fun.slnx
+      - run: dotnet format ascii4fun.slnx --verify-no-changes --no-restore
+      - run: dotnet build ascii4fun.slnx --configuration Release --no-restore
+      - run: dotnet test ascii4fun.slnx --configuration Release --no-build
+      - run: pnpm test:e2e
