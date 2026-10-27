@@ -28,5 +28,10 @@ export default tseslint.config(
   {
     files: ["src/ascii4fun-web/**/*.{ts,tsx}"],
     ...reactRefresh.configs.recommended
+  },
+  {
+    files: ["src/ascii4fun-web/**/*.{ts,tsx}"],
+    ignores: ["src/ascii4fun-web/ui/base/**"],
+    rules: { "max-lines": ["error", 150] }
   }
 );

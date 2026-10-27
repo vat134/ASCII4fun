@@ -6,8 +6,8 @@ import {
   type ImageConfiguration
 } from "./image-conversion";
 
-type SelectedImage = { file: File; url: string };
-type ConversionState =
+export type SelectedImage = { file: File; url: string };
+export type ConversionState =
   | { status: "empty" }
   | { status: "pending"; result: AsciiText | null }
   | { status: "ready"; result: AsciiText }
