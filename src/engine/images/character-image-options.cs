@@ -52,6 +52,12 @@ public sealed class CharacterImageOptions
     /// </summary>
     public bool Invert { get; init; }
 
+    /// <summary>
+    /// Gets whether glyphs use sampled source colors, composited over white like luminance analysis.
+    /// Defaults to monochrome; this option does not change glyph selection or geometry.
+    /// </summary>
+    public bool SourceColors { get; init; }
+
     internal Rune[] ValidateAndGetRamp()
     {
         if (OutputWidthInCells is < MinimumOutputWidthInCells or > MaximumOutputWidthInCells)

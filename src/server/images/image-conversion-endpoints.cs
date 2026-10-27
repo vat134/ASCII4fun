@@ -1,4 +1,5 @@
 using Ascii4Fun.Images;
+using Ascii4Fun.Rendering;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,7 +41,8 @@ internal static class ImageConversionEndpoints
         [FromForm] bool invert,
         StillImageConverter converter,
         HttpContext context,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        [FromForm] bool sourceColors = false)
     {
         context.Response.Headers.CacheControl = "no-store";
 
@@ -64,14 +66,16 @@ internal static class ImageConversionEndpoints
         {
             OutputWidthInCells = outputWidthInCells,
             CharacterRamp = characterRamp,
-            Invert = invert
+            Invert = invert,
+            SourceColors = sourceColors
         };
 
         try
         {
             await using var input = image.OpenReadStream();
             var result = await converter.ConvertAsync(input, options, cancellationToken);
-            return Results.Ok(new { result.Text, result.WidthInCells, result.HeightInCells });
+            var png = await PngExporter.ExportAsync(result, cancellationToken);
+            return Results.Ok(new { result.Text, result.WidthInCells, result.HeightInCells, Png = png });
         }
         catch (ArgumentException exception)
         {
