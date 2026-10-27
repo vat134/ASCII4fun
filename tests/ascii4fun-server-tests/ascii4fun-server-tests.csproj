@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ascii4fun-server\ascii4fun-server.csproj" />
+    <ProjectReference Include="..\..\src\server\ascii4fun-server.csproj" />
   </ItemGroup>
 
 </Project>

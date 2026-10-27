@@ -6,9 +6,9 @@ import {
   renderHook,
   screen
 } from "@testing-library/react";
-import { ImageWorkspace } from "../../src/ascii4fun-web/images/image-workspace";
-import { useImageConversion } from "../../src/ascii4fun-web/images/use-image-conversion";
-import type { ImageConfiguration } from "../../src/ascii4fun-web/images/image-conversion";
+import { ImageWorkspace } from "../../src/web/images/image-workspace";
+import { useImageConversion } from "../../src/web/images/use-image-conversion";
+import type { ImageConfiguration } from "../../src/web/images/image-conversion";
 
 const configuration: ImageConfiguration = {
   defaultOutputWidthInCells: 80,

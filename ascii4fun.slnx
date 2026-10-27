@@ -3,9 +3,9 @@
     <Project Path="benchmarks/ascii4fun-benchmarks/ascii4fun-benchmarks.csproj" />
   </Folder>
   <Folder Name="/src/">
-    <Project Path="src/ascii4fun-cli/ascii4fun-cli.csproj" />
-    <Project Path="src/ascii4fun-server/ascii4fun-server.csproj" />
-    <Project Path="src/ascii4fun/ascii4fun.csproj" />
+    <Project Path="src/cli/ascii4fun-cli.csproj" />
+    <Project Path="src/server/ascii4fun-server.csproj" />
+    <Project Path="src/engine/ascii4fun.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/ascii4fun-server-tests/ascii4fun-server-tests.csproj" />

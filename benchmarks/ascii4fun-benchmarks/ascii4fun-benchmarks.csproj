@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ascii4fun\ascii4fun.csproj" />
+    <ProjectReference Include="..\..\src\engine\ascii4fun.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

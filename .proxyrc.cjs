@@ -7,7 +7,7 @@ module.exports = (app) => {
   app.use(
     createProxyMiddleware({
       pathFilter: "/api",
-      target: developmentEnvironment.ASCII4FUN_SERVER_URL
+      target: developmentEnvironment.serverUrl
     })
   );
 };

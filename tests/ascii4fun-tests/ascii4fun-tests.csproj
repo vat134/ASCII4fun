@@ -18,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ascii4fun-cli\ascii4fun-cli.csproj" />
-    <ProjectReference Include="..\..\src\ascii4fun\ascii4fun.csproj" />
+    <ProjectReference Include="..\..\src\cli\ascii4fun-cli.csproj" />
+    <ProjectReference Include="..\..\src\engine\ascii4fun.csproj" />
   </ItemGroup>
 
 </Project>

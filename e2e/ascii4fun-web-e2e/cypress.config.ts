@@ -7,7 +7,7 @@ export default defineConfig({
   video: false,
   downloadsFolder: "../../artifacts/cypress/downloads",
   e2e: {
-    baseUrl: developmentEnvironment.ASCII4FUN_SERVER_URL,
+    baseUrl: developmentEnvironment.serverUrl,
     supportFile: false,
     specPattern: "**/*.cy.ts",
     setupNodeEvents(on) {

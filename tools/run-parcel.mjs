@@ -4,10 +4,7 @@ process.env.PARCEL_WORKERS = "0";
 if (process.argv[2] === "serve") {
   const { developmentEnvironment } =
     await import("./development-environment.cjs");
-  process.argv.push(
-    "--port",
-    String(developmentEnvironment.ASCII4FUN_WEB_PORT)
-  );
+  process.argv.push("--port", String(developmentEnvironment.webPort));
 }
 
 await import("parcel/lib/bin.js");

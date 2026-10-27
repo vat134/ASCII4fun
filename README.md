@@ -12,15 +12,15 @@ Status: JPEG, PNG and still WebP conversion through the browser, package and CLI
 
 ## Layout
 
-| Path                   | Purpose                             |
-| ---------------------- | ----------------------------------- |
-| `src/ascii4fun`        | Conversion engine and NuGet package |
-| `src/ascii4fun-cli`    | CLI entry point                     |
-| `src/ascii4fun-server` | ASP.NET Core API and Web host       |
-| `src/ascii4fun-web`    | Browser client                      |
-| `tests`                | .NET and Web tests                  |
-| `e2e`                  | Cypress tests                       |
-| `benchmarks`           | Performance measurements            |
+| Path         | Purpose                             |
+| ------------ | ----------------------------------- |
+| `src/engine` | Conversion engine and NuGet package |
+| `src/cli`    | CLI entry point                     |
+| `src/server` | ASP.NET Core API and Web host       |
+| `src/web`    | Browser client                      |
+| `tests`      | .NET and Web tests                  |
+| `e2e`        | Cypress tests                       |
+| `benchmarks` | Performance measurements            |
 
 Dependency direction: `Web / API / CLI -> Ascii4Fun engine -> media boundary`.
 

@@ -2,14 +2,14 @@ const { spawnSync } = require("node:child_process");
 const { resolve } = require("node:path");
 const { developmentEnvironment } = require("./development-environment.cjs");
 
-const serverUrl = developmentEnvironment.ASCII4FUN_SERVER_URL;
+const serverUrl = developmentEnvironment.serverUrl;
 const commands = {
   server: {
     executable: "dotnet",
     args: [
       "run",
       "--project",
-      "src/ascii4fun-server/ascii4fun-server.csproj",
+      "src/server/ascii4fun-server.csproj",
       "--no-launch-profile"
     ]
   },

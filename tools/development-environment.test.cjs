@@ -16,8 +16,8 @@ const {
 
 test("omitted settings use the shared development defaults", () => {
   assert.deepEqual(developmentEnvironmentSchema.parse({}), {
-    ASCII4FUN_WEB_PORT: 1234,
-    ASCII4FUN_SERVER_URL: "http://127.0.0.1:5100"
+    webPort: 1234,
+    serverUrl: "http://127.0.0.1:5100"
   });
 });
 
@@ -27,7 +27,7 @@ test("shell strings become a port and a normalized server origin", () => {
       ASCII4FUN_WEB_PORT: "2345",
       ASCII4FUN_SERVER_URL: "http://localhost:5200/"
     }),
-    { ASCII4FUN_WEB_PORT: 2345, ASCII4FUN_SERVER_URL: "http://localhost:5200" }
+    { webPort: 2345, serverUrl: "http://localhost:5200" }
   );
 });
 
@@ -94,8 +94,8 @@ test("root .env.local loads from another cwd and shell overrides win", (t) => {
     );
     assert.equal(result.status, 0, result.stderr);
     assert.deepEqual(JSON.parse(result.stdout), {
-      ASCII4FUN_WEB_PORT: shellPort ? Number(shellPort) : 2345,
-      ASCII4FUN_SERVER_URL: "http://127.0.0.1:5200"
+      webPort: shellPort ? Number(shellPort) : 2345,
+      serverUrl: "http://127.0.0.1:5200"
     });
   }
 });

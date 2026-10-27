@@ -14,7 +14,7 @@ export default tseslint.config(
       "dist-*/**",
       "docs/project/**",
       "node_modules/**",
-      "src/ascii4fun-server/wwwroot/**"
+      "src/server/wwwroot/**"
     ]
   },
   {
@@ -34,16 +34,16 @@ export default tseslint.config(
     extends: [js.configs.recommended, ...tseslint.configs.recommended]
   },
   {
-    files: ["src/ascii4fun-web/**/*.{ts,tsx}"],
+    files: ["src/web/**/*.{ts,tsx}"],
     ...reactHooks.configs.flat.recommended
   },
   {
-    files: ["src/ascii4fun-web/**/*.{ts,tsx}"],
+    files: ["src/web/**/*.{ts,tsx}"],
     ...reactRefresh.configs.recommended
   },
   {
-    files: ["src/ascii4fun-web/**/*.{ts,tsx}"],
-    ignores: ["src/ascii4fun-web/ui/base/**"],
+    files: ["src/web/**/*.{ts,tsx}"],
+    ignores: ["src/web/ui/base/**"],
     rules: { "max-lines": ["error", 150] }
   }
 );
