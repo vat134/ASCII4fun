@@ -14,19 +14,36 @@ export default tseslint.config(
       "dist-*/**",
       "docs/project/**",
       "node_modules/**",
-      "src/ascii4fun-server/wwwroot/**"
+      "src/server/wwwroot/**"
     ]
+  },
+  {
+    files: ["tools/**/*.{cjs,mjs}", ".proxyrc.cjs"],
+    extends: [js.configs.recommended],
+    languageOptions: {
+      globals: {
+        process: "readonly",
+        console: "readonly",
+        __dirname: "readonly",
+        URL: "readonly"
+      }
+    }
   },
   {
     files: ["**/*.{ts,tsx}"],
     extends: [js.configs.recommended, ...tseslint.configs.recommended]
   },
   {
-    files: ["src/ascii4fun-web/**/*.{ts,tsx}"],
+    files: ["src/web/**/*.{ts,tsx}"],
     ...reactHooks.configs.flat.recommended
   },
   {
-    files: ["src/ascii4fun-web/**/*.{ts,tsx}"],
+    files: ["src/web/**/*.{ts,tsx}"],
     ...reactRefresh.configs.recommended
+  },
+  {
+    files: ["src/web/**/*.{ts,tsx}"],
+    ignores: ["src/web/ui/base/**"],
+    rules: { "max-lines": ["error", 150] }
   }
 );

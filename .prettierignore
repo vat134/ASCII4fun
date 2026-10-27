@@ -8,7 +8,7 @@ dist/
 dist-*/
 docs/project/
 node_modules/
-src/ascii4fun-server/wwwroot/
+src/server/wwwroot/
 AGENTS.md
 pnpm-lock.yaml
 

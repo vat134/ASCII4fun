@@ -18,6 +18,21 @@ public sealed class CharacterImageOptions
     public static int DefaultOutputWidthInCells { get; } = 80;
 
     /// <summary>
+    /// Gets the smallest supported output width, in character cells.
+    /// </summary>
+    public static int MinOutputWidthInCells => MinimumOutputWidthInCells;
+
+    /// <summary>
+    /// Gets the largest supported output width, in character cells.
+    /// </summary>
+    public static int MaxOutputWidthInCells => MaximumOutputWidthInCells;
+
+    /// <summary>
+    /// Gets the cell width-to-height ratio used by the current character renderer.
+    /// </summary>
+    public static double DefaultCharacterCellAspectRatio => CharacterCellAspectRatio;
+
+    /// <summary>
     /// Gets the default ramp ordered from darkest to lightest.
     /// </summary>
     public static string DefaultCharacterRamp { get; } = "@%#*+=-:. ";

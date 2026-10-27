@@ -32,6 +32,7 @@ jobs:
       - run: pnpm format
       - run: pnpm lint
       - run: pnpm typecheck
+      - run: pnpm test:tools
       - run: pnpm test:web
       - run: pnpm build:web
       - run: dotnet restore ascii4fun.slnx

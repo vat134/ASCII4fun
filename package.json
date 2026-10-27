@@ -6,10 +6,13 @@
   "engines": {
     "node": ">=22.9.0"
   },
+  "@parcel/resolver-default": {
+    "packageExports": true
+  },
   "targets": {
     "web": {
       "context": "browser",
-      "distDir": "src/ascii4fun-server/wwwroot",
+      "distDir": "src/server/wwwroot",
       "publicUrl": "./",
       "includeNodeModules": true
     }
@@ -27,22 +30,33 @@
     ]
   },
   "scripts": {
-    "build:web": "node tools/run-parcel.mjs build src/ascii4fun-web/index.html --target web --no-cache",
-    "check": "pnpm format && pnpm lint && pnpm typecheck && pnpm test:web && pnpm build:web",
-    "convert:image": "dotnet run --project src/ascii4fun-cli/ascii4fun-cli.csproj --configuration Release -- convert-image --output-directory dev-assets/output",
-    "dev": "pnpm build:web && dotnet run --project src/ascii4fun-server/ascii4fun-server.csproj --no-launch-profile -- --urls http://127.0.0.1:5100 --environment Development",
+    "build:web": "node tools/run-parcel.mjs build src/web/index.html --target web --no-cache",
+    "check": "pnpm format && pnpm lint && pnpm typecheck && pnpm test:tools && pnpm test:web && pnpm build:web",
+    "convert:image": "dotnet run --project src/cli/ascii4fun-cli.csproj --configuration Release -- convert-image --output-directory dev-assets/output",
+    "dev": "concurrently --kill-others \"pnpm dev:web\" \"pnpm dev:server\"",
+    "dev:web": "node tools/run-parcel.mjs serve src/web/index.html --target web --host 127.0.0.1",
+    "dev:server": "node tools/run-development.cjs server",
+    "start": "pnpm build:web && pnpm dev:server",
     "format": "prettier --check .",
     "format:write": "prettier --write .",
     "lint": "eslint .",
-    "test:e2e": "start-server-and-test \"pnpm dev\" http://127.0.0.1:5100 \"pnpm test:e2e:run\"",
+    "test:e2e": "node tools/run-development.cjs e2e",
     "test:e2e:open": "cypress open --project e2e/ascii4fun-web-e2e",
-    "test:e2e:run": "cypress run --project e2e/ascii4fun-web-e2e",
+    "test:e2e:run": "cypress run --project e2e/ascii4fun-web-e2e --browser chrome",
+    "test:tools": "node --test tools/*.test.cjs",
     "test:web": "jest --runInBand",
     "typecheck": "tsc --noEmit && tsc --project e2e/ascii4fun-web-e2e/tsconfig.json"
   },
   "dependencies": {
+    "@base-ui/react": "1.9.0",
+    "@fontsource/aldrich": "5.3.0",
+    "@fontsource/ibm-plex-mono": "5.3.0",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "lucide-react": "1.62.0",
     "react": "19.3.1",
-    "react-dom": "19.3.1"
+    "react-dom": "19.3.1",
+    "tailwind-merge": "3.7.0"
   },
   "devDependencies": {
     "@babel/core": "7.29.7",
@@ -51,22 +65,28 @@
     "@babel/preset-typescript": "7.29.7",
     "@eslint/js": "9.39.5",
     "@jest/globals": "30.5.2",
+    "@tailwindcss/postcss": "4.3.3",
     "@testing-library/dom": "10.4.2",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.3",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "babel-jest": "30.5.2",
+    "concurrently": "10.0.6",
     "cypress": "16.2.0",
     "eslint": "9.39.5",
     "eslint-plugin-react-hooks": "7.1.1",
     "eslint-plugin-react-refresh": "0.5.7",
+    "http-proxy-middleware": "3.0.10",
     "jest": "30.5.2",
     "jest-environment-jsdom": "30.5.2",
     "parcel": "2.16.4",
+    "postcss": "8.5.32",
     "prettier": "3.9.10",
     "start-server-and-test": "3.0.13",
+    "tailwindcss": "4.3.3",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.50.0"
+    "typescript-eslint": "8.50.0",
+    "zod": "4.6.7"
   }
 }

@@ -1,0 +1,105 @@
+@import "@fontsource/aldrich/latin-400.css";
+@import "@fontsource/ibm-plex-mono/latin-400.css";
+@import "tailwindcss";
+
+@source "./";
+
+/* shadcn's orientation variants map to Base UI's data-orientation attribute. */
+@custom-variant data-horizontal (&:where([data-orientation="horizontal"]));
+@custom-variant data-vertical (&:where([data-orientation="vertical"]));
+
+@theme inline {
+  --font-sans: "Aldrich", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--foreground);
+  --color-popover: var(--card);
+  --color-popover-foreground: var(--foreground);
+  --color-accent: var(--muted);
+  --color-accent-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--muted);
+  --color-secondary-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--border);
+  --color-ring: var(--foreground);
+  --color-destructive: var(--foreground);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  color-scheme: dark;
+  --background: #080808;
+  --foreground: #eeeeec;
+  --card: #101010;
+  --muted: #1b1b1b;
+  --muted-foreground: #999998;
+  --primary: #eeeeec;
+  --primary-foreground: #101010;
+  --border: #2b2b2b;
+  --radius: 0.75rem;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+    scrollbar-color: var(--border) transparent;
+    scrollbar-width: thin;
+  }
+
+  body {
+    margin: 0;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+  }
+
+  button:not(:disabled),
+  [role="tab"]:not(:disabled),
+  select:not(:disabled) {
+    cursor: pointer;
+  }
+
+  ::selection {
+    background: var(--foreground);
+    color: var(--background);
+  }
+}
+
+/* Four discrete frames, each visible for the reference loader's 120 ms interval. */
+.ascii-spinner > span {
+  opacity: 0;
+  animation: spinner-frame 480ms step-end infinite;
+}
+
+@keyframes spinner-frame {
+  0%,
+  24.99% {
+    opacity: 1;
+  }
+  25%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .ascii-spinner > span:first-child {
+    opacity: 1;
+  }
+}

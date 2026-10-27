@@ -14,8 +14,8 @@
     "skipLibCheck": true
   },
   "include": [
-    "src/ascii4fun-web/**/*.ts",
-    "src/ascii4fun-web/**/*.tsx",
+    "src/web/**/*.ts",
+    "src/web/**/*.tsx",
     "tests/ascii4fun-web-tests/**/*.ts",
     "tests/ascii4fun-web-tests/**/*.tsx"
   ],
