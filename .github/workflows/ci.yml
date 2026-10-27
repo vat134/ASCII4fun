@@ -27,6 +27,8 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+      - name: Install Cypress binary
+        run: pnpm exec cypress install
       - run: pnpm format
       - run: pnpm lint
       - run: pnpm typecheck
