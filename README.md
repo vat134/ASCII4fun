@@ -2,7 +2,7 @@
 
 Local-first toolkit for converting images, animations, and text into ASCII and cell-based art.
 
-Status: toolchain foundation; conversion is not implemented yet.
+Status: first still-image character conversion is available through the package and CLI.
 
 ## Stack
 
@@ -43,6 +43,10 @@ dotnet test ascii4fun.slnx --configuration Release --no-build
 
 pnpm dev
 pnpm test:e2e
+
+pnpm convert:image dev-assets/input/photo.webp --width 100
 ```
 
 `dev` serves the UI at `http://127.0.0.1:5100`; health is available at `/health`.
+
+`convert-image` accepts JPEG, PNG, and still WebP. Use `--ramp`, `--invert`, or `--output` for the initial text controls.

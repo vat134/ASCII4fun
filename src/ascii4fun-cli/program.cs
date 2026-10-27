@@ -1,2 +1,4 @@
-Console.WriteLine("ASCII4fun CLI foundation is ready.");
+using Ascii4Fun.Cli;
+
+return await CliApplication.RunAsync(args);
 
