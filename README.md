@@ -2,12 +2,12 @@
 
 Local-first toolkit for converting images, animations, and text into ASCII and cell-based art.
 
-Status: first still-image character conversion is available through the package and CLI.
+Status: JPEG, PNG and still WebP conversion through the browser, package and CLI. Text and animation conversion are planned.
 
 ## Stack
 
 - .NET 10 / C# 14 — engine, CLI, HTTP API, local host
-- React / TypeScript / Parcel — browser UI
+- React / TypeScript / Parcel / Tailwind / shadcn — browser UI
 - xUnit / Jest / Cypress — tests
 
 ## Layout
@@ -30,6 +30,8 @@ Dependency direction: `Web / API / CLI -> Ascii4Fun engine -> media boundary`.
 - Node.js 22.9 or later
 - pnpm 10.19
 
+Cypress end-to-end tests use an installed Chrome browser.
+
 ## Commands
 
 ```powershell
@@ -47,6 +49,6 @@ pnpm test:e2e
 pnpm convert:image dev-assets/input/photo.webp --width 100
 ```
 
-`dev` serves the UI at `http://127.0.0.1:5100`; health is available at `/health`.
+`dev` serves the development UI at `http://127.0.0.1:1234` with live updates and proxies `/api` to ASP.NET Core at port 5100. `pnpm start` builds and serves the UI directly from ASP.NET Core at `http://127.0.0.1:5100`.
 
 `convert-image` accepts JPEG, PNG, and still WebP. Use `--ramp`, `--invert`, or `--output` for the initial text controls.

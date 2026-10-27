@@ -10,6 +10,11 @@ public sealed class StillImageConverter
     private readonly ConversionLimits limits;
 
     /// <summary>
+    /// Gets the encoded input limit, in bytes, enforced by this converter.
+    /// </summary>
+    public long MaxEncodedBytes => limits.MaxEncodedBytes;
+
+    /// <summary>
     /// Initializes a converter with the current safe local defaults.
     /// </summary>
     public StillImageConverter()
