@@ -7,6 +7,15 @@
     <IsPackable>true</IsPackable>
     <PackageId>Ascii4Fun</PackageId>
     <Description>Reusable image, animation, and text to ASCII conversion engine.</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Magick.NET-Q8-AnyCPU" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Ascii4Fun.Tests" />
+  </ItemGroup>
 
 </Project>

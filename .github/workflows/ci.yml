@@ -37,3 +37,20 @@ jobs:
       - run: dotnet build ascii4fun.slnx --configuration Release --no-restore
       - run: dotnet test ascii4fun.slnx --configuration Release --no-build
       - run: pnpm test:e2e
+
+  engine-platforms:
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - run: dotnet restore tests/ascii4fun-tests/ascii4fun-tests.csproj
+      - run: dotnet test tests/ascii4fun-tests/ascii4fun-tests.csproj --configuration Release --no-restore

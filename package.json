@@ -29,6 +29,7 @@
   "scripts": {
     "build:web": "node tools/run-parcel.mjs build src/ascii4fun-web/index.html --target web --no-cache",
     "check": "pnpm format && pnpm lint && pnpm typecheck && pnpm test:web && pnpm build:web",
+    "convert:image": "dotnet run --project src/ascii4fun-cli/ascii4fun-cli.csproj --configuration Release -- convert-image --output-directory dev-assets/output",
     "dev": "pnpm build:web && dotnet run --project src/ascii4fun-server/ascii4fun-server.csproj --no-launch-profile -- --urls http://127.0.0.1:5100 --environment Development",
     "format": "prettier --check .",
     "format:write": "prettier --write .",
