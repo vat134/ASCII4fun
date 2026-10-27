@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "../ui/base/button";
+import { Switch } from "../ui/base/switch";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/base/tooltip";
 import {
   ArrowDownToLineIcon,
@@ -19,7 +20,7 @@ type ImageSettingsProps = {
   onChange: (options: CharacterImageOptions) => void;
   onReset: () => void;
   canExport: boolean;
-  onExport: () => void;
+  onExport: (format: "txt" | "png") => void;
   dimensions: string;
 };
 
@@ -78,6 +79,18 @@ export function ImageSettings({
           onEditorChange={setEditor}
           onChange={onChange}
         />
+        <div className="flex min-h-11 items-center justify-between gap-3 p-5">
+          <label htmlFor="source-colors" className="text-sm">
+            Source colors
+          </label>
+          <Switch
+            id="source-colors"
+            checked={options.sourceColors}
+            onCheckedChange={(sourceColors) =>
+              onChange({ ...options, sourceColors })
+            }
+          />
+        </div>
       </div>
 
       <footer className="shrink-0 space-y-4 border-t bg-card p-5">
@@ -90,12 +103,20 @@ export function ImageSettings({
         <Button
           className="h-11 w-full"
           disabled={!canExport}
-          onClick={onExport}
+          onClick={() => onExport("png")}
+        >
+          <ArrowDownToLineIcon aria-hidden="true" /> Download PNG
+        </Button>
+        <Button
+          variant="outline"
+          className="h-11 w-full"
+          disabled={!canExport}
+          onClick={() => onExport("txt")}
         >
           <ArrowDownToLineIcon aria-hidden="true" /> Download .txt
         </Button>
         <p className="text-center font-mono text-xs text-muted-foreground">
-          Plain text · UTF-8
+          PNG matches preview · TXT saves characters only
         </p>
       </footer>
     </aside>

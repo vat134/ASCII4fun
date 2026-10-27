@@ -28,13 +28,13 @@ public sealed class StillImageConverter
     }
 
     /// <summary>
-    /// Converts a JPEG, PNG, or still WebP stream to plain text.
+    /// Converts a JPEG, PNG, or still WebP stream to a glyph-and-color canvas.
     /// </summary>
     /// <param name="encodedImage">A readable stream containing encoded image bytes.</param>
     /// <param name="options">Character conversion options, or <see langword="null" /> for defaults.</param>
     /// <param name="cancellationToken">Stops input reading and cancellable decode work.</param>
-    /// <returns>The rectangular text result.</returns>
-    public async Task<AsciiText> ConvertAsync(
+    /// <returns>The rectangular canvas shared by text and image exporters.</returns>
+    public async Task<AsciiCanvas> ConvertAsync(
         Stream encodedImage,
         CharacterImageOptions? options = null,
         CancellationToken cancellationToken = default)
@@ -57,6 +57,6 @@ public sealed class StillImageConverter
         var luminanceGrid = LuminanceAnalyzer.Analyze(rgbaGrid, cancellationToken);
         var normalizedGrid = AutoToneMapper.Normalize(luminanceGrid, cancellationToken);
 
-        return CharacterImageRenderer.Render(normalizedGrid, ramp, options.Invert, cancellationToken);
+        return CharacterImageMapper.Map(normalizedGrid, rgbaGrid, ramp, options, cancellationToken);
     }
 }

@@ -1,6 +1,7 @@
 using System.CommandLine;
 using System.Text;
 using Ascii4Fun.Images;
+using Ascii4Fun.Rendering;
 
 namespace Ascii4Fun.Cli;
 
@@ -34,34 +35,54 @@ internal static class ConvertImageCommand
             Description = "Reverse light and dark character mapping."
         };
 
+        var sourceColorsOption = new Option<bool>("--source-colors")
+        {
+            Description = "Use sampled source colors for PNG; TXT still saves glyphs only."
+        };
+        var formatOption = new Option<string>("--format")
+        {
+            Description = "Output format: txt or png.",
+            DefaultValueFactory = _ => "txt"
+        };
+        formatOption.AcceptOnlyFromAmong("txt", "png");
+
         var outputOption = new Option<FileInfo?>("--output")
         {
-            Description = "Write UTF-8 text to a file instead of stdout."
+            Description = "Write the selected format to a file instead of text stdout."
         };
         outputOption.Aliases.Add("-o");
 
         var outputDirectoryOption = new Option<DirectoryInfo>("--output-directory")
         {
-            Description = "Create a UTF-8 text file using the input name in this directory."
+            Description = "Create a file in the selected format using the input name in this directory."
         };
         outputDirectoryOption.AcceptExistingOnly();
 
-        var command = new Command("convert-image", "Convert one still image to plain-text ASCII.")
+        var command = new Command("convert-image", "Convert one still image to ASCII text or PNG.")
         {
             inputArgument,
             widthOption,
             rampOption,
             invertOption,
+            sourceColorsOption,
+            formatOption,
             outputOption,
             outputDirectoryOption
         };
 
         command.Validators.Add(result =>
         {
-            if (result.GetValue(outputOption) is not null
-                && result.GetValue(outputDirectoryOption) is not null)
+            var hasOutput = result.GetResult(outputOption) is not null;
+            var hasOutputDirectory = result.GetResult(outputDirectoryOption) is not null;
+            if (hasOutput && hasOutputDirectory)
             {
                 result.AddError("Use either --output or --output-directory, not both.");
+            }
+
+            if (result.GetResult(formatOption)?.Tokens.Any(token => token.Value == "png") == true
+                && !hasOutput && !hasOutputDirectory)
+            {
+                result.AddError("PNG requires --output or --output-directory.");
             }
         });
 
@@ -72,12 +93,13 @@ internal static class ConvertImageCommand
             {
                 OutputWidthInCells = parseResult.GetValue(widthOption),
                 CharacterRamp = parseResult.GetRequiredValue(rampOption),
-                Invert = parseResult.GetValue(invertOption)
+                Invert = parseResult.GetValue(invertOption),
+                SourceColors = parseResult.GetValue(sourceColorsOption)
             };
 
             try
             {
-                AsciiText result;
+                AsciiCanvas result;
 
                 var fileOptions = new FileStreamOptions
                 {
@@ -97,24 +119,24 @@ internal static class ConvertImageCommand
 
                 var output = parseResult.GetValue(outputOption);
                 DirectoryInfo? outputDirectory = parseResult.GetValue(outputDirectoryOption);
+                var format = parseResult.GetRequiredValue(formatOption);
 
-                if (output is not null)
+                if (output is not null || outputDirectory is not null)
                 {
-                    await File.WriteAllTextAsync(
-                        output.FullName,
-                        result.Text + '\n',
-                        Utf8WithoutBom,
-                        cancellationToken);
-                }
-                else if (outputDirectory is not null)
-                {
-                    var generatedOutput = await WriteGeneratedOutputAsync(
-                        input,
-                        outputDirectory,
-                        result.Text,
-                        cancellationToken);
-                    Console.OutputEncoding = Utf8WithoutBom;
-                    Console.Out.WriteLine($"Saved: {generatedOutput.FullName}");
+                    var bytes = format == "png"
+                        ? await PngExporter.ExportAsync(result, cancellationToken)
+                        : Utf8WithoutBom.GetBytes(result.Text + '\n');
+                    if (output is not null)
+                    {
+                        await File.WriteAllBytesAsync(output.FullName, bytes, cancellationToken);
+                    }
+                    else
+                    {
+                        var generatedOutput = await WriteGeneratedOutputAsync(
+                            input, outputDirectory!, bytes, format, cancellationToken);
+                        Console.OutputEncoding = Utf8WithoutBom;
+                        Console.Out.WriteLine($"Saved: {generatedOutput.FullName}");
+                    }
                 }
                 else
                 {
@@ -140,7 +162,8 @@ internal static class ConvertImageCommand
     private static async Task<FileInfo> WriteGeneratedOutputAsync(
         FileInfo input,
         DirectoryInfo outputDirectory,
-        string text,
+        byte[] bytes,
+        string format,
         CancellationToken cancellationToken)
     {
         var outputName = Path.GetFileNameWithoutExtension(input.Name);
@@ -148,7 +171,7 @@ internal static class ConvertImageCommand
         for (var index = 0; ; index++)
         {
             var suffix = index == 0 ? string.Empty : $"-{index}";
-            var outputPath = Path.Combine(outputDirectory.FullName, $"{outputName}{suffix}.txt");
+            var outputPath = Path.Combine(outputDirectory.FullName, $"{outputName}{suffix}.{format}");
             FileStream outputStream;
 
             try
@@ -169,9 +192,8 @@ internal static class ConvertImageCommand
             }
 
             await using (outputStream)
-            await using (var writer = new StreamWriter(outputStream, Utf8WithoutBom))
             {
-                await writer.WriteAsync((text + '\n').AsMemory(), cancellationToken);
+                await outputStream.WriteAsync(bytes, cancellationToken);
             }
 
             return new FileInfo(outputPath);

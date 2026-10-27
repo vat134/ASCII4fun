@@ -44,7 +44,9 @@ test("exposes current controls and explicitly disables future inputs", () => {
     "true"
   );
   expect(screen.getByRole("textbox", { name: "Media URL" })).toBeDisabled();
-  expect(screen.getByRole("button", { name: /Download/ })).toBeDisabled();
+  expect(screen.getByRole("button", { name: "Download PNG" })).toBeDisabled();
+  expect(screen.getByRole("button", { name: "Download .txt" })).toBeDisabled();
+  expect(screen.getByRole("switch", { name: "Source colors" })).toBeChecked();
   // jsdom has no layout; Base UI reveals the thumbs after browser measurement.
   expect(
     screen.getByLabelText("Columns", { selector: 'input[type="range"]' })
@@ -54,6 +56,59 @@ test("exposes current controls and explicitly disables future inputs", () => {
   expect(
     screen.getByLabelText("Characters", { selector: "p" })
   ).toHaveTextContent("@%#*+=-:.");
+});
+
+test("exports the displayed PNG, blocks stale exports and keeps zoom local", async () => {
+  const response = {
+    text: "@ ",
+    widthInCells: 2,
+    heightInCells: 1,
+    png: "current-png"
+  };
+  fetchMock.mockResolvedValue({
+    ok: true,
+    json: async () => response
+  } as Response);
+  const downloads: { href: string; name: string }[] = [];
+  const click = jest
+    .spyOn(HTMLAnchorElement.prototype, "click")
+    .mockImplementation(function (this: HTMLAnchorElement) {
+      downloads.push({ href: this.href, name: this.download });
+    });
+  render(<ImageWorkspace configuration={configuration} />);
+  fireEvent.change(screen.getByLabelText("Upload image"), {
+    target: { files: [new File(["image"], "source.png")] }
+  });
+  await act(async () => {
+    jest.advanceTimersByTime(200);
+  });
+  const body = fetchMock.mock.calls[0]![1]!.body as FormData;
+  expect(body.get("sourceColors")).toBe("true");
+  expect(screen.getByRole("img", { name: /ASCII preview/ })).toHaveAttribute(
+    "src",
+    "data:image/png;base64,current-png"
+  );
+  fireEvent.click(screen.getByRole("switch", { name: "Source colors" }));
+  expect(screen.getByRole("button", { name: "Download PNG" })).toBeDisabled();
+  expect(screen.getByRole("button", { name: "Download .txt" })).toBeDisabled();
+  await act(async () => {
+    jest.advanceTimersByTime(200);
+  });
+  expect(
+    (fetchMock.mock.calls[1]![1]!.body as FormData).get("sourceColors")
+  ).toBe("false");
+  fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
+  expect(screen.getByLabelText("Preview zoom level")).toHaveTextContent("125%");
+  expect(fetchMock).toHaveBeenCalledTimes(2);
+  fireEvent.click(screen.getByRole("button", { name: "Download PNG" }));
+  expect(downloads).toEqual([
+    { href: "data:image/png;base64,current-png", name: "source.png" }
+  ]);
+  fireEvent.click(screen.getByRole("button", { name: "Download .txt" }));
+  expect(downloads[1]?.name).toBe("source.txt");
+  fireEvent.click(screen.getByRole("button", { name: "Reset to default" }));
+  expect(screen.getByRole("switch", { name: "Source colors" })).toBeChecked();
+  click.mockRestore();
 });
 
 test("rejects excessive local input without submitting conversion", () => {
@@ -137,7 +192,7 @@ test("shows a conversion failure and retries without losing the selected image",
   await act(async () => {
     jest.advanceTimersByTime(200);
   });
-  expect(screen.getByRole("button", { name: /Download/ })).toBeEnabled();
+  expect(screen.getByRole("button", { name: "Download PNG" })).toBeEnabled();
   expect(
     screen.getByRole("img", { name: /ASCII preview/ })
   ).toBeInTheDocument();
