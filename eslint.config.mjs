@@ -18,6 +18,18 @@ export default tseslint.config(
     ]
   },
   {
+    files: ["tools/**/*.{cjs,mjs}", ".proxyrc.cjs"],
+    extends: [js.configs.recommended],
+    languageOptions: {
+      globals: {
+        process: "readonly",
+        console: "readonly",
+        __dirname: "readonly",
+        URL: "readonly"
+      }
+    }
+  },
+  {
     files: ["**/*.{ts,tsx}"],
     extends: [js.configs.recommended, ...tseslint.configs.recommended]
   },

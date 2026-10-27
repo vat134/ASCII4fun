@@ -1,4 +1,5 @@
 import { defineConfig } from "cypress";
+import { developmentEnvironment } from "../../tools/development-environment.cjs";
 
 export default defineConfig({
   screenshotsFolder: "../../artifacts/cypress/screenshots",
@@ -6,7 +7,7 @@ export default defineConfig({
   video: false,
   downloadsFolder: "../../artifacts/cypress/downloads",
   e2e: {
-    baseUrl: "http://127.0.0.1:5100",
+    baseUrl: developmentEnvironment.ASCII4FUN_SERVER_URL,
     supportFile: false,
     specPattern: "**/*.cy.ts",
     setupNodeEvents(on) {
