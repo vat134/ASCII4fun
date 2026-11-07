@@ -1,5 +1,8 @@
 import { useRef, useState } from "react";
-import type { ImageConfiguration } from "./image-conversion";
+import {
+  createDefaultImageOptions,
+  type ImageConfiguration
+} from "./image-conversion";
 import { ImagePreviewStage } from "./image-preview-stage";
 import { ImageSettings } from "./image-settings";
 import { ImageSource } from "./image-source";
@@ -111,12 +114,7 @@ export function ImageWorkspace({
         onChange={changeOptions}
         onReset={() => {
           setZoom(previewZoom.default);
-          changeOptions({
-            outputWidthInCells: configuration.defaultOutputWidthInCells,
-            characterRamp: configuration.defaultCharacterRamp,
-            invert: true,
-            sourceColors: true
-          });
+          changeOptions(createDefaultImageOptions(configuration));
         }}
         canExport={state.status === "ready"}
         onExport={download}

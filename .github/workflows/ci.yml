@@ -39,6 +39,7 @@ jobs:
       - run: dotnet format ascii4fun.slnx --verify-no-changes --no-restore
       - run: dotnet build ascii4fun.slnx --configuration Release --no-restore
       - run: dotnet test ascii4fun.slnx --configuration Release --no-build
+      - run: node tools/test-package.mjs
       - run: pnpm test:e2e
 
   engine-platforms:
@@ -57,3 +58,7 @@ jobs:
 
       - run: dotnet restore tests/ascii4fun-tests/ascii4fun-tests.csproj
       - run: dotnet test tests/ascii4fun-tests/ascii4fun-tests.csproj --configuration Release --no-restore
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22.x
+      - run: node tools/test-package.mjs

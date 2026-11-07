@@ -2,9 +2,7 @@ using System.Text;
 
 namespace Ascii4Fun.Images;
 
-/// <summary>
-/// An immutable rectangular grid of glyphs and colors, independent of its export format.
-/// </summary>
+/// <summary> An immutable rectangular grid of glyphs and colors, independent of its export format. </summary>
 public sealed class AsciiCanvas
 {
     internal AsciiCanvas(AsciiCell[] cells, int widthInCells, int heightInCells)
@@ -14,16 +12,16 @@ public sealed class AsciiCanvas
         HeightInCells = heightInCells;
     }
 
-    /// <summary>Gets the cells in row-major order, including empty space glyphs.</summary>
+    /// <summary> The cells in row-major order, including empty space glyphs. </summary>
     public IReadOnlyList<AsciiCell> Cells { get; }
 
-    /// <summary>Gets the width in character cells.</summary>
+    /// <summary> The width in character cells. </summary>
     public int WidthInCells { get; }
 
-    /// <summary>Gets the height in character cells.</summary>
+    /// <summary> The height in character cells. </summary>
     public int HeightInCells { get; }
 
-    /// <summary>Gets a glyph-only projection, with LF separators and no trailing line break.</summary>
+    /// <summary> Glyph-only projection, with LF separators and no trailing line break. </summary>
     public string Text
     {
         get

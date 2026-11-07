@@ -4,9 +4,6 @@ namespace Ascii4Fun.Images;
 
 internal static class LuminanceAnalyzer
 {
-    private const int RgbaChannelCount = 4;
-    private const int GreenChannelOffset = 1;
-    private const int BlueChannelOffset = 2;
     private const double RedLuminanceWeight = 0.2126;
     private const double GreenLuminanceWeight = 0.7152;
     private const double BlueLuminanceWeight = 0.0722;
@@ -27,11 +24,8 @@ internal static class LuminanceAnalyzer
                 cancellationToken.ThrowIfCancellationRequested();
             }
 
-            var offset = index * RgbaChannelCount;
-            values[index] = CalculateLuminance(
-                grid.ChannelOverWhite(offset),
-                grid.ChannelOverWhite(offset + GreenChannelOffset),
-                grid.ChannelOverWhite(offset + BlueChannelOffset));
+            var sample = grid.SampleOverWhite(index);
+            values[index] = CalculateLuminance(sample.Red, sample.Green, sample.Blue);
         }
 
         return new LuminanceGrid(grid.WidthInCells, grid.HeightInCells, values);

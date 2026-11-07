@@ -1,61 +1,41 @@
 using System.Text;
+using Ascii4Fun.Rendering;
 
 namespace Ascii4Fun.Images;
 
-/// <summary>
-/// Controls character-based conversion of a still image.
-/// </summary>
+/// <summary> Controls character-based conversion of a still image. </summary>
 public sealed class CharacterImageOptions
 {
     private const int MinimumOutputWidthInCells = 1;
     private const int MinimumCharacterRampLength = 2;
     private const int MaximumOutputWidthInCells = 500;
-    internal const double CharacterCellAspectRatio = 0.5;
 
-    /// <summary>
-    /// Gets the default output width measured in character cells.
-    /// </summary>
+    /// <summary> The default output width measured in character cells. </summary>
     public static int DefaultOutputWidthInCells { get; } = 80;
 
-    /// <summary>
-    /// Gets the smallest supported output width, in character cells.
-    /// </summary>
+    /// <summary> The smallest supported output width, in character cells. </summary>
     public static int MinOutputWidthInCells => MinimumOutputWidthInCells;
 
-    /// <summary>
-    /// Gets the largest supported output width, in character cells.
-    /// </summary>
+    /// <summary> The largest supported output width, in character cells. </summary>
     public static int MaxOutputWidthInCells => MaximumOutputWidthInCells;
 
-    /// <summary>
-    /// Gets the cell width-to-height ratio used by the current character renderer.
-    /// </summary>
-    public static double DefaultCharacterCellAspectRatio => CharacterCellAspectRatio;
+    /// <summary> The cell width-to-height ratio used by the current character renderer. </summary>
+    public static double DefaultCharacterCellAspectRatio => CharacterCellGeometry.AspectRatio;
 
-    /// <summary>
-    /// Gets the default ramp ordered from darkest to lightest.
-    /// </summary>
+    /// <summary> The default ramp ordered from darkest to lightest. </summary>
     public static string DefaultCharacterRamp { get; } = "@%#*+=-:. ";
 
-    /// <summary>
-    /// Gets the requested output width measured in character cells.
-    /// </summary>
+    /// <summary> The requested output width measured in character cells. </summary>
     public int OutputWidthInCells { get; init; } = DefaultOutputWidthInCells;
 
-    /// <summary>
-    /// Gets the glyph ramp ordered from darkest to lightest.
-    /// </summary>
+    /// <summary> The glyph ramp ordered from darkest to lightest. </summary>
     public string CharacterRamp { get; init; } = DefaultCharacterRamp;
 
-    /// <summary>
-    /// Gets a value indicating whether light and dark glyph mapping is reversed.
-    /// </summary>
+    /// <summary> Reverses light and dark glyph mapping. </summary>
     public bool Invert { get; init; }
 
-    /// <summary>
-    /// Gets whether glyphs use sampled source colors, composited over white like luminance analysis.
-    /// Defaults to monochrome; this option does not change glyph selection or geometry.
-    /// </summary>
+    /// <summary> Uses sampled source colors, composited over white like luminance analysis. </summary>
+    /// <remarks>Defaults to monochrome; enabling color preserves glyph selection and geometry.</remarks>
     public bool SourceColors { get; init; }
 
     internal Rune[] ValidateAndGetRamp()

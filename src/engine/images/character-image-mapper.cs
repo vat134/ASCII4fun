@@ -28,11 +28,11 @@ internal static class CharacterImageMapper
             var color = MonochromeColor;
             if (options.SourceColors)
             {
-                var offset = index * 4;
+                var sample = source.SampleOverWhite(index);
                 color = new RgbColor(
-                    (byte)Math.Round(source.ChannelOverWhite(offset) * byte.MaxValue),
-                    (byte)Math.Round(source.ChannelOverWhite(offset + 1) * byte.MaxValue),
-                    (byte)Math.Round(source.ChannelOverWhite(offset + 2) * byte.MaxValue));
+                    (byte)Math.Round(sample.Red * byte.MaxValue),
+                    (byte)Math.Round(sample.Green * byte.MaxValue),
+                    (byte)Math.Round(sample.Blue * byte.MaxValue));
             }
 
             cells[index] = new AsciiCell(ramp[rampIndex], color);

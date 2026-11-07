@@ -4,6 +4,8 @@ import { Button } from "../ui/base/button";
 import { Input } from "../ui/base/input";
 import { Slider } from "../ui/base/slider";
 
+const columnInputDelayMs = 1000;
+
 type GridSettingsProps = {
   minWidthInCells: number;
   maxWidthInCells: number;
@@ -101,7 +103,7 @@ export function GridSettings({
             ) {
               inputTimer.current = window.setTimeout(
                 () => changeWidth.current(value),
-                1000
+                columnInputDelayMs
               );
             }
           }}

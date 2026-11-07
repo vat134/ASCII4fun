@@ -7,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 var converter = new StillImageConverter();
 // Reserve room for multipart headers and bounded settings alongside the encoded file.
 const int multipartOverheadInBytes = 64 * 1024;
+// Provisional interactive request budget; revise with the performance baseline.
+const int conversionTimeoutInSeconds = 30;
 var maxRequestBytes = converter.MaxEncodedBytes + multipartOverheadInBytes;
 
 builder.Services.AddHealthChecks();
@@ -38,8 +40,7 @@ builder.Services.AddRateLimiter(options =>
 });
 builder.Services.AddRequestTimeouts(options => options.AddPolicy(
     ImageConversionEndpoints.PolicyName,
-    // Provisional interactive request budget; revise with the performance baseline.
-    TimeSpan.FromSeconds(30)));
+    TimeSpan.FromSeconds(conversionTimeoutInSeconds)));
 
 var app = builder.Build();
 

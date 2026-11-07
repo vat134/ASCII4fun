@@ -24,6 +24,17 @@ export type ImageConversionResult = {
 
 type ProblemDetails = { title: string; detail?: string };
 
+export function createDefaultImageOptions(
+  configuration: ImageConfiguration
+): CharacterImageOptions {
+  return {
+    outputWidthInCells: configuration.defaultOutputWidthInCells,
+    characterRamp: configuration.defaultCharacterRamp,
+    invert: true,
+    sourceColors: true
+  };
+}
+
 export async function loadImageConfiguration(
   signal: AbortSignal
 ): Promise<ImageConfiguration> {

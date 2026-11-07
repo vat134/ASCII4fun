@@ -7,18 +7,21 @@ using ImageMagick.Formats;
 
 namespace Ascii4Fun.Rendering;
 
-/// <summary>Renders a canvas to PNG with bundled fonts and fixed dark-background geometry.</summary>
+/// <summary> Renders a canvas to PNG with bundled fonts and fixed dark-background geometry. </summary>
 public static class PngExporter
 {
-    /// <summary>Gets the exported cell width in pixels, independent of preview zoom.</summary>
-    public const int CellWidthInPixels = 12;
+    /// <summary> The exported cell width in pixels, independent of preview zoom. </summary>
+    public const int CellWidthInPixels = CharacterCellGeometry.WidthInPixels;
 
-    /// <summary>Gets the exported cell height in pixels.</summary>
-    public const int CellHeightInPixels = 24;
+    /// <summary> The exported cell height in pixels. </summary>
+    public const int CellHeightInPixels = CharacterCellGeometry.HeightInPixels;
 
     private const int BackgroundChannel = 8;
+    private const int AsciiFontPointSize = 20;
+    private const int AsciiBaselineInPixels = 19;
+    private const int UnicodeBaselineInPixels = 21;
 
-    /// <summary>Exports the existing canvas without decoding or choosing glyphs again.</summary>
+    /// <summary> Exports the existing canvas without decoding or choosing glyphs again. </summary>
     /// <param name="canvas">The immutable conversion result.</param>
     /// <param name="cancellationToken">Stops rendering between rows and cancels output encoding.</param>
     /// <returns>PNG bytes with opaque background #080808.</returns>
@@ -84,11 +87,16 @@ public static class PngExporter
 
     private static byte[] RenderGlyph(Rune glyph)
     {
-        var fontName = glyph.IsAscii ? "ibm-plex-mono-regular.ttf" : glyph.IsBmp ? "unifont.otf" : "unifont-upper.otf";
+        var fontName = glyph switch
+        {
+            { IsAscii: true } => "ibm-plex-mono-regular.ttf",
+            { IsBmp: true } => "unifont.otf",
+            _ => "unifont-upper.otf"
+        };
         var fontPath = Path.Combine(AppContext.BaseDirectory, "rendering", "fonts", fontName);
         var drawing = new Drawables()
             .Font(fontPath)
-            .FontPointSize(glyph.IsAscii ? 20 : CellHeightInPixels)
+            .FontPointSize(glyph.IsAscii ? AsciiFontPointSize : CellHeightInPixels)
             .TextEncoding(Encoding.UTF8)
             .FillColor(MagickColors.White)
             .StrokeColor(MagickColors.None);
@@ -98,7 +106,7 @@ public static class PngExporter
         var scaleX = metrics.TextWidth > 0 ? CellWidthInPixels / metrics.TextWidth : 1;
         using var tile = new MagickImage(MagickColors.Transparent, CellWidthInPixels, CellHeightInPixels);
         drawing.Affine(scaleX, 1, 0, 0, 0, 0)
-            .Text(0, glyph.IsAscii ? 19 : 21, glyph.ToString())
+            .Text(0, glyph.IsAscii ? AsciiBaselineInPixels : UnicodeBaselineInPixels, glyph.ToString())
             .Draw(tile);
         using var pixels = tile.GetPixels();
         var rgba = pixels.ToByteArray(PixelMapping.RGBA)

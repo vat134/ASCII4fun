@@ -1,22 +1,17 @@
 using Ascii4Fun.Media;
+using Ascii4Fun.Rendering;
 
 namespace Ascii4Fun.Images;
 
-/// <summary>
-/// Converts encoded still images through the shared character-image pipeline.
-/// </summary>
+/// <summary> Converts encoded still images through the shared character-image pipeline. </summary>
 public sealed class StillImageConverter
 {
     private readonly ConversionLimits limits;
 
-    /// <summary>
-    /// Gets the encoded input limit, in bytes, enforced by this converter.
-    /// </summary>
+    /// <summary> The encoded input limit, in bytes, enforced by this converter. </summary>
     public long MaxEncodedBytes => limits.MaxEncodedBytes;
 
-    /// <summary>
-    /// Initializes a converter with the current safe local defaults.
-    /// </summary>
+    /// <summary> Creates a converter with bounded local-use defaults. </summary>
     public StillImageConverter()
         : this(ConversionLimits.Default)
     {
@@ -27,12 +22,10 @@ public sealed class StillImageConverter
         this.limits = limits;
     }
 
-    /// <summary>
-    /// Converts a JPEG, PNG, or still WebP stream to a glyph-and-color canvas.
-    /// </summary>
+    /// <summary> Converts a JPEG, PNG, or still WebP stream to a glyph-and-color canvas. </summary>
     /// <param name="encodedImage">A readable stream containing encoded image bytes.</param>
     /// <param name="options">Character conversion options, or <see langword="null" /> for defaults.</param>
-    /// <param name="cancellationToken">Stops input reading and cancellable decode work.</param>
+    /// <param name="cancellationToken">Cancels input reading and checked stages of decoding, analysis, and mapping.</param>
     /// <returns>The rectangular canvas shared by text and image exporters.</returns>
     public async Task<AsciiCanvas> ConvertAsync(
         Stream encodedImage,
@@ -51,7 +44,7 @@ public sealed class StillImageConverter
         var rgbaGrid = await MagickStillImageReader.ReadGridAsync(
             encodedImage,
             options.OutputWidthInCells,
-            CharacterImageOptions.CharacterCellAspectRatio,
+            CharacterCellGeometry.AspectRatio,
             limits,
             cancellationToken);
         var luminanceGrid = LuminanceAnalyzer.Analyze(rgbaGrid, cancellationToken);
