@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Ascii4Fun.Images;
+using Ascii4Fun.Rendering;
 using ImageMagick;
 using Microsoft.AspNetCore.Mvc.Testing;
 
@@ -11,6 +12,57 @@ namespace Ascii4Fun.Server.Tests;
 public sealed class ImageConversionEndpointTests(WebApplicationFactory<Program> application)
     : IClassFixture<WebApplicationFactory<Program>>
 {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReturnsPackagePngAndGlyphOnlyText(bool sourceColors)
+    {
+        using var client = application.CreateClient();
+        await GetConfigurationAsync(client);
+        using var image = new MagickImage(MagickColors.Red, 4, 2);
+        var encoded = image.ToByteArray(MagickFormat.Png);
+        using var input = new MemoryStream(encoded);
+        var expected = await new StillImageConverter().ConvertAsync(input, new CharacterImageOptions
+        {
+            OutputWidthInCells = 4,
+            CharacterRamp = "@ ",
+            Invert = true,
+            SourceColors = sourceColors
+        });
+        using var body = CreateBody(encoded, "image/png");
+        body.Add(new StringContent(sourceColors.ToString()), "sourceColors");
+        using var response = await client.PostAsync("/api/images/convert", body);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var result = await response.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(expected.Text, result.GetProperty("text").GetString());
+        using var actualPng = new MagickImage(Convert.FromBase64String(result.GetProperty("png").GetString()!));
+        using var expectedPng = new MagickImage(await PngExporter.ExportAsync(expected));
+        using var actualPixels = actualPng.GetPixels();
+        using var expectedPixels = expectedPng.GetPixels();
+        Assert.Equal(expectedPixels.ToByteArray(PixelMapping.RGB), actualPixels.ToByteArray(PixelMapping.RGB));
+        Assert.True(response.Headers.CacheControl!.NoStore);
+    }
+
+    [Fact]
+    public async Task RejectsInvalidColorFlagAndPreservesPreviouslyValidTallGrids()
+    {
+        using var client = application.CreateClient();
+        await GetConfigurationAsync(client);
+        using var invalid = CreateBody(CreateImage(MagickFormat.Png), "image/png");
+        invalid.Add(new StringContent("invalid"), "sourceColors");
+        using var invalidResponse = await client.PostAsync("/api/images/convert", invalid);
+        Assert.Equal(HttpStatusCode.BadRequest, invalidResponse.StatusCode);
+
+        using var tall = new MagickImage(MagickColors.Red, 1, 2000);
+        using var excessive = CreateBody(tall.ToByteArray(MagickFormat.Png), "image/png", "1");
+        using var excessiveResponse = await client.PostAsync("/api/images/convert", excessive);
+        Assert.Equal(HttpStatusCode.OK, excessiveResponse.StatusCode);
+        var result = await excessiveResponse.Content.ReadFromJsonAsync<JsonElement>();
+        using var png = new MagickImage(Convert.FromBase64String(result.GetProperty("png").GetString()!));
+        Assert.Equal(12u, png.Width);
+        Assert.Equal(24_000u, png.Height);
+    }
+
     [Theory]
     [InlineData(MagickFormat.Png, "image/png")]
     [InlineData(MagickFormat.Jpeg, "image/jpeg")]

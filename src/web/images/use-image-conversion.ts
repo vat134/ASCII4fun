@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   convertImage,
-  type AsciiText,
+  type ImageConversionResult,
   type CharacterImageOptions,
   type ImageConfiguration
 } from "./image-conversion";
@@ -9,8 +9,8 @@ import {
 export type SelectedImage = { file: File; url: string };
 export type ConversionState =
   | { status: "empty" }
-  | { status: "pending"; result: AsciiText | null }
-  | { status: "ready"; result: AsciiText }
+  | { status: "pending"; result: ImageConversionResult | null }
+  | { status: "ready"; result: ImageConversionResult }
   | { status: "error"; message: string };
 
 // Coalesce slider and typing changes before sending CPU-heavy work to the server.
@@ -21,7 +21,8 @@ export function useImageConversion(configuration: ImageConfiguration) {
   const [options, setOptions] = useState<CharacterImageOptions>({
     outputWidthInCells: configuration.defaultOutputWidthInCells,
     characterRamp: configuration.defaultCharacterRamp,
-    invert: true
+    invert: true,
+    sourceColors: true
   });
   const [state, setState] = useState<ConversionState>({ status: "empty" });
   const [retryCount, setRetryCount] = useState(0);

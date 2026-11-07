@@ -8,7 +8,6 @@ import type { ConversionState } from "./use-image-conversion";
 type ImagePreviewStageProps = {
   state: ConversionState;
   zoom: number;
-  characterCellAspectRatio: number;
   maxEncodedBytes: number;
   hasImage: boolean;
   onBrowse: () => void;
@@ -19,7 +18,6 @@ type ImagePreviewStageProps = {
 export function ImagePreviewStage({
   state,
   zoom,
-  characterCellAspectRatio,
   maxEncodedBytes,
   hasImage,
   onBrowse,
@@ -50,11 +48,7 @@ export function ImagePreviewStage({
         <div
           className={`size-full p-5 transition-opacity ${state.status === "pending" ? "opacity-40" : "opacity-100"}`}
         >
-          <AsciiPreview
-            result={result}
-            characterCellAspectRatio={characterCellAspectRatio}
-            zoom={zoom}
-          />
+          <AsciiPreview result={result} zoom={zoom} />
         </div>
       ) : state.status === "empty" ? (
         <ImageUploadPrompt

@@ -28,16 +28,19 @@ export function ImageWorkspace({
     ? `${result.widthInCells} × ${result.heightInCells}`
     : "—";
 
-  function download() {
+  function download(format: "txt" | "png") {
     if (state.status !== "ready" || !selection) return;
-    const url = URL.createObjectURL(
-      new Blob([state.result.text], { type: "text/plain;charset=utf-8" })
-    );
+    const url =
+      format === "png"
+        ? `data:image/png;base64,${state.result.png}`
+        : URL.createObjectURL(
+            new Blob([state.result.text], { type: "text/plain;charset=utf-8" })
+          );
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `${selection.file.name.replace(/\.[^.]+$/u, "")}.txt`;
+    anchor.download = `${selection.file.name.replace(/\.[^.]+$/u, "")}.${format}`;
     anchor.click();
-    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+    if (format === "txt") window.setTimeout(() => URL.revokeObjectURL(url), 0);
   }
 
   return (
@@ -75,9 +78,6 @@ export function ImageWorkspace({
         <ImagePreviewStage
           state={state}
           zoom={zoom}
-          characterCellAspectRatio={
-            configuration.defaultCharacterCellAspectRatio
-          }
           maxEncodedBytes={configuration.maxEncodedBytes}
           hasImage={selection !== null}
           onBrowse={() => inputRef.current?.click()}
@@ -114,7 +114,8 @@ export function ImageWorkspace({
           changeOptions({
             outputWidthInCells: configuration.defaultOutputWidthInCells,
             characterRamp: configuration.defaultCharacterRamp,
-            invert: true
+            invert: true,
+            sourceColors: true
           });
         }}
         canExport={state.status === "ready"}

@@ -1,11 +1,14 @@
 // A project-owned 4 × 2 PNG fixture with a black/white split.
 const imageBase64 =
   "iVBORw0KGgoAAAANSUhEUgAAAAQAAAACCAIAAADwyuo0AAAAEUlEQVR4nGNgAIP/YMCAzAEAd6IL9cTZu14AAAAASUVORK5CYII=";
+// Owned RGBA fixture: red, green, half-transparent blue, and fully transparent black.
+const transparentImageBase64 =
+  "iVBORw0KGgoAAAANSUhEUgAAAAQAAAACCAYAAAB/qH1jAAAAGklEQVR4nGP4z8DwHwwZ/jcwMDAwMIEIZAAAlrgFfp5ub54AAAAASUVORK5CYII=";
 
-function uploadImage() {
+function uploadImage(contents = imageBase64) {
   cy.get("#image-upload").selectFile(
     {
-      contents: Cypress.Buffer.from(imageBase64, "base64"),
+      contents: Cypress.Buffer.from(contents, "base64"),
       fileName: "source.png",
       mimeType: "image/png"
     },
@@ -14,6 +17,54 @@ function uploadImage() {
 }
 
 describe("Still-image workspace", () => {
+  it("applies column shortcuts and waits for finished numeric input", () => {
+    cy.viewport(1440, 900);
+    cy.intercept("POST", "/api/images/convert").as("convert");
+    cy.visit("/");
+    uploadImage();
+    cy.wait("@convert");
+    cy.contains("button", "Download PNG").should("be.enabled");
+    cy.clock();
+    cy.get("#grid-columns").focus().clear().type("16");
+    cy.tick(500);
+    cy.get("@convert.all").should("have.length", 1);
+    cy.get("#grid-columns").type("0");
+    cy.tick(999);
+    cy.get("@convert.all").should("have.length", 1);
+    cy.tick(1);
+    cy.get('input[type="range"][aria-labelledby="grid-columns-label"]').should(
+      "have.value",
+      "160"
+    );
+    cy.tick(200);
+    cy.wait("@convert").its("response.body.widthInCells").should("eq", 160);
+    for (const [name, width] of [
+      ["Double columns", "320"],
+      ["Halve columns", "160"],
+      ["Add 10 columns", "170"],
+      ["Subtract 10 columns", "160"]
+    ]) {
+      cy.get(`button[aria-label="${name}"]`).click();
+      cy.get("#grid-columns").should("have.value", width);
+    }
+    cy.tick(200);
+    cy.wait("@convert").its("response.body.widthInCells").should("eq", 160);
+    cy.get("#grid-columns").focus().clear().type("240{enter}");
+    cy.tick(200);
+    cy.wait("@convert").its("response.body.widthInCells").should("eq", 240);
+    cy.tick(1000);
+    cy.get("@convert.all").should("have.length", 4);
+    cy.get("#grid-columns").focus().clear().type("100");
+    cy.get('button[aria-label="Double columns"]').click();
+    cy.get("#grid-columns").should("have.value", "200");
+    cy.tick(200);
+    cy.wait("@convert").its("response.body.widthInCells").should("eq", 200);
+    cy.tick(1000);
+    cy.get("@convert.all").should("have.length", 5);
+    cy.contains("button", "Download PNG").should("be.enabled");
+    cy.screenshot("workspace-column-shortcuts", { capture: "fullPage" });
+  });
+
   it("keeps input and slider in sync and downloads the actual engine result", () => {
     cy.viewport(1440, 900);
     cy.intercept("POST", "/api/images/convert").as("convert");
@@ -32,8 +83,10 @@ describe("Still-image workspace", () => {
     cy.get("#grid-columns").should("have.value", "500");
     cy.get("#grid-columns").clear().type("80").blur();
     cy.get('input[type="range"][aria-labelledby="grid-columns-label"]')
+      .should("have.value", "80")
       .focus()
-      .type("{rightarrow}");
+      .type("{rightarrow}")
+      .should("have.value", "81");
     cy.get("#grid-columns").should("have.value", "81");
     cy.get("#grid-columns")
       .click("left")
@@ -51,7 +104,7 @@ describe("Still-image workspace", () => {
     cy.get("#grid-columns").should("have.value", "500");
     uploadImage();
     cy.wait("@convert").its("response.statusCode").should("eq", 200);
-    cy.get('svg[aria-label^="ASCII preview"]').should("be.visible");
+    cy.get('img[alt^="ASCII preview"]').should("be.visible");
     cy.get("#grid-columns").clear().type("160").blur();
     cy.wait("@convert").its("response.body.widthInCells").should("eq", 160);
     cy.get("#grid-columns").focus().type("{uparrow}").blur();
@@ -62,7 +115,7 @@ describe("Still-image workspace", () => {
     cy.wait("@convert").its("response.body.widthInCells").should("eq", 162);
     cy.get("#grid-columns").should("have.attr", "type", "text");
     cy.contains("button", "Original").should("not.exist");
-    cy.get('[role="switch"]').focus().type(" ");
+    cy.get("#invert-mapping").prev('[role="switch"]').focus().type(" ");
     cy.wait("@convert").then(({ response }) => {
       cy.contains("button", "Download .txt").click();
       cy.readFile("../../artifacts/cypress/downloads/source.txt").should(
@@ -73,13 +126,13 @@ describe("Still-image workspace", () => {
     cy.get('aside[aria-label="Conversion settings"] footer').should(
       "be.visible"
     );
-    for (let step = 0; step < 10; step++)
+    for (let step = 0; step < 4; step++)
       cy.get('button[aria-label="Zoom in"]').click();
     cy.get('output[aria-label="Preview zoom level"]').should(
       "have.text",
       "200%"
     );
-    cy.get('svg[aria-label^="ASCII preview"]')
+    cy.get('img[alt^="ASCII preview"]')
       .parent()
       .should(($viewport) => {
         expect($viewport[0]!.scrollWidth).to.be.greaterThan(
@@ -96,6 +149,7 @@ describe("Still-image workspace", () => {
       .should("be.visible")
       .and("have.text", "Reset to default");
     cy.get('button[aria-label="Reset to default"]').click();
+    cy.wait("@convert");
     cy.get("#grid-columns").should("have.value", "80");
     cy.get('output[aria-label="Preview zoom level"]').should(
       "have.text",
@@ -159,49 +213,41 @@ describe("Still-image workspace", () => {
     cy.screenshot("workspace-mobile", { capture: "fullPage" });
   });
 
-  it("keeps Unicode glyphs and empty cells at fixed column positions", () => {
-    const ramps = [
-      "@%#*+=-:. ",
-      "█▓▒░ ",
-      "█▙▛▜▟▀▄▌▐▘▝▖▗ ",
-      "█◆■▲▼◇△▽. ",
-      "ムミヒリツソノ:. ",
-      "@𝔸. "
-    ];
-    const widthInCells = 160;
-    const rows = Array.from({ length: 80 }, (_, index) => {
-      const ramp = Array.from(ramps[index % ramps.length]!);
-      return Array.from({ length: widthInCells }, (_, column) =>
-        column < 8 || column >= widthInCells - 8
-          ? " "
-          : ramp[column % ramp.length]
-      ).join("");
-    });
-    cy.intercept("POST", "/api/images/convert", {
-      body: { text: rows.join("\n"), widthInCells, heightInCells: rows.length }
-    }).as("convert");
+  it("keeps transparent-input glyphs unchanged with color and downloads preview bytes after zoom", () => {
     cy.viewport(1440, 900);
+    cy.intercept("POST", "/api/images/convert").as("convert");
     cy.visit("/");
-    uploadImage();
-    cy.wait("@convert");
-    cy.get('svg[aria-label^="ASCII preview"]').should(($svg) => {
-      const svg = $svg[0] as unknown as SVGSVGElement;
-      const renderedRows = svg.querySelectorAll("tspan");
-      expect(renderedRows.length).to.eq(rows.length);
-      renderedRows.forEach((row, index) => {
-        expect(row.textContent).to.eq(rows[index]);
-        const glyphs = Array.from(rows[index]!);
-        let utf16Index = 0;
-        let maximumColumnError = 0;
-        glyphs.forEach((glyph, column) => {
-          if ([0, 8, 9, 10, 11, 40, 80, 159].includes(column))
-            maximumColumnError = Math.max(
-              maximumColumnError,
-              Math.abs(row.getStartPositionOfChar(utf16Index).x - column)
-            );
-          utf16Index += glyph.length;
-        });
-        expect(maximumColumnError).to.be.lessThan(0.01);
+    uploadImage(transparentImageBase64);
+    cy.wait("@convert").then(({ response: color }) => {
+      cy.get("#source-colors")
+        .prev('[role="switch"]')
+        .should("have.attr", "aria-checked", "true")
+        .focus()
+        .type(" ");
+      cy.contains("button", "Download PNG").should("be.disabled");
+      cy.contains("button", "Download .txt").should("be.disabled");
+      cy.wait("@convert").then(({ response }) => {
+        expect(response?.body.text).to.eq(color?.body.text);
+        expect(response?.body.widthInCells).to.eq(color?.body.widthInCells);
+        expect(response?.body.heightInCells).to.eq(color?.body.heightInCells);
+        expect(response?.body.png).not.to.eq(color?.body.png);
+        for (let step = 0; step < 4; step++)
+          cy.get('button[aria-label="Zoom in"]').click();
+        cy.get('img[alt^="ASCII preview"]').should(
+          "have.attr",
+          "src",
+          `data:image/png;base64,${response?.body.png}`
+        );
+        cy.contains("button", "Download PNG").click();
+        cy.readFile(
+          "../../artifacts/cypress/downloads/source.png",
+          "base64"
+        ).should("eq", response?.body.png);
+        cy.contains("button", "Download .txt").click();
+        cy.readFile("../../artifacts/cypress/downloads/source.txt").should(
+          "eq",
+          response?.body.text
+        );
       });
     });
   });
@@ -251,19 +297,12 @@ describe("Still-image workspace", () => {
             .every((row: string) => Array.from(row).length === 300)
         ).to.eq(true);
       });
-      cy.get('svg[aria-label^="ASCII preview"]').should(($svg) => {
-        const svg = $svg[0] as unknown as SVGSVGElement;
-        expect(svg.viewBox.baseVal.width / svg.viewBox.baseVal.height).to.eq(2);
-        const row = svg.querySelector("tspan")!;
-        expect(row.getComputedTextLength()).to.be.closeTo(300, 0.01);
-        const transform = row.getScreenCTM()!;
-        const start = new DOMPoint(0, 0).matrixTransform(transform);
-        const end = new DOMPoint(300, 0).matrixTransform(transform);
-        const viewport = svg.getBoundingClientRect();
-        expect((start.x + end.x) / 2).to.be.closeTo(
-          viewport.x + viewport.width / 2,
-          1
-        );
+      cy.get('img[alt^="ASCII preview"]').should(($image) => {
+        const image = $image[0] as HTMLImageElement;
+        expect(image.complete).to.eq(true);
+        expect(image.naturalWidth).to.eq(3600);
+        expect(image.naturalHeight).to.eq(1800);
+        expect(image.getBoundingClientRect().width).to.be.greaterThan(0);
       });
     }
   });
@@ -281,48 +320,57 @@ describe("Still-image workspace", () => {
     cy.get('[role="alert"]').should("contain.text", "not supported");
     cy.contains("button", "Download .txt").should("be.disabled");
     uploadImage();
-    cy.get('svg[aria-label^="ASCII preview"]').should("be.visible");
+    cy.get('img[alt^="ASCII preview"]').should("be.visible");
   });
 
   if (Cypress.expose("visualInput")) {
     it("captures a local reference image for visual evaluation", () => {
       cy.viewport(1600, 1000);
+      cy.intercept("POST", "/api/images/convert").as("convert");
       cy.visit("/");
+      cy.get("#source-colors").prev('[role="switch"]').click();
       cy.get("#image-upload").selectFile(
         String(Cypress.expose("visualInput")),
         { force: true }
       );
-      cy.get('svg[aria-label^="ASCII preview"]').should("be.visible");
+      cy.wait("@convert");
+      cy.get('img[alt^="ASCII preview"]').should("be.visible");
       cy.get("#grid-columns").clear().type("300").blur();
-      cy.get('img[alt="Uploaded source thumbnail"]').then(($source) => {
-        const source = $source[0] as HTMLImageElement;
-        cy.get('svg[aria-label^="ASCII preview, 300"]').should(($svg) => {
-          const svg = $svg[0] as unknown as SVGSVGElement;
-          const row = svg.querySelector("tspan")!;
-          const transform = row.getScreenCTM()!;
-          const start = new DOMPoint(0, 0).matrixTransform(transform);
-          const end = new DOMPoint(300, 0).matrixTransform(transform);
-          const viewport = svg.getBoundingClientRect();
-          // Grid row rounding may differ from the source by at most one cell height.
-          const grid = svg.viewBox.baseVal;
-          expect(grid.height).to.be.closeTo(
-            (300 * source.naturalHeight) / source.naturalWidth,
-            2
-          );
-          expect(end.x - start.x).to.be.closeTo(
-            Math.min(
-              viewport.width,
-              (viewport.height * grid.width) / grid.height
-            ),
-            1
-          );
-          expect((start.x + end.x) / 2).to.be.closeTo(
-            viewport.x + viewport.width / 2,
-            1
-          );
-        });
+      cy.wait("@convert");
+      cy.contains("button", "Download PNG").should("be.enabled");
+      cy.screenshot("workspace-local-monochrome", { capture: "fullPage" });
+      cy.get("#source-colors").prev('[role="switch"]').click();
+      cy.wait("@convert").then(({ response }) => {
+        cy.get('img[alt^="ASCII preview"]').should(
+          "have.attr",
+          "src",
+          `data:image/png;base64,${response?.body.png}`
+        );
+        cy.contains("button", "Download PNG").click();
+        const fileName = String(Cypress.expose("visualInput"))
+          .split(/[\\/]/u)
+          .pop()!;
+        cy.readFile(
+          `../../artifacts/cypress/downloads/${fileName.replace(/\.[^.]+$/u, "")}.png`,
+          "base64"
+        ).should("eq", response?.body.png);
+      });
+      cy.get('img[alt^="ASCII preview, 300"]').should(($image) => {
+        const image = $image[0] as HTMLImageElement;
+        expect(image.naturalWidth).to.eq(3600);
+        expect(image.complete).to.eq(true);
       });
       cy.screenshot("workspace-local-image", { capture: "fullPage" });
+      cy.get("#character-set").click();
+      cy.get('[role="option"]')
+        .contains("span", /^Blocks$/u)
+        .click();
+      cy.wait("@convert");
+      cy.contains("button", "Download PNG").should("be.enabled");
+      cy.get('img[alt^="ASCII preview"]').should(($image) => {
+        expect(($image[0] as HTMLImageElement).complete).to.eq(true);
+      });
+      cy.screenshot("workspace-local-blocks", { capture: "fullPage" });
     });
   }
 });

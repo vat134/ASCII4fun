@@ -35,5 +35,6 @@ SOFTWARE.
 
 - Aldrich: Copyright (c) Matthew Desmond, 2011; SIL Open Font License 1.1.
 - IBM Plex Mono: Copyright 2017 IBM Corp.; SIL Open Font License 1.1.
+- GNU Unifont / Unifont Upper 17.0.05: Copyright © 1998-2026 Roman Czyborra, Paul Hardy, Qianqian Fang, Andrew Miller, Johnnie Weaver, David Corbett, Ælla Chiana Moskopp, Rebecca Bettencourt, Ho-Seok Ee, et al.; distributed here under SIL Open Font License 1.1, one of its dual licenses. [Upstream](https://unifoundry.com/unifont/).
 
-Fonts are self-hosted through pinned Fontsource packages. Complete font and browser dependency licenses are included in the browser build through its `rel="license"` document.
+UI fonts are self-hosted through pinned Fontsource packages. Complete UI font and browser dependency licenses are included in the browser build through its `rel="license"` document. PNG fonts and their full licenses are bundled with the engine and its NuGet content files; see [font provenance](src/engine/rendering/fonts/README.md).

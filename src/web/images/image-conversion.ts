@@ -12,12 +12,14 @@ export type CharacterImageOptions = {
   outputWidthInCells: number;
   characterRamp: string;
   invert: boolean;
+  sourceColors: boolean;
 };
 
-export type AsciiText = {
+export type ImageConversionResult = {
   text: string;
   widthInCells: number;
   heightInCells: number;
+  png: string;
 };
 
 type ProblemDetails = { title: string; detail?: string };
@@ -39,12 +41,13 @@ export async function convertImage(
   options: CharacterImageOptions,
   requestToken: string,
   signal: AbortSignal
-): Promise<AsciiText> {
+): Promise<ImageConversionResult> {
   const body = new FormData();
   body.set("image", file);
   body.set("outputWidthInCells", String(options.outputWidthInCells));
   body.set("characterRamp", options.characterRamp);
   body.set("invert", String(options.invert));
+  body.set("sourceColors", String(options.sourceColors));
 
   const response = await fetch("/api/images/convert", {
     method: "POST",
@@ -56,5 +59,5 @@ export async function convertImage(
     const problem = (await response.json()) as ProblemDetails;
     throw new Error(problem.detail ?? problem.title);
   }
-  return response.json() as Promise<AsciiText>;
+  return response.json() as Promise<ImageConversionResult>;
 }

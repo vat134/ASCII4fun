@@ -7,7 +7,6 @@ internal static class LuminanceAnalyzer
     private const int RgbaChannelCount = 4;
     private const int GreenChannelOffset = 1;
     private const int BlueChannelOffset = 2;
-    private const int AlphaChannelOffset = 3;
     private const double RedLuminanceWeight = 0.2126;
     private const double GreenLuminanceWeight = 0.7152;
     private const double BlueLuminanceWeight = 0.0722;
@@ -30,33 +29,24 @@ internal static class LuminanceAnalyzer
 
             var offset = index * RgbaChannelCount;
             values[index] = CalculateLuminance(
-                grid.Pixels[offset],
-                grid.Pixels[offset + GreenChannelOffset],
-                grid.Pixels[offset + BlueChannelOffset],
-                grid.Pixels[offset + AlphaChannelOffset]);
+                grid.ChannelOverWhite(offset),
+                grid.ChannelOverWhite(offset + GreenChannelOffset),
+                grid.ChannelOverWhite(offset + BlueChannelOffset));
         }
 
         return new LuminanceGrid(grid.WidthInCells, grid.HeightInCells, values);
     }
 
-    private static double CalculateLuminance(byte red, byte green, byte blue, byte alpha)
+    private static double CalculateLuminance(double red, double green, double blue)
     {
-        var opacity = alpha / (double)byte.MaxValue;
-        var compositedRed = CompositeOverWhite(red, opacity);
-        var compositedGreen = CompositeOverWhite(green, opacity);
-        var compositedBlue = CompositeOverWhite(blue, opacity);
-
-        var linearRed = LinearizeSrgb(compositedRed);
-        var linearGreen = LinearizeSrgb(compositedGreen);
-        var linearBlue = LinearizeSrgb(compositedBlue);
+        var linearRed = LinearizeSrgb(red);
+        var linearGreen = LinearizeSrgb(green);
+        var linearBlue = LinearizeSrgb(blue);
 
         return (RedLuminanceWeight * linearRed)
             + (GreenLuminanceWeight * linearGreen)
             + (BlueLuminanceWeight * linearBlue);
     }
-
-    private static double CompositeOverWhite(byte channel, double opacity) =>
-        ((channel * opacity) + (byte.MaxValue * (1 - opacity))) / byte.MaxValue;
 
     private static double LinearizeSrgb(double channel) =>
         channel <= SrgbLinearThreshold

@@ -18,4 +18,9 @@
     <InternalsVisibleTo Include="Ascii4Fun.Tests" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="rendering/fonts/*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest"
+             Pack="true" PackagePath="contentFiles/any/net10.0/rendering/fonts/" PackageCopyToOutput="true" />
+  </ItemGroup>
+
 </Project>
