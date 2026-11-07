@@ -50,13 +50,22 @@ describe("Still-image workspace", () => {
     uploadImage();
     ready();
     columns(40);
+    cy.get('input[type="range"][aria-labelledby="shadowLift-label"]')
+      .focus()
+      .type("{end}{leftarrow}");
+    cy.get('input[type="range"][aria-labelledby="source-photo-label"]')
+      .focus()
+      .type("{end}");
+    ready(40);
     cy.get('button[aria-label="Zoom in"]').click().click();
     cy.contains("button", "Download PNG").click();
     cy.contains("button", "Download .txt").click();
     cy.wrap(downloads).should("have.length", 2);
     cy.window().then(async (win) => {
       const native = await nativeResult(win, imageBase64, {
-        outputWidthInCells: "40"
+        outputWidthInCells: "40",
+        shadowLift: "99",
+        sourcePhotoOpacity: "100"
       });
       expect(downloads.map((item) => item.name)).to.deep.eq([
         "source.png",

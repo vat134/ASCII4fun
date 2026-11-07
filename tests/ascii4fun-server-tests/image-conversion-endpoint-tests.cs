@@ -21,12 +21,15 @@ public sealed class ImageConversionEndpointTests(WebApplicationFactory<Program> 
         Assert.Equal(180, configuration.GetProperty("maxOutputWidthInCells").GetInt32());
         Assert.Equal(-40, configuration.GetProperty("minToneAdjustment").GetInt32());
         Assert.Equal(40, configuration.GetProperty("maxToneAdjustment").GetInt32());
+        Assert.Equal(100, configuration.GetProperty("maxPercentage").GetInt32());
     }
 
     [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task ReturnsPackagePngAndGlyphOnlyText(bool sourceColors)
+    [InlineData(false, 0)]
+    [InlineData(true, 0)]
+    [InlineData(false, 35)]
+    [InlineData(true, 100)]
+    public async Task ReturnsPackagePngAndGlyphOnlyText(bool sourceColors, int photoOpacity)
     {
         using var client = application.CreateClient();
         await GetConfigurationAsync(client);
@@ -41,6 +44,8 @@ public sealed class ImageConversionEndpointTests(WebApplicationFactory<Program> 
             SourceColors = sourceColors,
             Contrast = 25,
             Brightness = -10,
+            ShadowLift = 50,
+            SourcePhotoOpacity = photoOpacity,
             MonochromeColor = new RgbColor(0, 255, 255),
             BackgroundColor = new RgbColor(16, 32, 48)
         });
@@ -48,6 +53,8 @@ public sealed class ImageConversionEndpointTests(WebApplicationFactory<Program> 
         body.Add(new StringContent(sourceColors.ToString()), "sourceColors");
         body.Add(new StringContent("25"), "contrast");
         body.Add(new StringContent("-10"), "brightness");
+        body.Add(new StringContent("50"), "shadowLift");
+        body.Add(new StringContent(photoOpacity.ToString(System.Globalization.CultureInfo.InvariantCulture)), "sourcePhotoOpacity");
         body.Add(new StringContent("#00FFFF"), "monochromeColor");
         body.Add(new StringContent("#102030"), "backgroundColor");
         using var response = await client.PostAsync("/api/images/convert", body);
@@ -137,6 +144,21 @@ public sealed class ImageConversionEndpointTests(WebApplicationFactory<Program> 
         using var body = CreateBody(CreateImage(MagickFormat.Png), "image/png");
         using var response = await client.PostAsync("/api/images/convert", body);
 
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Theory]
+    [InlineData("shadowLift", "-1")]
+    [InlineData("shadowLift", "101")]
+    [InlineData("sourcePhotoOpacity", "-1")]
+    [InlineData("sourcePhotoOpacity", "101")]
+    public async Task RejectsInvalidReadabilityAndPhotoSettings(string field, string value)
+    {
+        using var client = application.CreateClient();
+        await GetConfigurationAsync(client);
+        using var body = CreateBody(CreateImage(MagickFormat.Png), "image/png");
+        body.Add(new StringContent(value), field);
+        using var response = await client.PostAsync("/api/images/convert", body);
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 

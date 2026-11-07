@@ -18,7 +18,8 @@ export async function loadBrowserEngine(): Promise<BrowserEngine> {
   await initializeImageMagick(new URL(magickWasmUrl, self.location.href));
   const engine: BrowserEngine = exports.Ascii4Fun.Browser.BrowserImageEngine;
   const [, , maxDimension] = engine.Limits();
-  ResourceLimits.memory = BigInt(64 * 1024 * 1024);
+  // Original plus resize/color-profile buffers must fit without disk spill.
+  ResourceLimits.memory = BigInt(256 * 1024 * 1024);
   ResourceLimits.disk = 0n;
   ResourceLimits.width = BigInt(maxDimension!);
   ResourceLimits.height = BigInt(maxDimension!);

@@ -8,6 +8,7 @@ export type ImageConfiguration = {
   requestToken: string;
   minToneAdjustment: number;
   maxToneAdjustment: number;
+  maxPercentage: number;
   defaultMonochromeColor: RgbColor;
   defaultBackgroundColor: RgbColor;
 };
@@ -21,6 +22,8 @@ export type CharacterImageOptions = {
   sourceColors: boolean;
   contrast: number;
   brightness: number;
+  shadowLift: number;
+  sourcePhotoOpacity: number;
   monochromeColor: RgbColor;
   backgroundColor: RgbColor;
 };
@@ -44,6 +47,8 @@ export function createDefaultImageOptions(
     sourceColors: true,
     contrast: 0,
     brightness: 0,
+    shadowLift: 0,
+    sourcePhotoOpacity: 0,
     monochromeColor: configuration.defaultMonochromeColor,
     backgroundColor: configuration.defaultBackgroundColor
   };

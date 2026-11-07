@@ -24,6 +24,8 @@ const defaults: CharacterImageOptions = {
   sourceColors: true,
   contrast: 0,
   brightness: 0,
+  shadowLift: 0,
+  sourcePhotoOpacity: 0,
   monochromeColor: { red: 255, green: 255, blue: 255 },
   backgroundColor: { red: 0, green: 0, blue: 0 }
 };
@@ -124,6 +126,8 @@ test("keys every option canonically including tone and composition colors", asyn
     { ...defaults, outputWidthInCells: 90 },
     { ...defaults, contrast: 10 },
     { ...defaults, brightness: 10 },
+    { ...defaults, shadowLift: 50 },
+    { ...defaults, sourcePhotoOpacity: 35 },
     { ...defaults, monochromeColor: { red: 0, green: 255, blue: 0 } },
     { ...defaults, backgroundColor: { red: 255, green: 0, blue: 0 } }
   ];

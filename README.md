@@ -58,7 +58,7 @@ Development defaults and Zod validation live in `tools/development-environment.c
 
 ## PNG export
 
-Web defaults to Original color; package, CLI and omitted HTTP flags remain monochrome. Contrast, Brightness, Mono color and Background share engine semantics. Mono defaults to white on black. TXT always saves characters only.
+Web defaults to Original color; package, CLI and omitted HTTP flags remain monochrome. Tone and background controls share engine semantics. Mono defaults to white on black. TXT always saves characters only.
 
 ```powershell
 pnpm convert:image dev-assets/input/photo.webp --width 160 --invert --source-colors --format png
@@ -68,8 +68,10 @@ The CLI defaults to TXT. PNG requires `--output` or `--output-directory`; the co
 
 The package returns `AsciiCanvas` (replacing the pre-release `AsciiText` type). Use `canvas.Text` for TXT and `await PngExporter.ExportAsync(canvas)` for PNG.
 
+`ShadowLift` / `--shadow-lift` lifts dark tones; `SourcePhotoOpacity` / `--source-photo-opacity` adds the normalized original beneath glyphs. Both range from 0 to 100 and default to 0. Photo tone stays unchanged; its additional raster is limited to 12 million pixels.
+
 PNG uses fixed 12 × 24 px cells, bundled OFL fonts and an opaque background (black by default). Downloaded PNG pixels match preview; zoom and dragging only affect the view. Font details and licenses are in [rendering/fonts](src/engine/rendering/fonts/README.md).
 
-The existing multipart `/api/images/convert` accepts optional `sourceColors=false`, `contrast=0`, `brightness=0`, `monochromeColor=#FFFFFF` and `backgroundColor=#000000` and returns `{ text, widthInCells, heightInCells, png }`, with base64 PNG. Uploaded media remains transient.
+The existing multipart `/api/images/convert` accepts optional `sourceColors=false`, `contrast=0`, `brightness=0`, `shadowLift=0`, `sourcePhotoOpacity=0`, `monochromeColor=#FFFFFF` and `backgroundColor=#000000` and returns `{ text, widthInCells, heightInCells, png }`, with base64 PNG. Uploaded media remains transient.
 
 Browser working buffers and result history are bounded; oversized work fails explicitly. First use loads the WASM runtimes and required fonts. See [architecture](docs/architecture.md) for ownership and limits.

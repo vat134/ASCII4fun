@@ -13,7 +13,9 @@ foreach (var glyph in new[] { "@", "█", "𝔸" })
     {
         OutputWidthInCells = 4,
         CharacterRamp = glyph + " ",
-        SourceColors = true
+        SourceColors = true,
+        ShadowLift = 50,
+        SourcePhotoOpacity = 35
     });
     if (canvas.Text != glyph + glyph + "  ")
     {

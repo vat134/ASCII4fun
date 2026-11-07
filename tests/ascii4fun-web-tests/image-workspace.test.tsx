@@ -38,6 +38,7 @@ const configuration: ImageConfiguration = {
   requestToken: "token",
   minToneAdjustment: -40,
   maxToneAdjustment: 40,
+  maxPercentage: 100,
   defaultMonochromeColor: { red: 255, green: 255, blue: 255 },
   defaultBackgroundColor: { red: 0, green: 0, blue: 0 }
 };
@@ -97,7 +98,7 @@ test("exposes neutral tone, Original mode, white Mono and black background defau
   expect(screen.getByLabelText("Mono color")).toHaveValue("#ffffff");
   expect(screen.getByLabelText("Mono color")).toBeDisabled();
   expect(screen.getByLabelText("Background")).toHaveValue("#000000");
-  for (const label of ["Contrast", "Brightness"])
+  for (const label of ["Contrast", "Brightness", "Shadow lift", "Source photo"])
     expect(
       screen.getByLabelText(label, { selector: 'input[type="range"]' })
     ).toHaveValue("0");

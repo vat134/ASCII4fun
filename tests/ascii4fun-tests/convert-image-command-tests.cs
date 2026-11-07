@@ -8,6 +8,38 @@ namespace Ascii4Fun.Tests;
 
 public sealed class ConvertImageCommandTests
 {
+    [Fact]
+    public async Task PhotoAndShadowControlsMatchThePackageRaster()
+    {
+        var directory = Directory.CreateTempSubdirectory("ascii4fun-cli-photo-");
+        try
+        {
+            var encoded = ColorAndPngTests.CreateColorImage();
+            var inputPath = Path.Combine(directory.FullName, "input.png");
+            var outputPath = Path.Combine(directory.FullName, "output.png");
+            await File.WriteAllBytesAsync(inputPath, encoded);
+            Assert.Equal(0, await CliApplication.RunAsync([
+                "convert-image", inputPath, "--width", "4", "--shadow-lift", "50", "--source-photo-opacity", "35",
+                "--format", "png", "--output", outputPath]));
+            using var input = new MemoryStream(encoded);
+            var canvas = await new StillImageConverter().ConvertAsync(input, new CharacterImageOptions
+            {
+                OutputWidthInCells = 4,
+                ShadowLift = 50,
+                SourcePhotoOpacity = 35
+            });
+            using var expected = new MagickImage(await PngExporter.ExportAsync(canvas));
+            using var actual = new MagickImage(await File.ReadAllBytesAsync(outputPath));
+            using var expectedPixels = expected.GetPixels();
+            using var actualPixels = actual.GetPixels();
+            Assert.Equal(expectedPixels.ToByteArray(PixelMapping.RGB), actualPixels.ToByteArray(PixelMapping.RGB));
+        }
+        finally
+        {
+            directory.Delete(recursive: true);
+        }
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

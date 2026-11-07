@@ -16,6 +16,9 @@ public sealed class CharacterImageOptions
     /// <summary> The upper bound for contrast and brightness adjustments. </summary>
     public const int MaxToneAdjustment = 100;
 
+    /// <summary> The upper bound for shadow lift and source-photo opacity, in percent. </summary>
+    public const int MaxPercentage = 100;
+
     /// <summary> The default output width measured in character cells. </summary>
     public static int DefaultOutputWidthInCells { get; } = 80;
 
@@ -56,6 +59,13 @@ public sealed class CharacterImageOptions
     /// <summary> Additive brightness in percentage points; 0 preserves the input. </summary>
     public int Brightness { get; init; }
 
+    /// <summary> Lifts shadows with an endpoint-preserving power curve before contrast/brightness; 0 disables, 100 uses exponent 1/3. </summary>
+    public int ShadowLift { get; init; }
+
+    /// <summary> Opacity of the normalized original photo beneath glyphs, in percent (0..100); 0 retains no photo. </summary>
+    /// <remarks>The photo ignores tone/invert controls. Source alpha is composited over BackgroundColor. TXT is unaffected.</remarks>
+    public int SourcePhotoOpacity { get; init; }
+
     /// <summary> Fixed ink used when source colors are disabled. </summary>
     public RgbColor MonochromeColor { get; init; } = DefaultMonochromeColor;
 
@@ -64,6 +74,10 @@ public sealed class CharacterImageOptions
 
     internal Rune[] ValidateAndGetRamp()
     {
+        ArgumentOutOfRangeException.ThrowIfNegative(ShadowLift);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(ShadowLift, MaxPercentage);
+        ArgumentOutOfRangeException.ThrowIfNegative(SourcePhotoOpacity);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(SourcePhotoOpacity, MaxPercentage);
         ArgumentOutOfRangeException.ThrowIfLessThan(Contrast, MinToneAdjustment);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(Contrast, MaxToneAdjustment);
         ArgumentOutOfRangeException.ThrowIfLessThan(Brightness, MinToneAdjustment);

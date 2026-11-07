@@ -25,6 +25,8 @@ function optionsKey(options: CharacterImageOptions): string {
     sourceColors: options.sourceColors,
     contrast: options.contrast,
     brightness: options.brightness,
+    shadowLift: options.shadowLift,
+    sourcePhotoOpacity: options.sourcePhotoOpacity,
     monochromeColor: options.monochromeColor,
     backgroundColor: options.backgroundColor
   } satisfies CharacterImageOptions);

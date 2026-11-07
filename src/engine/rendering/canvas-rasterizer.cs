@@ -19,11 +19,24 @@ internal static class CanvasRasterizer
         }
 
         var rgb = new byte[checked(width * height * 3)];
-        for (var offset = 0; offset < rgb.Length; offset += 3)
+        for (var y = 0; y < height; y++)
         {
-            rgb[offset] = canvas.BackgroundColor.Red;
-            rgb[offset + 1] = canvas.BackgroundColor.Green;
-            rgb[offset + 2] = canvas.BackgroundColor.Blue;
+            cancellationToken.ThrowIfCancellationRequested();
+            var rowEnd = (y + 1) * width * 3;
+            for (var offset = y * width * 3; offset < rowEnd; offset += 3)
+            {
+                rgb[offset] = canvas.BackgroundColor.Red;
+                rgb[offset + 1] = canvas.BackgroundColor.Green;
+                rgb[offset + 2] = canvas.BackgroundColor.Blue;
+                if (canvas.SourcePhotoRgba is { } photo)
+                {
+                    var photoOffset = offset / 3 * 4;
+                    var coverage = (byte)((photo[photoOffset + 3] * canvas.SourcePhotoOpacity + 50) / 100);
+                    rgb[offset] = Blend(photo[photoOffset], rgb[offset], coverage);
+                    rgb[offset + 1] = Blend(photo[photoOffset + 1], rgb[offset + 1], coverage);
+                    rgb[offset + 2] = Blend(photo[photoOffset + 2], rgb[offset + 2], coverage);
+                }
+            }
         }
         var masks = new Dictionary<Rune, byte[]>();
         for (var index = 0; index < canvas.Cells.Count; index++)
@@ -53,9 +66,9 @@ internal static class CanvasRasterizer
                 {
                     var coverage = mask[(y * CharacterCellGeometry.WidthInPixels) + x];
                     var offset = (((originY + y) * width) + originX + x) * 3;
-                    rgb[offset] = Blend(cell.Color.Red, canvas.BackgroundColor.Red, coverage);
-                    rgb[offset + 1] = Blend(cell.Color.Green, canvas.BackgroundColor.Green, coverage);
-                    rgb[offset + 2] = Blend(cell.Color.Blue, canvas.BackgroundColor.Blue, coverage);
+                    rgb[offset] = Blend(cell.Color.Red, rgb[offset], coverage);
+                    rgb[offset + 1] = Blend(cell.Color.Green, rgb[offset + 1], coverage);
+                    rgb[offset + 2] = Blend(cell.Color.Blue, rgb[offset + 2], coverage);
                 }
             }
         }

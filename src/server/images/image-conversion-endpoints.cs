@@ -32,6 +32,7 @@ internal static class ImageConversionEndpoints
                 MaxToneAdjustment = Math.Min(MaxEditorToneAdjustment, CharacterImageOptions.MaxToneAdjustment),
                 CharacterImageOptions.DefaultMonochromeColor,
                 CharacterImageOptions.DefaultBackgroundColor,
+                CharacterImageOptions.MaxPercentage,
                 RequestToken = antiforgery.GetAndStoreTokens(context).RequestToken
             });
         });
@@ -53,7 +54,9 @@ internal static class ImageConversionEndpoints
         [FromForm] int contrast = 0,
         [FromForm] int brightness = 0,
         [FromForm] string? monochromeColor = null,
-        [FromForm] string? backgroundColor = null)
+        [FromForm] string? backgroundColor = null,
+        [FromForm] int shadowLift = 0,
+        [FromForm] int sourcePhotoOpacity = 0)
     {
         context.Response.Headers.CacheControl = "no-store";
 
@@ -83,6 +86,8 @@ internal static class ImageConversionEndpoints
                 SourceColors = sourceColors,
                 Contrast = contrast,
                 Brightness = brightness,
+                ShadowLift = shadowLift,
+                SourcePhotoOpacity = sourcePhotoOpacity,
                 MonochromeColor = monochromeColor is null ? CharacterImageOptions.DefaultMonochromeColor : RgbColor.ParseHex(monochromeColor),
                 BackgroundColor = backgroundColor is null ? CharacterImageOptions.DefaultBackgroundColor : RgbColor.ParseHex(backgroundColor)
             };
