@@ -1,6 +1,7 @@
 using System.Text;
 using Ascii4Fun.Images;
 using Ascii4Fun.Media;
+using Ascii4Fun.Rendering;
 using ImageMagick;
 
 namespace Ascii4Fun.Tests;
@@ -100,6 +101,9 @@ public sealed class StillImageConverterTests
         Assert.Equal(2, result.HeightInCells);
         Assert.Equal(2, rows.Length);
         Assert.All(rows, row => Assert.Equal(4, row.EnumerateRunes().Count()));
+
+        using var png = new MagickImage(await PngExporter.ExportAsync(result));
+        Assert.Equal(png.Width, png.Height);
     }
 
     [Fact]
