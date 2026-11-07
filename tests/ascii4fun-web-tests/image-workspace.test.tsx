@@ -108,6 +108,18 @@ test("exports the displayed PNG, blocks stale exports and keeps zoom local", asy
   expect(downloads[1]?.name).toBe("source.txt");
   fireEvent.click(screen.getByRole("button", { name: "Reset to default" }));
   expect(screen.getByRole("switch", { name: "Source colors" })).toBeChecked();
+  await act(async () => {
+    jest.advanceTimersByTime(200);
+  });
+  const resetBody = fetchMock.mock.calls.at(-1)![1]!.body as FormData;
+  for (const setting of [
+    "outputWidthInCells",
+    "characterRamp",
+    "invert",
+    "sourceColors"
+  ]) {
+    expect(resetBody.get(setting)).toBe(body.get(setting));
+  }
   click.mockRestore();
 });
 

@@ -21,6 +21,8 @@ The conversion path is explicit: decode/normalize -> sample -> analyze -> tone m
 
 `AsciiCanvas` is the conversion result. TXT projects its glyphs; `PngExporter` renders its cells. Web displays and downloads the same PNG bytes. Zoom and panning are presentation state. `CharacterCellGeometry` owns the fixed 12 × 24 px cell and derives the sampling ratio from it.
 
+Web initialization and Reset share one options factory. `RgbaGrid` owns source-channel layout and white compositing; conversion stages consume normalized RGB samples.
+
 Keep modules concrete and grouped by capability. Add abstractions when real consumers require them. Public XML comments describe behavior, units, constraints and cancellation; comments explain decisions rather than repeat code.
 
 Verification covers deterministic conversion, media failures, HTTP behavior and browser journeys. `node tools/test-package.mjs` packs the engine, restores an isolated NuGet consumer and runs its published output with ASCII, Blocks and supplementary Unicode glyphs. This checks packaged fonts without project references or repository build settings.

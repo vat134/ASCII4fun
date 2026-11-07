@@ -1,18 +1,21 @@
+import type { CSSProperties } from "react";
+
+const frames = ["|", "/", "-", "\\"];
+
 export function AsciiSpinner() {
   return (
     <span
       aria-hidden="true"
-      className="ascii-spinner inline-grid size-5 place-items-center font-mono"
+      className="ascii-spinner inline-block size-5 shrink-0 overflow-hidden align-middle font-mono"
+      style={{ "--spinner-frame-count": frames.length } as CSSProperties}
     >
-      {["|", "/", "-", "\\"].map((frame, index) => (
-        <span
-          key={frame}
-          className="col-start-1 row-start-1"
-          style={{ animationDelay: `${index * 120}ms` }}
-        >
-          {frame}
-        </span>
-      ))}
+      <span className="grid">
+        {frames.map((frame) => (
+          <span key={frame} className="grid size-5 place-items-center">
+            {frame}
+          </span>
+        ))}
+      </span>
     </span>
   );
 }

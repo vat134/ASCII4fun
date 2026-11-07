@@ -74,20 +74,19 @@
   }
 }
 
-/* Four discrete frames, each visible for the reference loader's 120 ms interval. */
+.ascii-spinner {
+  --spinner-frame-duration: 120ms;
+}
+
 .ascii-spinner > span {
-  opacity: 0;
-  animation: spinner-frame 480ms step-end infinite;
+  animation: spinner-frame
+    calc(var(--spinner-frame-duration) * var(--spinner-frame-count))
+    steps(var(--spinner-frame-count)) infinite;
 }
 
 @keyframes spinner-frame {
-  0%,
-  24.99% {
-    opacity: 1;
-  }
-  25%,
-  100% {
-    opacity: 0;
+  to {
+    transform: translateY(-100%);
   }
 }
 
@@ -97,9 +96,5 @@
   *::after {
     animation: none !important;
     transition: none !important;
-  }
-
-  .ascii-spinner > span:first-child {
-    opacity: 1;
   }
 }

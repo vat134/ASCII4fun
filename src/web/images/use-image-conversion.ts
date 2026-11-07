@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   convertImage,
+  createDefaultImageOptions,
   type ImageConversionResult,
   type CharacterImageOptions,
   type ImageConfiguration
@@ -18,12 +19,9 @@ const previewDebounceMs = 200;
 
 export function useImageConversion(configuration: ImageConfiguration) {
   const [selection, setSelection] = useState<SelectedImage | null>(null);
-  const [options, setOptions] = useState<CharacterImageOptions>({
-    outputWidthInCells: configuration.defaultOutputWidthInCells,
-    characterRamp: configuration.defaultCharacterRamp,
-    invert: true,
-    sourceColors: true
-  });
+  const [options, setOptions] = useState(() =>
+    createDefaultImageOptions(configuration)
+  );
   const [state, setState] = useState<ConversionState>({ status: "empty" });
   const [retryCount, setRetryCount] = useState(0);
 
