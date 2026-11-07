@@ -27,7 +27,16 @@ self.addEventListener(
         return;
       }
       await loadFonts(engine.FontNames(data.options.characterRamp));
-      const sampled = source.sample(data.options.outputWidthInCells);
+      const sampled = source.sample(
+        data.options.outputWidthInCells,
+        data.options.sourcePhotoOpacity > 0
+      );
+      if (sampled.sourcePhotoRgba !== null)
+        engine.SetSourcePhoto(
+          sampled.sourcePhotoRgba,
+          data.options.outputWidthInCells,
+          sampled.height
+        );
       const result = JSON.parse(
         engine.Convert(
           sampled.rgba,

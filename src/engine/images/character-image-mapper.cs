@@ -10,10 +10,11 @@ internal static class CharacterImageMapper
         RgbaGrid source,
         Rune[] ramp,
         CharacterImageOptions options,
+        byte[]? sourcePhotoRgba,
         CancellationToken cancellationToken)
     {
         var cells = new AsciiCell[grid.Values.Length];
-        var tone = new ToneAdjustment(options.Contrast, options.Brightness);
+        var tone = new ToneAdjustment(options.Contrast, options.Brightness, options.ShadowLift);
 
         for (var index = 0; index < cells.Length; index++)
         {
@@ -42,6 +43,7 @@ internal static class CharacterImageMapper
             cells[index] = new AsciiCell(ramp[rampIndex], color);
         }
 
-        return new AsciiCanvas(cells, grid.WidthInCells, grid.HeightInCells, options.BackgroundColor);
+        return new AsciiCanvas(cells, grid.WidthInCells, grid.HeightInCells, options.BackgroundColor,
+            sourcePhotoRgba, options.SourcePhotoOpacity);
     }
 }

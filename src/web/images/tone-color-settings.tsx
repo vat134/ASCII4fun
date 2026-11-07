@@ -26,22 +26,33 @@ export function ToneColorSettings({ configuration, options, onChange }: Props) {
       <section className="space-y-5 p-5" aria-label="Tone settings">
         {(
           [
-            ["contrast", "Contrast"],
-            ["brightness", "Brightness"]
+            [
+              "contrast",
+              "Contrast",
+              configuration.minToneAdjustment,
+              configuration.maxToneAdjustment
+            ],
+            [
+              "brightness",
+              "Brightness",
+              configuration.minToneAdjustment,
+              configuration.maxToneAdjustment
+            ],
+            ["shadowLift", "Shadow lift", 0, configuration.maxPercentage]
           ] as const
-        ).map(([key, label]) => (
+        ).map(([key, label, min, max]) => (
           <div key={key} className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <label id={`${key}-label`}>{label}</label>
               <output className="font-mono text-xs text-muted-foreground">
-                {options[key] > 0 ? "+" : ""}
+                {key !== "shadowLift" && options[key] > 0 ? "+" : ""}
                 {options[key]}
               </output>
             </div>
             <Slider
               aria-labelledby={`${key}-label`}
-              min={configuration.minToneAdjustment}
-              max={configuration.maxToneAdjustment}
+              min={min}
+              max={max}
               value={[options[key]]}
               onValueChange={(value) => {
                 const [next] = value as number[];

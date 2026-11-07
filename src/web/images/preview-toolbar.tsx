@@ -1,4 +1,5 @@
 import { Button } from "../ui/base/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/base/tooltip";
 import { XIcon, ZoomInIcon, ZoomOutIcon } from "../ui/icons";
 import { previewZoom } from "./preview-zoom";
 
@@ -54,14 +55,16 @@ export function PreviewToolbar({
           </Button>
         </div>
         {hasImage && (
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Remove image"
-            onClick={onClear}
-          >
-            <XIcon aria-hidden="true" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger
+              render={<Button variant="ghost" size="icon" />}
+              aria-label="Remove image"
+              onClick={onClear}
+            >
+              <XIcon aria-hidden="true" />
+            </TooltipTrigger>
+            <TooltipContent>Remove image</TooltipContent>
+          </Tooltip>
         )}
       </div>
     </div>

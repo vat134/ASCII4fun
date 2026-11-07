@@ -51,6 +51,14 @@ internal static class ConvertImageCommand
             Description = "Opaque PNG background in #RRGGBB notation.",
             DefaultValueFactory = _ => CharacterImageOptions.DefaultBackgroundColor.ToHex()
         };
+        var shadowLiftOption = new Option<int>("--shadow-lift")
+        {
+            Description = "Lift dark tones before contrast/brightness (0..100, default 0)."
+        };
+        var photoOpacityOption = new Option<int>("--source-photo-opacity")
+        {
+            Description = "Original photo opacity beneath PNG glyphs (0..100, default 0). TXT is unchanged."
+        };
         var formatOption = new Option<string>("--format")
         {
             Description = "Output format: txt or png.",
@@ -79,6 +87,8 @@ internal static class ConvertImageCommand
             sourceColorsOption,
             contrastOption,
             brightnessOption,
+            shadowLiftOption,
+            photoOpacityOption,
             monochromeOption,
             backgroundOption,
             formatOption,
@@ -115,6 +125,8 @@ internal static class ConvertImageCommand
                     SourceColors = parseResult.GetValue(sourceColorsOption),
                     Contrast = parseResult.GetValue(contrastOption),
                     Brightness = parseResult.GetValue(brightnessOption),
+                    ShadowLift = parseResult.GetValue(shadowLiftOption),
+                    SourcePhotoOpacity = parseResult.GetValue(photoOpacityOption),
                     MonochromeColor = RgbColor.ParseHex(parseResult.GetRequiredValue(monochromeOption)),
                     BackgroundColor = RgbColor.ParseHex(parseResult.GetRequiredValue(backgroundOption))
                 };

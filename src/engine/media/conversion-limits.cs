@@ -12,7 +12,7 @@ internal sealed record ConversionLimits(
     private const int DefaultMaxInputDimension = 16_384;
     private const int DefaultMaxGridCells = 250_000;
 
-    // shortcut: these limits are provisional until Task 5 establishes release-build measurements.
+    // shortcut: calibrate these admission defaults on low-memory devices and animation workloads before widening them.
     public static ConversionLimits Default { get; } = new(
         MaxEncodedBytes: DefaultMaxEncodedBytes,
         MaxDecodedPixels: DefaultMaxDecodedPixels,

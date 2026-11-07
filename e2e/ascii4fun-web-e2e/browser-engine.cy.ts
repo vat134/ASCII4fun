@@ -7,6 +7,36 @@ import {
 } from "./workspace-actions";
 
 describe("Shared browser engine", () => {
+  for (const name of ["large-portrait.jpg", "twelve-megapixel.jpg"]) {
+    it(`adjusts ${name} with a full-size photo background`, () => {
+      cy.visit("/");
+      cy.get("#image-upload").selectFile(`fixtures/${name}`, {
+        force: true
+      });
+      ready();
+      columns(160);
+      cy.get('input[type="range"][aria-labelledby="source-photo-label"]')
+        .focus()
+        .type("{end}");
+      ready(160);
+      columns(180);
+      for (let adjustment = 0; adjustment < 5; adjustment++) {
+        cy.get('input[type="range"][aria-labelledby="contrast-label"]')
+          .focus()
+          .type("{rightarrow}");
+        ready(180);
+      }
+      cy.readFile(`fixtures/${name}`, "base64").then((source) =>
+        compareWithNative(source, {
+          outputWidthInCells: "180",
+          sourcePhotoOpacity: "100",
+          contrast: "5"
+        })
+      );
+      cy.get('[role="alert"]').should("not.exist");
+    });
+  }
+
   it("matches native Blocks and custom supplementary Unicode without an atlas", () => {
     cy.visit("/");
     uploadImage();
@@ -68,6 +98,16 @@ describe("Shared browser engine", () => {
       columns(24);
       cy.readFile(`fixtures/${name}`, "base64").then((source) =>
         compareWithNative(source, { outputWidthInCells: "24" })
+      );
+      cy.get('input[type="range"][aria-labelledby="source-photo-label"]')
+        .focus()
+        .type("{end}");
+      ready(24);
+      cy.readFile(`fixtures/${name}`, "base64").then((source) =>
+        compareWithNative(source, {
+          outputWidthInCells: "24",
+          sourcePhotoOpacity: "100"
+        })
       );
     });
   }

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "../ui/base/button";
 import { ToneColorSettings } from "./tone-color-settings";
+import { PhotoBackgroundSettings } from "./photo-background-settings";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/base/tooltip";
 import {
   ArrowDownToLineIcon,
@@ -82,6 +83,11 @@ export function ImageSettings({
           onChange={onChange}
         />
         <ToneColorSettings
+          configuration={configuration}
+          options={options}
+          onChange={onChange}
+        />
+        <PhotoBackgroundSettings
           configuration={configuration}
           options={options}
           onChange={onChange}

@@ -14,6 +14,7 @@ namespace Ascii4Fun.Browser;
 internal static partial class BrowserImageEngine
 {
     private static AsciiCanvas? current;
+    private static BrowserSourcePhoto? sourcePhoto;
 
     public static void Main() { }
 
@@ -29,6 +30,21 @@ internal static partial class BrowserImageEngine
 
     [JSExport]
     public static int[] Geometry() => [CharacterCellGeometry.WidthInPixels, CharacterCellGeometry.HeightInPixels];
+
+    [JSExport]
+    public static int PhotoByteLength(int widthInCells, int heightInCells) => SourcePhotoGeometry.ByteLength(widthInCells, heightInCells);
+
+    [JSExport]
+    public static void SetSourcePhoto(byte[] rgba, int widthInCells, int heightInCells)
+    {
+        sourcePhoto = null;
+        if (rgba.Length == 0) return;
+        if (rgba.Length != PhotoByteLength(widthInCells, heightInCells))
+        {
+            throw new ArgumentException("The prepared photo does not match the output geometry.", nameof(rgba));
+        }
+        sourcePhoto = new BrowserSourcePhoto(rgba, widthInCells, heightInCells);
+    }
 
     [JSExport]
     public static string[] FontNames(string ramp) => ramp.EnumerateRunes()
@@ -65,13 +81,22 @@ internal static partial class BrowserImageEngine
             throw new InvalidDataException("The sampled grid does not match the requested geometry.");
         }
 
-        current = CharacterImagePipeline.Convert(new RgbaGrid(width, height, rgba), options);
+        if (options.SourcePhotoOpacity > 0 && (sourcePhoto?.WidthInCells != width || sourcePhoto.HeightInCells != height))
+        {
+            throw new InvalidOperationException("Prepare the source photo for this geometry before conversion.");
+        }
+        current = CharacterImagePipeline.Convert(new RgbaGrid(width, height, rgba), options,
+            sourcePhotoRgba: options.SourcePhotoOpacity > 0 ? sourcePhoto?.Rgba : null);
         return JsonSerializer.Serialize(new BrowserImageResult(current.Text, width, height), BrowserJson.Default.BrowserImageResult);
     }
 
     [JSExport]
-    public static byte[] Rasterize() => CanvasRasterizer.Render(
-        current ?? throw new InvalidOperationException("Convert an image before rendering."), RenderGlyph);
+    public static byte[] Rasterize()
+    {
+        var canvas = current ?? throw new InvalidOperationException("Convert an image before rendering.");
+        current = null;
+        return CanvasRasterizer.Render(canvas, RenderGlyph);
+    }
 
     private static byte[] RenderGlyph(Rune glyph)
     {
@@ -85,6 +110,7 @@ internal static partial class BrowserImageEngine
 }
 
 internal sealed record BrowserImageResult(string Text, int WidthInCells, int HeightInCells);
+internal sealed record BrowserSourcePhoto(byte[] Rgba, int WidthInCells, int HeightInCells);
 
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 [JsonSerializable(typeof(CharacterImageOptions))]

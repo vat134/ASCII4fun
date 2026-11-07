@@ -1,4 +1,5 @@
 using System.Buffers;
+using Ascii4Fun.Rendering;
 using ImageMagick;
 
 namespace Ascii4Fun.Media;
@@ -7,11 +8,12 @@ internal static class MagickStillImageReader
 {
     private const int StillImageFrameProbeLimit = 2;
     private const int ReadBufferSizeInBytes = 81_920;
-    public static async Task<RgbaGrid> ReadGridAsync(
+    public static async Task<PreparedStillImage> ReadAsync(
         Stream encodedImage,
         int outputWidthInCells,
         double characterCellAspectRatio,
         ConversionLimits limits,
+        bool includeSourcePhoto,
         CancellationToken cancellationToken)
     {
         var encodedBytes = await ReadEncodedBytesAsync(encodedImage, limits.MaxEncodedBytes, cancellationToken);
@@ -41,17 +43,42 @@ internal static class MagickStillImageReader
                 IgnoreAspectRatio = true
             };
 
-            image.Resize(geometry, FilterType.Box);
+            if (includeSourcePhoto)
+            {
+                SourcePhotoGeometry.ByteLength(outputWidthInCells, outputHeightInCells);
+            }
+
+            using var sampled = includeSourcePhoto ? image.Clone() : null;
+            var gridImage = sampled ?? image;
+            gridImage.Resize(geometry, FilterType.Box);
             cancellationToken.ThrowIfCancellationRequested();
 
-            using var pixels = image.GetPixels();
+            using var pixels = gridImage.GetPixels();
             var rgba = pixels.ToByteArray(PixelMapping.RGBA)
                 ?? throw new InvalidDataException("The decoded image did not expose RGBA pixels.");
 
-            return new RgbaGrid(outputWidthInCells, outputHeightInCells, rgba);
+            byte[]? sourcePhotoRgba = null;
+            if (includeSourcePhoto)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                geometry.Width *= CharacterCellGeometry.WidthInPixels;
+                geometry.Height *= CharacterCellGeometry.HeightInPixels;
+                if (cancellationToken.CanBeCanceled)
+                {
+                    image.Progress += (_, progress) => progress.Cancel = cancellationToken.IsCancellationRequested;
+                }
+                image.Resize(geometry, FilterType.Box);
+                cancellationToken.ThrowIfCancellationRequested();
+                using var photoPixels = image.GetPixels();
+                sourcePhotoRgba = photoPixels.ToByteArray(PixelMapping.RGBA)
+                    ?? throw new InvalidDataException("The decoded photo did not expose RGBA pixels.");
+            }
+
+            return new PreparedStillImage(new RgbaGrid(outputWidthInCells, outputHeightInCells, rgba), sourcePhotoRgba);
         }
         catch (MagickException exception)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             throw new InvalidDataException("The image could not be decoded.", exception);
         }
     }

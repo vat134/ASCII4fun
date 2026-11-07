@@ -1,16 +1,16 @@
 import {
   ColorProfile,
   ColorSpace,
-  FilterType,
   ImageMagick,
-  MagickGeometry,
   MagickImageCollection,
   MagickReadSettings,
   type IMagickImage
 } from "@imagemagick/magick-wasm";
 import type { BrowserEngine } from "./browser-engine";
+import { sampleRgbaImage } from "./sample-rgba-image";
 
-const workingBudgetInBytes = 192 * 1024 * 1024;
+// Admission ceiling, not an eager allocation or a cap on total browser RAM.
+const workingBudgetInBytes = 768 * 1024 * 1024;
 const maxRasterDimensionInPixels = 16_384;
 
 /** One normalized original, kept alive by ImageMagick's documented async read callback. */
@@ -18,6 +18,7 @@ export class BrowserImageSource {
   private image: IMagickImage | null = null;
   private encodedBytes = 0;
   private sourcePixels = 0;
+  private photoWidthInCells = 0;
 
   constructor(private readonly engine: BrowserEngine) {}
 
@@ -61,7 +62,7 @@ export class BrowserImageSource {
     });
   }
 
-  sample(columns: number) {
+  sample(columns: number, includeSourcePhoto: boolean) {
     if (!this.image) throw new Error("Load an image before converting.");
     const height = this.engine.Height(
       this.image.width,
@@ -69,29 +70,46 @@ export class BrowserImageSource {
       columns
     );
     const [cellWidth, cellHeight] = this.engine.Geometry();
+    if (includeSourcePhoto) this.engine.PhotoByteLength(columns, height);
     const widthInPixels = columns * cellWidth!,
       heightInPixels = height * cellHeight!;
     if (Math.max(widthInPixels, heightInPixels) > maxRasterDimensionInPixels)
       throw new Error(
         "This output exceeds the browser raster side limit. Choose fewer columns or a shorter image."
       );
-    this.checkBudget(widthInPixels * heightInPixels, columns * height);
-    const rgba = this.image.clone((image) => {
-      const geometry = new MagickGeometry(columns, height);
-      geometry.ignoreAspectRatio = true;
-      image.resize(geometry, FilterType.Box);
-      return image.getPixels((pixels) =>
-        pixels.toByteArray(0, 0, columns, height, "RGBA")
+    this.checkBudget(
+      widthInPixels * heightInPixels,
+      columns * height,
+      includeSourcePhoto
+    );
+    const rgba = sampleRgbaImage(this.image, columns, height);
+    // null reuses the one prepared .NET photo; an empty buffer explicitly releases it.
+    let sourcePhotoRgba: Uint8Array | null = null;
+    if (!includeSourcePhoto) {
+      sourcePhotoRgba = new Uint8Array();
+      this.photoWidthInCells = 0;
+    } else if (this.photoWidthInCells !== columns) {
+      sourcePhotoRgba = sampleRgbaImage(
+        this.image,
+        widthInPixels,
+        heightInPixels
       );
-    });
-    if (!rgba) throw new Error("The decoded image did not expose RGBA pixels.");
-    return { rgba, height, widthInPixels, heightInPixels };
+      this.photoWidthInCells = columns;
+    }
+    return { rgba, sourcePhotoRgba, height, widthInPixels, heightInPixels };
   }
 
-  private checkBudget(pixels: number, cells: number) {
+  private checkBudget(
+    pixels: number,
+    cells: number,
+    includeSourcePhoto = false
+  ) {
     // Conservative admission includes source/clone, interop copies, raster, presentation and export scratch.
     const bytes =
-      this.encodedBytes + this.sourcePixels * 32 + pixels * 19 + cells * 256;
+      this.encodedBytes +
+      this.sourcePixels * 32 +
+      pixels * (includeSourcePhoto ? 27 : 19) +
+      cells * 256;
     if (bytes > workingBudgetInBytes)
       throw new Error(
         "This image and output size exceed the browser working-buffer budget. Choose a smaller image or fewer columns."

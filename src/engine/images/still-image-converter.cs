@@ -41,12 +41,13 @@ public sealed class StillImageConverter
 
         options ??= new CharacterImageOptions();
         options.ValidateAndGetRamp();
-        var rgbaGrid = await MagickStillImageReader.ReadGridAsync(
+        var prepared = await MagickStillImageReader.ReadAsync(
             encodedImage,
             options.OutputWidthInCells,
             CharacterCellGeometry.AspectRatio,
             limits,
+            includeSourcePhoto: options.SourcePhotoOpacity > 0,
             cancellationToken);
-        return CharacterImagePipeline.Convert(rgbaGrid, options, cancellationToken);
+        return CharacterImagePipeline.Convert(prepared.Grid, options, prepared.SourcePhotoRgba, cancellationToken);
     }
 }

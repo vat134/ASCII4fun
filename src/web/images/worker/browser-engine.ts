@@ -5,6 +5,12 @@ export type BrowserEngine = {
   SrgbProfile(): Uint8Array;
   CmykProfile(): Uint8Array;
   Geometry(): number[];
+  PhotoByteLength(widthInCells: number, heightInCells: number): number;
+  SetSourcePhoto(
+    rgba: Uint8Array,
+    widthInCells: number,
+    heightInCells: number
+  ): void;
   FontNames(ramp: string): string[];
   ValidateSource(bytes: Uint8Array): void;
   Height(width: number, height: number, columns: number): number;
