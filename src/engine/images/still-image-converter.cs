@@ -40,16 +40,13 @@ public sealed class StillImageConverter
         }
 
         options ??= new CharacterImageOptions();
-        var ramp = options.ValidateAndGetRamp();
+        options.ValidateAndGetRamp();
         var rgbaGrid = await MagickStillImageReader.ReadGridAsync(
             encodedImage,
             options.OutputWidthInCells,
             CharacterCellGeometry.AspectRatio,
             limits,
             cancellationToken);
-        var luminanceGrid = LuminanceAnalyzer.Analyze(rgbaGrid, cancellationToken);
-        var normalizedGrid = AutoToneMapper.Normalize(luminanceGrid, cancellationToken);
-
-        return CharacterImageMapper.Map(normalizedGrid, rgbaGrid, ramp, options, cancellationToken);
+        return CharacterImagePipeline.Convert(rgbaGrid, options, cancellationToken);
     }
 }

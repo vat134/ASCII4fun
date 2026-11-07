@@ -6,7 +6,7 @@ const {
 module.exports = (app) => {
   app.use(
     createProxyMiddleware({
-      pathFilter: "/api",
+      pathFilter: ["/api", "/engine-runtime"],
       target: developmentEnvironment.serverUrl
     })
   );

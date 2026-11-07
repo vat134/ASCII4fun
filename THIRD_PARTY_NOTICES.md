@@ -38,3 +38,9 @@ SOFTWARE.
 - GNU Unifont / Unifont Upper 17.0.05: Copyright © 1998-2026 Roman Czyborra, Paul Hardy, Qianqian Fang, Andrew Miller, Johnnie Weaver, David Corbett, Ælla Chiana Moskopp, Rebecca Bettencourt, Ho-Seok Ee, et al.; distributed here under SIL Open Font License 1.1, one of its dual licenses. [Upstream](https://unifoundry.com/unifont/).
 
 UI fonts are self-hosted through pinned Fontsource packages. Complete UI font and browser dependency licenses are included in the browser build through its `rel="license"` document. PNG fonts and their full licenses are bundled with the engine and its NuGet content files; see [font provenance](src/engine/rendering/fonts/README.md).
+
+## Browser processing
+
+- `@imagemagick/magick-wasm` 0.0.46: Apache-2.0, ImageMagick browser codecs and font drawing. The published `engine-runtime/notices/` directory contains its complete `magick-wasm-license.txt` and `magick-wasm-notices.txt`.
+- Magick.NET.Core 15.0.0: built-in sRGB and CMYK profile bytes shared with native conversion. Its package copyright ships as `magick-core-notices.txt` in the same directory.
+- .NET browser runtime 10.0.14: MIT and upstream third-party notices, copied from the installed `Microsoft.NETCore.App.Runtime.Mono.browser-wasm` runtime pack into `src/engine/browser/notices/`. Refresh these files when updating the runtime; both ship with the browser assets.

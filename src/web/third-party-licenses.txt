@@ -617,3 +617,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+
+Browser runtime notices
+
+.NET runtime 10.0.14, Magick.NET.Core 15.0.0, and magick-wasm 0.0.46 notices are included with this application under /engine-runtime/notices/. See THIRD_PARTY_NOTICES.md in the source distribution for provenance.

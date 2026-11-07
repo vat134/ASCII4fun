@@ -6,23 +6,33 @@ export type ImageConfiguration = {
   defaultCharacterCellAspectRatio: number;
   maxEncodedBytes: number;
   requestToken: string;
+  minToneAdjustment: number;
+  maxToneAdjustment: number;
+  defaultMonochromeColor: RgbColor;
+  defaultBackgroundColor: RgbColor;
 };
+
+export type RgbColor = { red: number; green: number; blue: number };
 
 export type CharacterImageOptions = {
   outputWidthInCells: number;
   characterRamp: string;
   invert: boolean;
   sourceColors: boolean;
+  contrast: number;
+  brightness: number;
+  monochromeColor: RgbColor;
+  backgroundColor: RgbColor;
 };
 
 export type ImageConversionResult = {
   text: string;
   widthInCells: number;
   heightInCells: number;
-  png: string;
+  pixels: Uint8ClampedArray<ArrayBuffer>;
+  widthInPixels: number;
+  heightInPixels: number;
 };
-
-type ProblemDetails = { title: string; detail?: string };
 
 export function createDefaultImageOptions(
   configuration: ImageConfiguration
@@ -31,7 +41,11 @@ export function createDefaultImageOptions(
     outputWidthInCells: configuration.defaultOutputWidthInCells,
     characterRamp: configuration.defaultCharacterRamp,
     invert: true,
-    sourceColors: true
+    sourceColors: true,
+    contrast: 0,
+    brightness: 0,
+    monochromeColor: configuration.defaultMonochromeColor,
+    backgroundColor: configuration.defaultBackgroundColor
   };
 }
 
@@ -45,30 +59,4 @@ export async function loadImageConfiguration(
     );
   }
   return response.json() as Promise<ImageConfiguration>;
-}
-
-export async function convertImage(
-  file: File,
-  options: CharacterImageOptions,
-  requestToken: string,
-  signal: AbortSignal
-): Promise<ImageConversionResult> {
-  const body = new FormData();
-  body.set("image", file);
-  body.set("outputWidthInCells", String(options.outputWidthInCells));
-  body.set("characterRamp", options.characterRamp);
-  body.set("invert", String(options.invert));
-  body.set("sourceColors", String(options.sourceColors));
-
-  const response = await fetch("/api/images/convert", {
-    method: "POST",
-    headers: { "X-CSRF-TOKEN": requestToken },
-    body,
-    signal
-  });
-  if (!response.ok) {
-    const problem = (await response.json()) as ProblemDetails;
-    throw new Error(problem.detail ?? problem.title);
-  }
-  return response.json() as Promise<ImageConversionResult>;
 }

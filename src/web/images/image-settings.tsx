@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "../ui/base/button";
-import { Switch } from "../ui/base/switch";
+import { ToneColorSettings } from "./tone-color-settings";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/base/tooltip";
 import {
   ArrowDownToLineIcon,
@@ -20,6 +20,7 @@ type ImageSettingsProps = {
   onChange: (options: CharacterImageOptions) => void;
   onReset: () => void;
   canExport: boolean;
+  exportError: string | null;
   onExport: (format: "txt" | "png") => void;
   dimensions: string;
 };
@@ -30,6 +31,7 @@ export function ImageSettings({
   onChange,
   onReset,
   canExport,
+  exportError,
   onExport,
   dimensions
 }: ImageSettingsProps) {
@@ -79,21 +81,19 @@ export function ImageSettings({
           onEditorChange={setEditor}
           onChange={onChange}
         />
-        <div className="flex min-h-11 items-center justify-between gap-3 p-5">
-          <label htmlFor="source-colors" className="text-sm">
-            Source colors
-          </label>
-          <Switch
-            id="source-colors"
-            checked={options.sourceColors}
-            onCheckedChange={(sourceColors) =>
-              onChange({ ...options, sourceColors })
-            }
-          />
-        </div>
+        <ToneColorSettings
+          configuration={configuration}
+          options={options}
+          onChange={onChange}
+        />
       </div>
 
       <footer className="shrink-0 space-y-4 border-t bg-card p-5">
+        {exportError && (
+          <p role="alert" className="text-xs text-destructive">
+            {exportError}
+          </p>
+        )}
         <div className="flex items-center justify-between gap-3">
           <h3 className="text-sm">Export</h3>
           <span className="font-mono text-xs text-muted-foreground">

@@ -12,6 +12,17 @@ namespace Ascii4Fun.Server.Tests;
 public sealed class ImageConversionEndpointTests(WebApplicationFactory<Program> application)
     : IClassFixture<WebApplicationFactory<Program>>
 {
+    [Fact]
+    public async Task EditorUsesPracticalColumnAndToneRanges()
+    {
+        using var client = application.CreateClient();
+        var configuration = await GetConfigurationAsync(client);
+        Assert.Equal(16, configuration.GetProperty("minOutputWidthInCells").GetInt32());
+        Assert.Equal(180, configuration.GetProperty("maxOutputWidthInCells").GetInt32());
+        Assert.Equal(-40, configuration.GetProperty("minToneAdjustment").GetInt32());
+        Assert.Equal(40, configuration.GetProperty("maxToneAdjustment").GetInt32());
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -27,10 +38,18 @@ public sealed class ImageConversionEndpointTests(WebApplicationFactory<Program> 
             OutputWidthInCells = 4,
             CharacterRamp = "@ ",
             Invert = true,
-            SourceColors = sourceColors
+            SourceColors = sourceColors,
+            Contrast = 25,
+            Brightness = -10,
+            MonochromeColor = new RgbColor(0, 255, 255),
+            BackgroundColor = new RgbColor(16, 32, 48)
         });
         using var body = CreateBody(encoded, "image/png");
         body.Add(new StringContent(sourceColors.ToString()), "sourceColors");
+        body.Add(new StringContent("25"), "contrast");
+        body.Add(new StringContent("-10"), "brightness");
+        body.Add(new StringContent("#00FFFF"), "monochromeColor");
+        body.Add(new StringContent("#102030"), "backgroundColor");
         using var response = await client.PostAsync("/api/images/convert", body);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var result = await response.Content.ReadFromJsonAsync<JsonElement>();

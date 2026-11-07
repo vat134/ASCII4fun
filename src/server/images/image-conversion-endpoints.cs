@@ -9,6 +9,9 @@ internal static class ImageConversionEndpoints
 {
     internal const string PolicyName = "image-conversion";
     internal const string AntiforgeryHeaderName = "X-CSRF-TOKEN";
+    private const int MinEditorWidthInCells = 16;
+    private const int MaxEditorWidthInCells = 180;
+    private const int MaxEditorToneAdjustment = 40;
 
     public static void MapImageConversion(this WebApplication app)
     {
@@ -20,11 +23,15 @@ internal static class ImageConversionEndpoints
             return Results.Ok(new
             {
                 CharacterImageOptions.DefaultOutputWidthInCells,
-                CharacterImageOptions.MinOutputWidthInCells,
-                CharacterImageOptions.MaxOutputWidthInCells,
+                MinOutputWidthInCells = Math.Max(MinEditorWidthInCells, CharacterImageOptions.MinOutputWidthInCells),
+                MaxOutputWidthInCells = Math.Min(MaxEditorWidthInCells, CharacterImageOptions.MaxOutputWidthInCells),
                 CharacterImageOptions.DefaultCharacterRamp,
                 CharacterImageOptions.DefaultCharacterCellAspectRatio,
                 converter.MaxEncodedBytes,
+                MinToneAdjustment = Math.Max(-MaxEditorToneAdjustment, CharacterImageOptions.MinToneAdjustment),
+                MaxToneAdjustment = Math.Min(MaxEditorToneAdjustment, CharacterImageOptions.MaxToneAdjustment),
+                CharacterImageOptions.DefaultMonochromeColor,
+                CharacterImageOptions.DefaultBackgroundColor,
                 RequestToken = antiforgery.GetAndStoreTokens(context).RequestToken
             });
         });
@@ -42,7 +49,11 @@ internal static class ImageConversionEndpoints
         StillImageConverter converter,
         HttpContext context,
         CancellationToken cancellationToken,
-        [FromForm] bool sourceColors = false)
+        [FromForm] bool sourceColors = false,
+        [FromForm] int contrast = 0,
+        [FromForm] int brightness = 0,
+        [FromForm] string? monochromeColor = null,
+        [FromForm] string? backgroundColor = null)
     {
         context.Response.Headers.CacheControl = "no-store";
 
@@ -62,16 +73,19 @@ internal static class ImageConversionEndpoints
                 detail: "Choose JPEG, PNG, or still WebP. File content is verified during conversion.");
         }
 
-        var options = new CharacterImageOptions
-        {
-            OutputWidthInCells = outputWidthInCells,
-            CharacterRamp = characterRamp,
-            Invert = invert,
-            SourceColors = sourceColors
-        };
-
         try
         {
+            var options = new CharacterImageOptions
+            {
+                OutputWidthInCells = outputWidthInCells,
+                CharacterRamp = characterRamp,
+                Invert = invert,
+                SourceColors = sourceColors,
+                Contrast = contrast,
+                Brightness = brightness,
+                MonochromeColor = monochromeColor is null ? CharacterImageOptions.DefaultMonochromeColor : RgbColor.ParseHex(monochromeColor),
+                BackgroundColor = backgroundColor is null ? CharacterImageOptions.DefaultBackgroundColor : RgbColor.ParseHex(backgroundColor)
+            };
             await using var input = image.OpenReadStream();
             var result = await converter.ConvertAsync(input, options, cancellationToken);
             var png = await PngExporter.ExportAsync(result, cancellationToken);

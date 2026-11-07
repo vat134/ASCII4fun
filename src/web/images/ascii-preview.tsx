@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, type PointerEvent } from "react";
 import type { ImageConversionResult } from "./image-conversion";
+import { useRasterPreview } from "./use-raster-preview";
 
 type AsciiPreviewProps = {
   result: ImageConversionResult;
@@ -7,7 +8,9 @@ type AsciiPreviewProps = {
 };
 
 export function AsciiPreview({ result, zoom }: AsciiPreviewProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
+  useRasterPreview(result, zoom, viewportRef, canvasRef);
   const drag = useRef<{
     pointerId: number;
     x: number;
@@ -63,12 +66,14 @@ export function AsciiPreview({ result, zoom }: AsciiPreviewProps) {
       onPointerCancel={endPan}
       onLostPointerCapture={endPan}
     >
-      <img
-        alt={`ASCII preview, ${result.widthInCells} columns by ${result.heightInCells} rows`}
-        src={`data:image/png;base64,${result.png}`}
+      <canvas
+        ref={canvasRef}
+        role="img"
+        width={result.widthInPixels}
+        height={result.heightInPixels}
+        aria-label={`ASCII preview, ${result.widthInCells} columns by ${result.heightInCells} rows`}
         draggable={false}
-        className="m-auto max-w-none shrink-0 object-contain"
-        style={{ width: `${zoom}%`, height: `${zoom}%` }}
+        className="m-auto max-w-none shrink-0"
       />
     </div>
   );

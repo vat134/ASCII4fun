@@ -1,4 +1,5 @@
-import { beforeEach, afterEach, expect, jest, test } from "@jest/globals";
+import { afterEach, beforeEach, expect, jest, test } from "@jest/globals";
+import { StrictMode } from "react";
 import {
   act,
   fireEvent,
@@ -8,204 +9,228 @@ import {
 } from "@testing-library/react";
 import { ImageWorkspace } from "../../src/web/images/image-workspace";
 import { useImageConversion } from "../../src/web/images/use-image-conversion";
-import type { ImageConfiguration } from "../../src/web/images/image-conversion";
+import type {
+  CharacterImageOptions,
+  ImageConfiguration,
+  ImageConversionResult
+} from "../../src/web/images/image-conversion";
 
+const mockConvert =
+  jest.fn<(options: CharacterImageOptions) => Promise<ImageConversionResult>>();
+const mockDispose = jest.fn();
+const mockExport = jest.fn<() => Promise<Blob>>();
+jest.mock("../../src/web/images/browser-image-client", () => ({
+  BrowserImageClient: class {
+    convert = (options: CharacterImageOptions) => mockConvert(options);
+    dispose = () => mockDispose();
+  }
+}));
+jest.mock("../../src/web/images/export-preview-png", () => ({
+  exportPreviewPng: () => mockExport()
+}));
 const configuration: ImageConfiguration = {
   defaultOutputWidthInCells: 80,
-  minOutputWidthInCells: 1,
-  maxOutputWidthInCells: 500,
+  minOutputWidthInCells: 16,
+  maxOutputWidthInCells: 180,
   defaultCharacterRamp: "@%#*+=-:. ",
   defaultCharacterCellAspectRatio: 0.5,
   maxEncodedBytes: 1024,
-  requestToken: "test-token"
+  requestToken: "token",
+  minToneAdjustment: -40,
+  maxToneAdjustment: 40,
+  defaultMonochromeColor: { red: 255, green: 255, blue: 255 },
+  defaultBackgroundColor: { red: 0, green: 0, blue: 0 }
 };
-const fetchMock = jest.fn<typeof fetch>();
-
-beforeEach(() => {
-  jest.useFakeTimers();
-  globalThis.fetch = fetchMock;
-  fetchMock.mockReset();
-  URL.createObjectURL = jest.fn(() => "blob:test-image");
-  URL.revokeObjectURL = jest.fn();
-});
-
-afterEach(() => {
-  jest.useRealTimers();
-});
-
-test("exposes current controls and explicitly disables future inputs", () => {
-  render(<ImageWorkspace configuration={configuration} />);
-  expect(screen.getByRole("tab", { name: /Text/ })).toHaveAttribute(
-    "aria-disabled",
-    "true"
-  );
-  expect(screen.getByRole("tab", { name: /Media/ })).toHaveAttribute(
-    "aria-selected",
-    "true"
-  );
-  expect(screen.getByRole("textbox", { name: "Media URL" })).toBeDisabled();
-  expect(screen.getByRole("button", { name: "Download PNG" })).toBeDisabled();
-  expect(screen.getByRole("button", { name: "Download .txt" })).toBeDisabled();
-  expect(screen.getByRole("switch", { name: "Source colors" })).toBeChecked();
-  // jsdom has no layout; Base UI reveals the thumbs after browser measurement.
-  expect(
-    screen.getByLabelText("Columns", { selector: 'input[type="range"]' })
-  ).toHaveValue("80");
-  expect(screen.getByLabelText("Preview zoom level")).toHaveTextContent("100%");
-  expect(screen.queryByRole("textbox", { name: "Characters" })).toBeNull();
-  expect(
-    screen.getByLabelText("Characters", { selector: "p" })
-  ).toHaveTextContent("@%#*+=-:.");
-});
-
-test("exports the displayed PNG, blocks stale exports and keeps zoom local", async () => {
-  const response = {
-    text: "@ ",
-    widthInCells: 2,
-    heightInCells: 1,
-    png: "current-png"
-  };
-  fetchMock.mockResolvedValue({
-    ok: true,
-    json: async () => response
-  } as Response);
-  const downloads: { href: string; name: string }[] = [];
-  const click = jest
-    .spyOn(HTMLAnchorElement.prototype, "click")
-    .mockImplementation(function (this: HTMLAnchorElement) {
-      downloads.push({ href: this.href, name: this.download });
-    });
-  render(<ImageWorkspace configuration={configuration} />);
+const artwork: ImageConversionResult = {
+  text: "@ ",
+  widthInCells: 2,
+  heightInCells: 1,
+  widthInPixels: 24,
+  heightInPixels: 24,
+  pixels: new Uint8ClampedArray(24 * 24 * 4)
+};
+const upload = () =>
   fireEvent.change(screen.getByLabelText("Upload image"), {
     target: { files: [new File(["image"], "source.png")] }
   });
-  await act(async () => {
-    jest.advanceTimersByTime(200);
-  });
-  const body = fetchMock.mock.calls[0]![1]!.body as FormData;
-  expect(body.get("sourceColors")).toBe("true");
-  expect(screen.getByRole("img", { name: /ASCII preview/ })).toHaveAttribute(
-    "src",
-    "data:image/png;base64,current-png"
-  );
-  fireEvent.click(screen.getByRole("switch", { name: "Source colors" }));
-  expect(screen.getByRole("button", { name: "Download PNG" })).toBeDisabled();
-  expect(screen.getByRole("button", { name: "Download .txt" })).toBeDisabled();
-  await act(async () => {
-    jest.advanceTimersByTime(200);
-  });
-  expect(
-    (fetchMock.mock.calls[1]![1]!.body as FormData).get("sourceColors")
-  ).toBe("false");
-  fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
-  expect(screen.getByLabelText("Preview zoom level")).toHaveTextContent("125%");
-  expect(fetchMock).toHaveBeenCalledTimes(2);
-  fireEvent.click(screen.getByRole("button", { name: "Download PNG" }));
-  expect(downloads).toEqual([
-    { href: "data:image/png;base64,current-png", name: "source.png" }
-  ]);
-  fireEvent.click(screen.getByRole("button", { name: "Download .txt" }));
-  expect(downloads[1]?.name).toBe("source.txt");
-  fireEvent.click(screen.getByRole("button", { name: "Reset to default" }));
-  expect(screen.getByRole("switch", { name: "Source colors" })).toBeChecked();
-  await act(async () => {
-    jest.advanceTimersByTime(200);
-  });
-  const resetBody = fetchMock.mock.calls.at(-1)![1]!.body as FormData;
-  for (const setting of [
-    "outputWidthInCells",
-    "characterRamp",
-    "invert",
-    "sourceColors"
-  ]) {
-    expect(resetBody.get(setting)).toBe(body.get(setting));
-  }
-  click.mockRestore();
+beforeEach(() => {
+  mockConvert.mockReset().mockResolvedValue(artwork);
+  mockDispose.mockClear();
+  mockExport.mockReset().mockResolvedValue(new Blob(["png"]));
+  URL.createObjectURL = jest.fn(() => "blob:test-image");
+  URL.revokeObjectURL = jest.fn();
+  jest.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({
+    putImageData: jest.fn(),
+    drawImage: jest.fn()
+  } as unknown as CanvasRenderingContext2D);
+  globalThis.OffscreenCanvas = class {
+    constructor(
+      public width: number,
+      public height: number
+    ) {}
+    getContext() {
+      return { putImageData: jest.fn() };
+    }
+  } as unknown as typeof OffscreenCanvas;
+  globalThis.ResizeObserver = class {
+    observe() {}
+    disconnect() {}
+  } as unknown as typeof ResizeObserver;
+  globalThis.ImageData = class {
+    constructor(
+      public data: Uint8ClampedArray,
+      public width: number,
+      public height: number
+    ) {}
+  } as typeof ImageData;
+});
+afterEach(() => {
+  jest.restoreAllMocks();
 });
 
-test("rejects excessive local input without submitting conversion", () => {
+test("exposes neutral tone, Original mode, white Mono and black background defaults", () => {
+  render(<ImageWorkspace configuration={configuration} />);
+  expect(screen.getByRole("button", { name: "Original" })).toHaveAttribute(
+    "aria-pressed",
+    "true"
+  );
+  expect(screen.getByLabelText("Mono color")).toHaveValue("#ffffff");
+  expect(screen.getByLabelText("Mono color")).toBeDisabled();
+  expect(screen.getByLabelText("Background")).toHaveValue("#000000");
+  for (const label of ["Contrast", "Brightness"])
+    expect(
+      screen.getByLabelText(label, { selector: 'input[type="range"]' })
+    ).toHaveValue("0");
+  expect(screen.getByRole("button", { name: "Download PNG" })).toBeDisabled();
+  expect(screen.getByRole("textbox", { name: "Media URL" })).toBeDisabled();
+});
+
+test("renders current pixels, blocks pending exports and keeps zoom local", async () => {
+  const downloads: string[] = [];
+  jest.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function (
+    this: HTMLAnchorElement
+  ) {
+    downloads.push(this.download);
+  });
+  render(<ImageWorkspace configuration={configuration} />);
+  await act(async () => upload());
+  expect(screen.getByRole("img", { name: /ASCII preview/ })).toHaveAttribute(
+    "width",
+    "24"
+  );
+  expect(mockConvert.mock.calls[0]![0].sourceColors).toBe(true);
+  let finish!: (result: ImageConversionResult) => void;
+  mockConvert.mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        finish = resolve;
+      })
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Mono" }));
+  expect(screen.queryByText("Converting image")).toBeNull();
+  expect(screen.getByRole("button", { name: "Download PNG" })).toBeDisabled();
+  fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
+  expect(screen.getByLabelText("Preview zoom level")).toHaveTextContent("125%");
+  expect(mockConvert).toHaveBeenCalledTimes(2);
+  await act(async () => finish(artwork));
+  await act(async () =>
+    fireEvent.click(screen.getByRole("button", { name: "Download PNG" }))
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Download .txt" }));
+  expect(downloads).toEqual(["source.png", "source.txt"]);
+  fireEvent.click(screen.getByRole("button", { name: "Reset to default" }));
+  expect(screen.getByRole("button", { name: "Original" })).toHaveAttribute(
+    "aria-pressed",
+    "true"
+  );
+  expect(mockConvert).toHaveBeenCalledTimes(2);
+});
+
+test("rejects excessive input before creating conversion work", () => {
   const { result } = renderHook(() => useImageConversion(configuration));
   act(() =>
     result.current.selectImage(new File([new Uint8Array(1025)], "large.png"))
   );
   expect(result.current.state.status).toBe("error");
-  expect(fetchMock).not.toHaveBeenCalled();
+  expect(mockConvert).not.toHaveBeenCalled();
 });
 
-test("aborts obsolete work and ignores a stale response even if it resolves", async () => {
-  let finishFirst!: (response: Response) => void;
-  fetchMock.mockImplementationOnce(
+test("replaces a source immediately, terminates old work and ignores obsolete completion", async () => {
+  let finish!: (value: ImageConversionResult) => void;
+  mockConvert.mockImplementationOnce(
     () =>
       new Promise((resolve) => {
-        finishFirst = resolve;
+        finish = resolve;
       })
   );
-  fetchMock.mockResolvedValueOnce({
-    ok: true,
-    json: async () => ({ text: "NEW", widthInCells: 3, heightInCells: 1 })
-  } as Response);
   const { result, unmount } = renderHook(() =>
     useImageConversion(configuration)
   );
-  act(() => result.current.selectImage(new File(["image"], "source.png")));
-  await act(async () => {
-    jest.advanceTimersByTime(200);
-  });
-  const firstSignal = fetchMock.mock.calls[0]?.[1]?.signal;
-  act(() =>
-    result.current.changeOptions({
-      ...result.current.options,
-      outputWidthInCells: 3
-    })
+  act(() => result.current.selectImage(new File(["first"], "first.png")));
+  await act(async () =>
+    result.current.selectImage(new File(["next"], "next.png"))
   );
-  expect(firstSignal?.aborted).toBe(true);
-  await act(async () => {
-    jest.advanceTimersByTime(200);
-  });
-  expect(result.current.state).toEqual({
-    status: "ready",
-    result: { text: "NEW", widthInCells: 3, heightInCells: 1 }
-  });
-  await act(async () => {
-    finishFirst({
-      ok: true,
-      json: async () => ({ text: "OLD", widthInCells: 3, heightInCells: 1 })
-    } as Response);
-  });
-  expect(result.current.state).toEqual({
-    status: "ready",
-    result: { text: "NEW", widthInCells: 3, heightInCells: 1 }
-  });
+  expect(mockDispose).toHaveBeenCalledTimes(1);
+  expect(result.current.state).toEqual({ status: "ready", result: artwork });
+  await act(async () => finish({ ...artwork, text: "OLD" }));
+  expect(result.current.state).toEqual({ status: "ready", result: artwork });
   unmount();
-  expect(URL.revokeObjectURL).toHaveBeenCalledWith("blob:test-image");
+  expect(mockDispose).toHaveBeenCalledTimes(2);
 });
 
-test("shows a conversion failure and retries without losing the selected image", async () => {
-  fetchMock.mockResolvedValueOnce({
-    ok: false,
-    json: async () => ({
-      title: "Image cannot be converted",
-      detail: "Unreadable image."
-    })
-  } as Response);
-  fetchMock.mockResolvedValueOnce({
-    ok: true,
-    json: async () => ({ text: "@ ", widthInCells: 2, heightInCells: 1 })
-  } as Response);
-  render(<ImageWorkspace configuration={configuration} />);
-  fireEvent.change(screen.getByLabelText("Upload image"), {
-    target: { files: [new File(["image"], "source.png")] }
-  });
-  await act(async () => {
-    jest.advanceTimersByTime(200);
-  });
-  expect(screen.getByRole("alert")).toHaveTextContent("Unreadable image.");
-  fireEvent.click(screen.getByRole("button", { name: "Retry" }));
-  await act(async () => {
-    jest.advanceTimersByTime(200);
-  });
+test("Retry restarts the source worker and Clear preserves settings through StrictMode", async () => {
+  mockConvert.mockRejectedValueOnce(new Error("Unreadable image"));
+  render(
+    <StrictMode>
+      <ImageWorkspace configuration={configuration} />
+    </StrictMode>
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Mono" }));
+  await act(async () => upload());
+  expect(screen.getByRole("alert")).toHaveTextContent("Unreadable image");
+  await act(async () =>
+    fireEvent.click(screen.getByRole("button", { name: "Retry" }))
+  );
+  expect(mockDispose).toHaveBeenCalledTimes(1);
   expect(screen.getByRole("button", { name: "Download PNG" })).toBeEnabled();
-  expect(
-    screen.getByRole("img", { name: /ASCII preview/ })
-  ).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Remove image" }));
+  expect(screen.getByRole("button", { name: "Mono" })).toHaveAttribute(
+    "aria-pressed",
+    "true"
+  );
+  expect(screen.getByRole("button", { name: "Download PNG" })).toBeDisabled();
+  expect(URL.revokeObjectURL).toHaveBeenCalled();
+});
+
+test("color controls update shared options and retain them when clearing an error", async () => {
+  render(<ImageWorkspace configuration={configuration} />);
+  fireEvent.click(screen.getByRole("button", { name: "Mono" }));
+  fireEvent.change(screen.getByLabelText("Mono color"), {
+    target: { value: "#00ff00" }
+  });
+  fireEvent.change(screen.getByLabelText("Background"), {
+    target: { value: "#102030" }
+  });
+  mockConvert.mockRejectedValueOnce(new Error("Bad input"));
+  await act(async () => upload());
+  expect(mockConvert.mock.calls[0]![0]).toMatchObject({
+    monochromeColor: { red: 0, green: 255, blue: 0 },
+    backgroundColor: { red: 16, green: 32, blue: 48 }
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Clear" }));
+  expect(screen.queryByRole("alert")).toBeNull();
+  expect(screen.getByLabelText("Background")).toHaveValue("#102030");
+  await act(async () => upload());
+  expect(screen.getByRole("button", { name: "Download PNG" })).toBeEnabled();
+});
+
+test("reports PNG encoding failure and keeps the current result available for retry", async () => {
+  mockExport.mockRejectedValueOnce(new Error("PNG encoding failed"));
+  render(<ImageWorkspace configuration={configuration} />);
+  await act(async () => upload());
+  await act(async () =>
+    fireEvent.click(screen.getByRole("button", { name: "Download PNG" }))
+  );
+  expect(screen.getByRole("alert")).toHaveTextContent("PNG encoding failed");
+  expect(screen.getByRole("button", { name: "Download PNG" })).toBeEnabled();
 });

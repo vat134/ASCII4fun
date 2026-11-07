@@ -1,21 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-  convertImage,
   createDefaultImageOptions,
-  type ImageConversionResult,
   type CharacterImageOptions,
   type ImageConfiguration
 } from "./image-conversion";
+import {
+  ImagePreviewSession,
+  type ConversionState
+} from "./image-preview-session";
 
 export type SelectedImage = { file: File; url: string };
-export type ConversionState =
-  | { status: "empty" }
-  | { status: "pending"; result: ImageConversionResult | null }
-  | { status: "ready"; result: ImageConversionResult }
-  | { status: "error"; message: string };
-
-// Coalesce slider and typing changes before sending CPU-heavy work to the server.
-const previewDebounceMs = 200;
 
 export function useImageConversion(configuration: ImageConfiguration) {
   const [selection, setSelection] = useState<SelectedImage | null>(null);
@@ -23,74 +17,48 @@ export function useImageConversion(configuration: ImageConfiguration) {
     createDefaultImageOptions(configuration)
   );
   const [state, setState] = useState<ConversionState>({ status: "empty" });
-  const [retryCount, setRetryCount] = useState(0);
+  const session = useRef<ImagePreviewSession | null>(null);
+  const sourceUrl = useRef<string | null>(null);
 
-  useEffect(() => {
-    if (!selection) return;
-    return () => URL.revokeObjectURL(selection.url);
-  }, [selection]);
+  useEffect(
+    () => () => {
+      session.current?.dispose();
+      if (sourceUrl.current) URL.revokeObjectURL(sourceUrl.current);
+    },
+    []
+  );
 
-  useEffect(() => {
-    if (!selection) return;
-    const controller = new AbortController();
-    const timer = window.setTimeout(async () => {
-      try {
-        const result = await convertImage(
-          selection.file,
-          options,
-          configuration.requestToken,
-          controller.signal
-        );
-        if (!controller.signal.aborted) setState({ status: "ready", result });
-      } catch (error) {
-        if (!controller.signal.aborted) {
-          setState({
-            status: "error",
-            message:
-              error instanceof Error
-                ? error.message
-                : "Conversion failed. Please retry."
-          });
-        }
-      }
-    }, previewDebounceMs);
-    return () => {
-      window.clearTimeout(timer);
-      controller.abort();
-    };
-  }, [selection, options, configuration.requestToken, retryCount]);
+  function clear() {
+    void session.current?.dispose();
+    session.current = null;
+    if (sourceUrl.current) URL.revokeObjectURL(sourceUrl.current);
+    sourceUrl.current = null;
+    setSelection(null);
+    setState({ status: "empty" });
+  }
 
   function selectImage(file: File) {
+    clear();
     if (file.size === 0 || file.size > configuration.maxEncodedBytes) {
-      setSelection(null);
       setState({
         status: "error",
         message: "Choose a non-empty image within the upload limit."
       });
       return;
     }
-    setSelection({ file, url: URL.createObjectURL(file) });
-    setState({ status: "pending", result: null });
+    sourceUrl.current = URL.createObjectURL(file);
+    setSelection({ file, url: sourceUrl.current });
+    session.current = new ImagePreviewSession(file, setState);
+    session.current.request(options);
   }
 
   function changeOptions(next: CharacterImageOptions) {
     setOptions(next);
-    if (selection) {
-      setState((current) => ({
-        status: "pending",
-        result: "result" in current ? current.result : null
-      }));
-    }
+    session.current?.request(next);
   }
 
   function retry() {
-    setState({ status: "pending", result: null });
-    setRetryCount((count) => count + 1);
-  }
-
-  function clear() {
-    setSelection(null);
-    setState({ status: "empty" });
+    if (selection) selectImage(selection.file);
   }
 
   return {

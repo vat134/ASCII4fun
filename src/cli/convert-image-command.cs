@@ -39,6 +39,18 @@ internal static class ConvertImageCommand
         {
             Description = "Use sampled source colors for PNG; TXT still saves glyphs only."
         };
+        var contrastOption = new Option<int>("--contrast") { Description = "Contrast from -100 to 100; 0 preserves tone." };
+        var brightnessOption = new Option<int>("--brightness") { Description = "Brightness from -100 to 100; 0 preserves tone." };
+        var monochromeOption = new Option<string>("--mono-color")
+        {
+            Description = "Monochrome ink in #RRGGBB notation.",
+            DefaultValueFactory = _ => CharacterImageOptions.DefaultMonochromeColor.ToHex()
+        };
+        var backgroundOption = new Option<string>("--background")
+        {
+            Description = "Opaque PNG background in #RRGGBB notation.",
+            DefaultValueFactory = _ => CharacterImageOptions.DefaultBackgroundColor.ToHex()
+        };
         var formatOption = new Option<string>("--format")
         {
             Description = "Output format: txt or png.",
@@ -65,6 +77,10 @@ internal static class ConvertImageCommand
             rampOption,
             invertOption,
             sourceColorsOption,
+            contrastOption,
+            brightnessOption,
+            monochromeOption,
+            backgroundOption,
             formatOption,
             outputOption,
             outputDirectoryOption
@@ -89,16 +105,19 @@ internal static class ConvertImageCommand
         command.SetAction(async (parseResult, cancellationToken) =>
         {
             var input = parseResult.GetRequiredValue(inputArgument);
-            var options = new CharacterImageOptions
-            {
-                OutputWidthInCells = parseResult.GetValue(widthOption),
-                CharacterRamp = parseResult.GetRequiredValue(rampOption),
-                Invert = parseResult.GetValue(invertOption),
-                SourceColors = parseResult.GetValue(sourceColorsOption)
-            };
-
             try
             {
+                var options = new CharacterImageOptions
+                {
+                    OutputWidthInCells = parseResult.GetValue(widthOption),
+                    CharacterRamp = parseResult.GetRequiredValue(rampOption),
+                    Invert = parseResult.GetValue(invertOption),
+                    SourceColors = parseResult.GetValue(sourceColorsOption),
+                    Contrast = parseResult.GetValue(contrastOption),
+                    Brightness = parseResult.GetValue(brightnessOption),
+                    MonochromeColor = RgbColor.ParseHex(parseResult.GetRequiredValue(monochromeOption)),
+                    BackgroundColor = RgbColor.ParseHex(parseResult.GetRequiredValue(backgroundOption))
+                };
                 AsciiCanvas result;
 
                 var fileOptions = new FileStreamOptions

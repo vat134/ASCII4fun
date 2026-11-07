@@ -24,9 +24,14 @@ public sealed class ConvertImageCommandTests
             var canvas = await new StillImageConverter().ConvertAsync(input, new CharacterImageOptions
             {
                 OutputWidthInCells = 4,
-                SourceColors = sourceColors
+                SourceColors = sourceColors,
+                Contrast = 25,
+                Brightness = -10,
+                MonochromeColor = new RgbColor(0, 255, 255),
+                BackgroundColor = new RgbColor(16, 32, 48)
             });
             var args = new List<string> { "convert-image", inputPath, "--width", "4", "--format", "png", "--output", outputPath };
+            args.AddRange(["--contrast", "25", "--brightness", "-10", "--mono-color", "#00FFFF", "--background", "#102030"]);
             if (sourceColors) args.Add("--source-colors");
 
             Assert.Equal(0, await CliApplication.RunAsync(args.ToArray()));

@@ -30,10 +30,11 @@
     ]
   },
   "scripts": {
-    "build:web": "node tools/run-parcel.mjs build src/web/index.html --target web --no-cache",
+    "build:web": "pnpm build:engine && node tools/run-parcel.mjs build src/web/index.html --target web --no-cache && node tools/build-browser-engine.mjs copy",
+    "build:engine": "node tools/build-browser-engine.mjs",
     "check": "pnpm format && pnpm lint && pnpm typecheck && pnpm test:tools && pnpm test:web && pnpm build:web",
     "convert:image": "dotnet run --project src/cli/ascii4fun-cli.csproj --configuration Release -- convert-image --output-directory dev-assets/output",
-    "dev": "concurrently --kill-others \"pnpm dev:web\" \"pnpm dev:server\"",
+    "dev": "pnpm build:engine && concurrently --kill-others \"pnpm dev:web\" \"pnpm dev:server\"",
     "dev:web": "node tools/run-parcel.mjs serve src/web/index.html --target web --host 127.0.0.1",
     "dev:server": "node tools/run-development.cjs server",
     "start": "pnpm build:web && pnpm dev:server",
@@ -45,12 +46,13 @@
     "test:e2e:run": "cypress run --project e2e/ascii4fun-web-e2e --browser chrome",
     "test:tools": "node --test tools/*.test.cjs",
     "test:web": "jest --runInBand",
-    "typecheck": "tsc --noEmit && tsc --project e2e/ascii4fun-web-e2e/tsconfig.json"
+    "typecheck": "tsc --noEmit && tsc --project tsconfig.worker.json && tsc --project e2e/ascii4fun-web-e2e/tsconfig.json"
   },
   "dependencies": {
     "@base-ui/react": "1.9.0",
     "@fontsource/aldrich": "5.3.0",
     "@fontsource/ibm-plex-mono": "5.3.0",
+    "@imagemagick/magick-wasm": "0.0.46",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "lucide-react": "1.62.0",

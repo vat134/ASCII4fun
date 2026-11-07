@@ -10,6 +10,12 @@ public sealed class CharacterImageOptions
     private const int MinimumCharacterRampLength = 2;
     private const int MaximumOutputWidthInCells = 500;
 
+    /// <summary> The lower bound for contrast and brightness adjustments. </summary>
+    public const int MinToneAdjustment = -100;
+
+    /// <summary> The upper bound for contrast and brightness adjustments. </summary>
+    public const int MaxToneAdjustment = 100;
+
     /// <summary> The default output width measured in character cells. </summary>
     public static int DefaultOutputWidthInCells { get; } = 80;
 
@@ -25,6 +31,12 @@ public sealed class CharacterImageOptions
     /// <summary> The default ramp ordered from darkest to lightest. </summary>
     public static string DefaultCharacterRamp { get; } = "@%#*+=-:. ";
 
+    /// <summary> Default opaque white ink for monochrome output. </summary>
+    public static RgbColor DefaultMonochromeColor { get; } = new(255, 255, 255);
+
+    /// <summary> Default opaque black canvas background. </summary>
+    public static RgbColor DefaultBackgroundColor { get; } = new(0, 0, 0);
+
     /// <summary> The requested output width measured in character cells. </summary>
     public int OutputWidthInCells { get; init; } = DefaultOutputWidthInCells;
 
@@ -38,8 +50,24 @@ public sealed class CharacterImageOptions
     /// <remarks>Defaults to monochrome; enabling color preserves glyph selection and geometry.</remarks>
     public bool SourceColors { get; init; }
 
+    /// <summary> Contrast around the midpoint; -100 flattens, 0 preserves, +100 increases contrast. </summary>
+    public int Contrast { get; init; }
+
+    /// <summary> Additive brightness in percentage points; 0 preserves the input. </summary>
+    public int Brightness { get; init; }
+
+    /// <summary> Fixed ink used when source colors are disabled. </summary>
+    public RgbColor MonochromeColor { get; init; } = DefaultMonochromeColor;
+
+    /// <summary> Opaque background retained by the result and shared raster exporter. </summary>
+    public RgbColor BackgroundColor { get; init; } = DefaultBackgroundColor;
+
     internal Rune[] ValidateAndGetRamp()
     {
+        ArgumentOutOfRangeException.ThrowIfLessThan(Contrast, MinToneAdjustment);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(Contrast, MaxToneAdjustment);
+        ArgumentOutOfRangeException.ThrowIfLessThan(Brightness, MinToneAdjustment);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(Brightness, MaxToneAdjustment);
         if (OutputWidthInCells is < MinimumOutputWidthInCells or > MaximumOutputWidthInCells)
         {
             throw new ArgumentOutOfRangeException(

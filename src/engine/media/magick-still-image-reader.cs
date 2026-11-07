@@ -7,14 +7,6 @@ internal static class MagickStillImageReader
 {
     private const int StillImageFrameProbeLimit = 2;
     private const int ReadBufferSizeInBytes = 81_920;
-    private const int RiffHeaderLength = 12;
-    private const int ContainerTagLength = 4;
-    private const int WebPFormatTagOffset = 8;
-
-    private static ReadOnlySpan<byte> JpegSignature => [0xFF, 0xD8, 0xFF];
-
-    private static ReadOnlySpan<byte> PngSignature => [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A];
-
     public static async Task<RgbaGrid> ReadGridAsync(
         Stream encodedImage,
         int outputWidthInCells,
@@ -24,7 +16,7 @@ internal static class MagickStillImageReader
     {
         var encodedBytes = await ReadEncodedBytesAsync(encodedImage, limits.MaxEncodedBytes, cancellationToken);
 
-        ValidateSupportedSignature(encodedBytes);
+        StillImageSignature.Validate(encodedBytes);
         await ValidateMetadataAsync(encodedBytes, limits, cancellationToken);
 
         try
@@ -34,10 +26,10 @@ internal static class MagickStillImageReader
             await image.ReadAsync(stream, cancellationToken);
 
             image.AutoOrient();
-            ValidateDimensions(image.Width, image.Height, limits);
+            ImageGridGeometry.ValidateDimensions(image.Width, image.Height, limits);
             NormalizeColorSpace(image);
 
-            var outputHeightInCells = CalculateOutputHeight(
+            var outputHeightInCells = ImageGridGeometry.CalculateOutputHeight(
                 image.Width,
                 image.Height,
                 outputWidthInCells,
@@ -95,7 +87,7 @@ internal static class MagickStillImageReader
                     "Animated or multi-frame images are not supported by still-image conversion.");
             }
 
-            ValidateDimensions(image.Width, image.Height, limits);
+            ImageGridGeometry.ValidateDimensions(image.Width, image.Height, limits);
         }
         catch (MagickException exception)
         {
@@ -115,21 +107,6 @@ internal static class MagickStillImageReader
             or MagickFormat.Png64
             or MagickFormat.WebP;
 
-    private static void ValidateSupportedSignature(ReadOnlySpan<byte> encodedBytes)
-    {
-        var isJpeg = encodedBytes.StartsWith(JpegSignature);
-        var isPng = encodedBytes.StartsWith(PngSignature);
-        var isWebP = encodedBytes.Length >= RiffHeaderLength
-            && encodedBytes[..ContainerTagLength].SequenceEqual("RIFF"u8)
-            && encodedBytes.Slice(WebPFormatTagOffset, ContainerTagLength).SequenceEqual("WEBP"u8);
-
-        if (!isJpeg && !isPng && !isWebP)
-        {
-            throw new InvalidDataException(
-                "The input signature is not supported. Use JPEG, PNG, or WebP.");
-        }
-    }
-
     private static void NormalizeColorSpace(MagickImage image)
     {
         if (image.TransformColorSpace(ColorProfiles.SRGB))
@@ -144,50 +121,6 @@ internal static class MagickStillImageReader
         }
 
         image.ColorSpace = ColorSpace.sRGB;
-    }
-
-    private static void ValidateDimensions(uint width, uint height, ConversionLimits limits)
-    {
-        if (width == 0 || height == 0)
-        {
-            throw new InvalidDataException("The image dimensions must be greater than zero.");
-        }
-
-        if (width > limits.MaxInputDimension || height > limits.MaxInputDimension)
-        {
-            throw new InvalidDataException(
-                $"The image dimensions exceed the current {limits.MaxInputDimension}-pixel side limit.");
-        }
-
-        var decodedPixels = checked((long)width * height);
-
-        if (decodedPixels > limits.MaxDecodedPixels)
-        {
-            throw new InvalidDataException(
-                $"The image exceeds the current {limits.MaxDecodedPixels:N0}-pixel decode limit.");
-        }
-    }
-
-    private static int CalculateOutputHeight(
-        uint inputWidth,
-        uint inputHeight,
-        int outputWidthInCells,
-        double characterCellAspectRatio,
-        int maxGridCells)
-    {
-        var aspectCorrectHeight =
-            (inputHeight / (double)inputWidth) * outputWidthInCells * characterCellAspectRatio;
-        var outputHeightInCells = Math.Max(
-            1,
-            (int)Math.Round(aspectCorrectHeight, MidpointRounding.AwayFromZero));
-
-        if ((long)outputWidthInCells * outputHeightInCells > maxGridCells)
-        {
-            throw new InvalidDataException(
-                $"The requested output exceeds the current {maxGridCells:N0}-cell grid limit.");
-        }
-
-        return outputHeightInCells;
     }
 
     private static async Task<byte[]> ReadEncodedBytesAsync(

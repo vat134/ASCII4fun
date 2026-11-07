@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.WebAssembly">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>Ascii4Fun.Browser</AssemblyName>
+    <RootNamespace>Ascii4Fun.Browser</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <WasmMainJSPath>main.js</WasmMainJSPath>
+    <WasmEnableHotReload>false</WasmEnableHotReload>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="notices/*" CopyToPublishDirectory="PreserveNewest" />
+    <PackageReference Include="Magick.NET.Core" GeneratePathProperty="true" />
+    <Compile Include="../images/*.cs" Exclude="../images/still-image-converter.cs" LinkBase="images" />
+    <Compile Include="../media/*.cs" Exclude="../media/magick-still-image-reader.cs" LinkBase="media" />
+    <Compile Include="../rendering/*.cs" Exclude="../rendering/png-exporter.cs;../rendering/magick-glyph-renderer.cs" LinkBase="rendering" />
+  </ItemGroup>
+  <Target Name="CopyBrowserRuntimeNotices" AfterTargets="Publish">
+    <Copy SourceFiles="$(PkgMagick_NET_Core)/Copyright.txt" DestinationFiles="$(PublishDir)notices/magick-core-notices.txt" />
+  </Target>
+</Project>
