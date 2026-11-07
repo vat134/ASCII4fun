@@ -1,3 +1,4 @@
+import { useImageDownload } from "./use-image-download";
 import { useRef, useState } from "react";
 import {
   createDefaultImageOptions,
@@ -31,20 +32,14 @@ export function ImageWorkspace({
     ? `${result.widthInCells} × ${result.heightInCells}`
     : "—";
 
-  function download(format: "txt" | "png") {
-    if (state.status !== "ready" || !selection) return;
-    const url =
-      format === "png"
-        ? `data:image/png;base64,${state.result.png}`
-        : URL.createObjectURL(
-            new Blob([state.result.text], { type: "text/plain;charset=utf-8" })
-          );
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = `${selection.file.name.replace(/\.[^.]+$/u, "")}.${format}`;
-    anchor.click();
-    if (format === "txt") window.setTimeout(() => URL.revokeObjectURL(url), 0);
-  }
+  const {
+    download,
+    busy: exporting,
+    error: exportError
+  } = useImageDownload(
+    state.status === "ready" ? state.result : null,
+    selection?.file.name
+  );
 
   return (
     <main className="mx-auto flex w-full max-w-480 flex-1 flex-col gap-4 p-4 sm:p-6 lg:min-h-0 lg:flex-row lg:gap-5 lg:p-6 xl:p-8">
@@ -69,7 +64,7 @@ export function ImageWorkspace({
 
       <section
         aria-label="Preview workspace"
-        className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-xl border bg-card lg:h-full lg:max-h-200"
+        className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-xl border bg-card lg:h-full"
       >
         <PreviewToolbar
           zoom={zoom}
@@ -86,6 +81,7 @@ export function ImageWorkspace({
           onBrowse={() => inputRef.current?.click()}
           onSelect={selectImage}
           onRetry={retry}
+          onClear={clear}
         />
 
         <div
@@ -116,7 +112,8 @@ export function ImageWorkspace({
           setZoom(previewZoom.default);
           changeOptions(createDefaultImageOptions(configuration));
         }}
-        canExport={state.status === "ready"}
+        canExport={state.status === "ready" && !exporting}
+        exportError={exportError}
         onExport={download}
         dimensions={dimensions}
       />

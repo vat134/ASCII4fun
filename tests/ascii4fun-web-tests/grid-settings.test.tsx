@@ -22,6 +22,28 @@ function Columns() {
   );
 }
 
+test("clamps delayed typing before it reaches conversion", () => {
+  const onChange = jest.fn();
+  render(
+    <GridSettings
+      minWidthInCells={16}
+      maxWidthInCells={180}
+      widthInCells={80}
+      onWidthChange={onChange}
+    />
+  );
+  const input = screen.getByLabelText("Columns", {
+    selector: 'input[type="text"]'
+  });
+  fireEvent.focus(input);
+  fireEvent.change(input, { target: { value: "500" } });
+  act(() => jest.advanceTimersByTime(1000));
+  expect(onChange).toHaveBeenLastCalledWith(180);
+  fireEvent.change(input, { target: { value: "1" } });
+  act(() => jest.advanceTimersByTime(1000));
+  expect(onChange).toHaveBeenLastCalledWith(16);
+});
+
 test("waits 1 second after the last typed digit and cancels cleared input", () => {
   const onChange = jest.fn();
   render(

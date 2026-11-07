@@ -19,5 +19,5 @@
     "tests/ascii4fun-web-tests/**/*.ts",
     "tests/ascii4fun-web-tests/**/*.tsx"
   ],
-  "exclude": ["e2e", "node_modules"]
+  "exclude": ["e2e", "node_modules", "src/web/images/worker"]
 }

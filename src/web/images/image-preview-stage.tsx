@@ -3,7 +3,7 @@ import { AsciiSpinner } from "../ui/ascii-spinner";
 import { Button } from "../ui/base/button";
 import { AsciiPreview } from "./ascii-preview";
 import { ImageUploadPrompt } from "./image-upload-prompt";
-import type { ConversionState } from "./use-image-conversion";
+import type { ConversionState } from "./image-preview-session";
 
 type ImagePreviewStageProps = {
   state: ConversionState;
@@ -13,6 +13,7 @@ type ImagePreviewStageProps = {
   onBrowse: () => void;
   onSelect: (file: File) => void;
   onRetry: () => void;
+  onClear: () => void;
 };
 
 export function ImagePreviewStage({
@@ -22,7 +23,8 @@ export function ImagePreviewStage({
   hasImage,
   onBrowse,
   onSelect,
-  onRetry
+  onRetry,
+  onClear
 }: ImagePreviewStageProps) {
   const [isDragging, setIsDragging] = useState(false);
   const result = "result" in state ? state.result : null;
@@ -45,9 +47,7 @@ export function ImagePreviewStage({
       }}
     >
       {result ? (
-        <div
-          className={`size-full p-5 transition-opacity ${state.status === "pending" ? "opacity-40" : "opacity-100"}`}
-        >
+        <div className="size-full p-5">
           <AsciiPreview result={result} zoom={zoom} />
         </div>
       ) : state.status === "empty" ? (
@@ -57,7 +57,7 @@ export function ImagePreviewStage({
         />
       ) : null}
 
-      {state.status === "pending" && (
+      {state.status === "pending" && !result && (
         <div
           role="status"
           className="absolute rounded-lg border bg-card px-5 py-3 text-sm shadow-lg"
@@ -73,8 +73,8 @@ export function ImagePreviewStage({
             {state.message}
           </p>
           <div className="flex justify-center gap-3">
-            <Button variant="outline" className="h-10" onClick={onBrowse}>
-              Choose image
+            <Button variant="outline" className="h-10" onClick={onClear}>
+              Clear
             </Button>
             {hasImage && (
               <Button className="h-10" onClick={onRetry}>

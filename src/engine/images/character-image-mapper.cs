@@ -5,8 +5,6 @@ namespace Ascii4Fun.Images;
 
 internal static class CharacterImageMapper
 {
-    internal static readonly RgbColor MonochromeColor = new(238, 238, 236);
-
     public static AsciiCanvas Map(
         LuminanceGrid grid,
         RgbaGrid source,
@@ -15,6 +13,7 @@ internal static class CharacterImageMapper
         CancellationToken cancellationToken)
     {
         var cells = new AsciiCell[grid.Values.Length];
+        var tone = new ToneAdjustment(options.Contrast, options.Brightness);
 
         for (var index = 0; index < cells.Length; index++)
         {
@@ -23,21 +22,26 @@ internal static class CharacterImageMapper
                 cancellationToken.ThrowIfCancellationRequested();
             }
 
-            var luminance = options.Invert ? 1 - grid.Values[index] : grid.Values[index];
+            var luminance = tone.Apply(grid.Values[index]);
+            if (options.Invert)
+            {
+                luminance = 1 - luminance;
+            }
+
             var rampIndex = Math.Min((int)(luminance * ramp.Length), ramp.Length - 1);
-            var color = MonochromeColor;
+            var color = options.MonochromeColor;
             if (options.SourceColors)
             {
                 var sample = source.SampleOverWhite(index);
                 color = new RgbColor(
-                    (byte)Math.Round(sample.Red * byte.MaxValue),
-                    (byte)Math.Round(sample.Green * byte.MaxValue),
-                    (byte)Math.Round(sample.Blue * byte.MaxValue));
+                    (byte)Math.Round(tone.Apply(sample.Red) * byte.MaxValue),
+                    (byte)Math.Round(tone.Apply(sample.Green) * byte.MaxValue),
+                    (byte)Math.Round(tone.Apply(sample.Blue) * byte.MaxValue));
             }
 
             cells[index] = new AsciiCell(ramp[rampIndex], color);
         }
 
-        return new AsciiCanvas(cells, grid.WidthInCells, grid.HeightInCells);
+        return new AsciiCanvas(cells, grid.WidthInCells, grid.HeightInCells, options.BackgroundColor);
     }
 }

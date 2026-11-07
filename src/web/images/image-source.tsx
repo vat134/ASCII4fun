@@ -39,7 +39,7 @@ export function ImageSource({ selection, onBrowse }: ImageSourceProps) {
               <img
                 src={selection.url}
                 alt="Uploaded source thumbnail"
-                className="max-h-40 w-full rounded-md bg-muted object-contain"
+                className="max-h-64 w-full rounded-md bg-muted object-contain"
               />
               <p className="break-all font-mono text-xs leading-relaxed">
                 {selection.file.name}

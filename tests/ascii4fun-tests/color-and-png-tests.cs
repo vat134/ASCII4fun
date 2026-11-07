@@ -37,7 +37,7 @@ public sealed class ColorAndPngTests
         Assert.Equal(
             [new RgbColor(255, 0, 0), new RgbColor(0, 255, 0), new RgbColor(0, 0, 255), new RgbColor(255, 127, 127)],
             color.Cells.Select(cell => cell.Color));
-        Assert.All(monochrome.Cells, cell => Assert.Equal(new RgbColor(238, 238, 236), cell.Color));
+        Assert.All(monochrome.Cells, cell => Assert.Equal(new RgbColor(255, 255, 255), cell.Color));
         Assert.True(((IList<AsciiCell>)color.Cells).IsReadOnly);
     }
 
@@ -76,9 +76,9 @@ public sealed class ColorAndPngTests
             for (var x = 0; x < 24; x++)
             {
                 var actual = pixels.GetPixel(x, y).ToColor()!;
-                Assert.Equal(x < 12 ? red : (byte)8, actual.R);
-                Assert.Equal(x < 12 ? green : (byte)8, actual.G);
-                Assert.Equal(x < 12 ? blue : (byte)8, actual.B);
+                Assert.Equal(x < 12 ? red : (byte)0, actual.R);
+                Assert.Equal(x < 12 ? green : (byte)0, actual.G);
+                Assert.Equal(x < 12 ? blue : (byte)0, actual.B);
                 Assert.Equal(byte.MaxValue, actual.A);
             }
         }

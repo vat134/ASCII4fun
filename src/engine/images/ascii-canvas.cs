@@ -5,12 +5,16 @@ namespace Ascii4Fun.Images;
 /// <summary> An immutable rectangular grid of glyphs and colors, independent of its export format. </summary>
 public sealed class AsciiCanvas
 {
-    internal AsciiCanvas(AsciiCell[] cells, int widthInCells, int heightInCells)
+    internal AsciiCanvas(AsciiCell[] cells, int widthInCells, int heightInCells, RgbColor? backgroundColor = null)
     {
         Cells = Array.AsReadOnly(cells);
         WidthInCells = widthInCells;
         HeightInCells = heightInCells;
+        BackgroundColor = backgroundColor ?? CharacterImageOptions.DefaultBackgroundColor;
     }
+
+    /// <summary> Opaque background for raster representations. TXT contains glyphs only. </summary>
+    public RgbColor BackgroundColor { get; }
 
     /// <summary> The cells in row-major order, including empty space glyphs. </summary>
     public IReadOnlyList<AsciiCell> Cells { get; }
