@@ -73,6 +73,7 @@ export async function nativeResult(
     characterRamp: "@%#*+=-:. ",
     invert: "true",
     sourceColors: "true",
+    useMeasuredGlyphDensity: "true",
     ...options
   }))
     form.set(key, value);

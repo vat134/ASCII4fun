@@ -4,6 +4,7 @@ export function imageOptionsKey(options: CharacterImageOptions): string {
   return JSON.stringify({
     outputWidthInCells: options.outputWidthInCells,
     characterRamp: options.characterRamp,
+    useMeasuredGlyphDensity: options.useMeasuredGlyphDensity,
     invert: options.invert,
     sourceColors: options.sourceColors,
     contrast: options.contrast,

@@ -41,9 +41,10 @@ public sealed class ConvertImageCommandTests
     }
 
     [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task WritesTheSamePngAsThePackage(bool sourceColors)
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    public async Task WritesTheSamePngAsThePackage(bool sourceColors, bool measuredDensity)
     {
         var directory = Directory.CreateTempSubdirectory("ascii4fun-cli-png-");
         try
@@ -57,6 +58,7 @@ public sealed class ConvertImageCommandTests
             {
                 OutputWidthInCells = 4,
                 SourceColors = sourceColors,
+                UseMeasuredGlyphDensity = measuredDensity,
                 Contrast = 25,
                 Brightness = -10,
                 MonochromeColor = new RgbColor(0, 255, 255),
@@ -65,6 +67,7 @@ public sealed class ConvertImageCommandTests
             var args = new List<string> { "convert-image", inputPath, "--width", "4", "--format", "png", "--output", outputPath };
             args.AddRange(["--contrast", "25", "--brightness", "-10", "--mono-color", "#00FFFF", "--background", "#102030"]);
             if (sourceColors) args.Add("--source-colors");
+            if (measuredDensity) args.Add("--measured-density");
 
             Assert.Equal(0, await CliApplication.RunAsync(args.ToArray()));
             using var expected = new MagickImage(await PngExporter.ExportAsync(canvas));

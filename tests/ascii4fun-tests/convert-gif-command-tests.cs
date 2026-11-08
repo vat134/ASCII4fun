@@ -17,7 +17,7 @@ public sealed class ConvertGifCommandTests
             await File.WriteAllBytesAsync(source, Convert.FromBase64String(
                 "R0lGODlhBAAEAPAAAP8AAAAAACH/C05FVFNDQVBFMi4wAwECAAAh+QQEAwAAACwAAAAABAAEAAACBISPCQUAIfkEDAcAAAAsAQABAAIAAgCAAP8AAAAAAgKEUQAh+QQICwAAACwDAAMAAQABAIAAAP8AAAACAkQBADs="));
             Assert.Equal(0, await CliApplication.RunAsync(["convert-gif", source, "--output", output,
-                "--width", "4", "--speed", "2", "--fps", "14"]));
+                "--width", "4", "--speed", "2", "--fps", "14", "--measured-density"]));
             var bytes = await File.ReadAllBytesAsync(output);
             using (var frames = new MagickImageCollection(bytes))
             {

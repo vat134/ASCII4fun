@@ -21,6 +21,7 @@ export type RgbColor = { red: number; green: number; blue: number };
 export type CharacterImageOptions = {
   outputWidthInCells: number;
   characterRamp: string;
+  useMeasuredGlyphDensity: boolean;
   invert: boolean;
   sourceColors: boolean;
   contrast: number;
@@ -46,6 +47,7 @@ export function createDefaultImageOptions(
   return {
     outputWidthInCells: configuration.defaultOutputWidthInCells,
     characterRamp: configuration.defaultCharacterRamp,
+    useMeasuredGlyphDensity: true,
     invert: true,
     sourceColors: true,
     contrast: 0,

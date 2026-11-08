@@ -1,3 +1,4 @@
+using System.Text;
 using Ascii4Fun.Media;
 using Ascii4Fun.Rendering;
 
@@ -6,7 +7,8 @@ namespace Ascii4Fun.Images;
 internal static class CharacterImagePipeline
 {
     public static AsciiCanvas Convert(RgbaGrid source, CharacterImageOptions options, byte[]? sourcePhotoRgba = null,
-        LuminanceRange? sequenceRange = null, CancellationToken cancellationToken = default)
+        LuminanceRange? sequenceRange = null, Func<Rune, byte[]>? renderGlyph = null,
+        CancellationToken cancellationToken = default)
     {
         var ramp = options.ValidateAndGetRamp();
         var (width, height) = (source.WidthInPixels, source.HeightInPixels);
@@ -18,7 +20,10 @@ internal static class CharacterImagePipeline
         }
         var luminance = LuminanceAnalyzer.Analyze(source, cancellationToken);
         var normalized = AutoToneMapper.Normalize(luminance, cancellationToken, sequenceRange);
+        var density = options.UseMeasuredGlyphDensity
+            ? GlyphDensityMap.Create(ramp, renderGlyph ?? throw new ArgumentNullException(nameof(renderGlyph)), cancellationToken)
+            : null;
         return CharacterImageMapper.Map(normalized, source, ramp, options,
-            options.SourcePhotoOpacity > 0 ? sourcePhotoRgba : null, cancellationToken);
+            options.SourcePhotoOpacity > 0 ? sourcePhotoRgba : null, cancellationToken, density);
     }
 }

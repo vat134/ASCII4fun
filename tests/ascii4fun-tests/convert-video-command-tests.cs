@@ -15,7 +15,7 @@ public sealed class ConvertVideoCommandTests
             var input = Path.Combine(directory, "source.mp4");
             var output = Path.Combine(directory, "ascii.mp4");
             await File.WriteAllBytesAsync(input, VideoFixture.Bytes());
-            string[] args = ["convert-video", input, "--output", output, "--width", "8", "--speed", "2", "--fps", "5"];
+            string[] args = ["convert-video", input, "--output", output, "--width", "8", "--speed", "2", "--fps", "5", "--measured-density"];
             Assert.Equal(0, await CliApplication.RunAsync(args));
             var expected = await File.ReadAllBytesAsync(output);
             await using var clip = await VideoClip.OpenAsync(new MemoryStream(expected));

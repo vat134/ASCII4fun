@@ -18,7 +18,8 @@ foreach (var glyph in new[] { "@", "█", "𝔸" })
         CharacterRamp = glyph + " ",
         SourceColors = true,
         ShadowLift = 50,
-        SourcePhotoOpacity = 35
+        SourcePhotoOpacity = 35,
+        UseMeasuredGlyphDensity = true
     });
     if (canvas.Text != glyph + glyph + "  ")
     {

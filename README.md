@@ -74,9 +74,13 @@ The package returns `AsciiCanvas` (replacing the pre-release `AsciiText` type). 
 
 `ShadowLift` / `--shadow-lift` lifts dark tones; `SourcePhotoOpacity` / `--source-photo-opacity` adds the normalized original beneath glyphs. Both range from 0 to 100 and default to 0. Photo tone stays unchanged; its additional raster is limited to 12 million pixels.
 
+**Measured glyph density** under Characters chooses the nearest measured glyph tone instead of using equally spaced ramp positions. It is enabled initially and after Reset in the Web editor; turn it off to use authored ramp order. Package/CLI/HTTP defaults remain unchanged: package consumers set `CharacterImageOptions.UseMeasuredGlyphDensity = true`; image/GIF/video CLI commands accept `--measured-density`. GIF/video HTTP `settings.options` accepts `useMeasuredGlyphDensity: true`.
+
+Density uses mean glyph-mask coverage in the bundled 12 × 24 px fonts, normalized between the densest and lightest selected glyphs. It reorders the selected set; authored order breaks equal-density ties. A set with identical coverage always selects its first glyph. Density mode supports up to 256 distinct Unicode glyphs and preserves tone controls, invert, geometry and foreground colors. This is relative tone matching, not exact physical brightness reproduction; a receiving chat's font can change the appearance. No dithering is applied.
+
 PNG uses fixed 12 × 24 px cells, bundled OFL fonts and an opaque background (black by default). Downloaded PNG pixels match preview; zoom and dragging only affect the view. Font details and licenses are in [rendering/fonts](src/engine/rendering/fonts/README.md).
 
-The existing multipart `/api/images/convert` accepts optional `sourceColors=false`, `contrast=0`, `brightness=0`, `shadowLift=0`, `sourcePhotoOpacity=0`, `monochromeColor=#FFFFFF` and `backgroundColor=#000000` and returns `{ text, widthInCells, heightInCells, png }`, with base64 PNG. Uploaded media remains transient.
+The existing multipart `/api/images/convert` accepts optional `sourceColors=false`, `useMeasuredGlyphDensity=false`, `contrast=0`, `brightness=0`, `shadowLift=0`, `sourcePhotoOpacity=0`, `monochromeColor=#FFFFFF` and `backgroundColor=#000000` and returns `{ text, widthInCells, heightInCells, png }`, with base64 PNG. Uploaded media remains transient.
 
 Browser working buffers and result history are bounded; oversized work fails explicitly. First use loads the WASM runtimes and required fonts. See [architecture](docs/architecture.md) for ownership and limits.
 

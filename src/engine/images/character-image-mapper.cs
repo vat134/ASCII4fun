@@ -11,7 +11,8 @@ internal static class CharacterImageMapper
         Rune[] ramp,
         CharacterImageOptions options,
         byte[]? sourcePhotoRgba,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        GlyphDensityMap? density = null)
     {
         var cells = new AsciiCell[grid.Values.Length];
         var tone = new ToneAdjustment(options.Contrast, options.Brightness, options.ShadowLift);
@@ -40,7 +41,7 @@ internal static class CharacterImageMapper
                     (byte)Math.Round(tone.Apply(sample.Blue) * byte.MaxValue));
             }
 
-            cells[index] = new AsciiCell(ramp[rampIndex], color);
+            cells[index] = new AsciiCell(density?.SelectGlyph(luminance) ?? ramp[rampIndex], color);
         }
 
         return new AsciiCanvas(cells, grid.WidthInPixels, grid.HeightInPixels, options.BackgroundColor,
