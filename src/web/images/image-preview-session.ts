@@ -20,6 +20,7 @@ type PreviewRequest = {
 function optionsKey(options: CharacterImageOptions): string {
   return JSON.stringify({
     outputWidthInCells: options.outputWidthInCells,
+    style: options.style,
     characterRamp: options.characterRamp,
     invert: options.invert,
     sourceColors: options.sourceColors,

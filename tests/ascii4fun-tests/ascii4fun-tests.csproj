@@ -15,6 +15,9 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
+    <EmbeddedResource Include="fixtures/figlet-selection-goldens.json" LogicalName="Ascii4Fun.Tests.FigletSelectionGoldens.json" />
+    <EmbeddedResource Include="fixtures/thedraw-color-goldens.json" LogicalName="Ascii4Fun.Tests.ThedrawColorGoldens.json" />
+    <EmbeddedResource Include="fixtures/figlet-font-goldens.json" LogicalName="Ascii4Fun.Tests.FigletFontGoldens.json" />
   </ItemGroup>
 
   <ItemGroup>

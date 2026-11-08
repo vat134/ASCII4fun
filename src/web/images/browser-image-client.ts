@@ -19,7 +19,7 @@ export class BrowserImageClient {
 
   constructor(file: File) {
     this.worker = new Worker(
-      new URL("./worker/image-worker.ts", import.meta.url),
+      new URL("../browser-engine/conversion-worker.ts", import.meta.url),
       { type: "module" }
     );
     this.worker.onmessage = ({ data }) => {

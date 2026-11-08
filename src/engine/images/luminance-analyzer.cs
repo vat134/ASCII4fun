@@ -15,11 +15,11 @@ internal static class LuminanceAnalyzer
 
     public static LuminanceGrid Analyze(RgbaGrid grid, CancellationToken cancellationToken)
     {
-        var values = new double[grid.WidthInCells * grid.HeightInCells];
+        var values = new double[grid.WidthInPixels * grid.HeightInPixels];
 
         for (var index = 0; index < values.Length; index++)
         {
-            if (index % grid.WidthInCells == 0)
+            if (index % grid.WidthInPixels == 0)
             {
                 cancellationToken.ThrowIfCancellationRequested();
             }
@@ -28,7 +28,7 @@ internal static class LuminanceAnalyzer
             values[index] = CalculateLuminance(sample.Red, sample.Green, sample.Blue);
         }
 
-        return new LuminanceGrid(grid.WidthInCells, grid.HeightInCells, values);
+        return new LuminanceGrid(grid.WidthInPixels, grid.HeightInPixels, values);
     }
 
     private static double CalculateLuminance(double red, double green, double blue)

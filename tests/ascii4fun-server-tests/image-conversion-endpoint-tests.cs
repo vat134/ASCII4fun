@@ -17,6 +17,7 @@ public sealed class ImageConversionEndpointTests(WebApplicationFactory<Program> 
     {
         using var client = application.CreateClient();
         var configuration = await GetConfigurationAsync(client);
+        Assert.Equal("characters", configuration.GetProperty("defaultStyle").GetString());
         Assert.Equal(16, configuration.GetProperty("minOutputWidthInCells").GetInt32());
         Assert.Equal(180, configuration.GetProperty("maxOutputWidthInCells").GetInt32());
         Assert.Equal(-40, configuration.GetProperty("minToneAdjustment").GetInt32());
@@ -29,7 +30,9 @@ public sealed class ImageConversionEndpointTests(WebApplicationFactory<Program> 
     [InlineData(true, 0)]
     [InlineData(false, 35)]
     [InlineData(true, 100)]
-    public async Task ReturnsPackagePngAndGlyphOnlyText(bool sourceColors, int photoOpacity)
+    [InlineData(false, 0, ImageStyle.Braille)]
+    [InlineData(true, 100, ImageStyle.Braille)]
+    public async Task ReturnsPackagePngAndGlyphOnlyText(bool sourceColors, int photoOpacity, ImageStyle style = ImageStyle.Characters)
     {
         using var client = application.CreateClient();
         await GetConfigurationAsync(client);
@@ -39,6 +42,7 @@ public sealed class ImageConversionEndpointTests(WebApplicationFactory<Program> 
         var expected = await new StillImageConverter().ConvertAsync(input, new CharacterImageOptions
         {
             OutputWidthInCells = 4,
+            Style = style,
             CharacterRamp = "@ ",
             Invert = true,
             SourceColors = sourceColors,
@@ -50,6 +54,7 @@ public sealed class ImageConversionEndpointTests(WebApplicationFactory<Program> 
             BackgroundColor = new RgbColor(16, 32, 48)
         });
         using var body = CreateBody(encoded, "image/png");
+        body.Add(new StringContent(style.ToString().ToLowerInvariant()), "style");
         body.Add(new StringContent(sourceColors.ToString()), "sourceColors");
         body.Add(new StringContent("25"), "contrast");
         body.Add(new StringContent("-10"), "brightness");
@@ -148,6 +153,8 @@ public sealed class ImageConversionEndpointTests(WebApplicationFactory<Program> 
     }
 
     [Theory]
+    [InlineData("style", "99")]
+    [InlineData("style", "unknown")]
     [InlineData("shadowLift", "-1")]
     [InlineData("shadowLift", "101")]
     [InlineData("sourcePhotoOpacity", "-1")]

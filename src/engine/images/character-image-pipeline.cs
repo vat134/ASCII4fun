@@ -9,12 +9,18 @@ internal static class CharacterImagePipeline
         CancellationToken cancellationToken = default)
     {
         var ramp = options.ValidateAndGetRamp();
-        if (options.SourcePhotoOpacity > 0 && sourcePhotoRgba?.Length != SourcePhotoGeometry.ByteLength(source.WidthInCells, source.HeightInCells))
+        var (width, height) = ImageSamplingGeometry.OutputSize(source.WidthInPixels, source.HeightInPixels, options.Style);
+        if (source.Pixels.LongLength != (long)source.WidthInPixels * source.HeightInPixels * 4)
+            throw new ArgumentException("The sampled image must contain RGBA pixels for every sample.", nameof(source));
+        if (options.SourcePhotoOpacity > 0 && sourcePhotoRgba?.Length != SourcePhotoGeometry.ByteLength(width, height))
         {
             throw new ArgumentException("The source photo must match the full output raster.", nameof(sourcePhotoRgba));
         }
         var luminance = LuminanceAnalyzer.Analyze(source, cancellationToken);
         var normalized = AutoToneMapper.Normalize(luminance, cancellationToken);
+        if (options.Style == ImageStyle.Braille)
+            return BrailleImageMapper.Map(normalized, source, options,
+                options.SourcePhotoOpacity > 0 ? sourcePhotoRgba : null, cancellationToken);
         return CharacterImageMapper.Map(normalized, source, ramp, options,
             options.SourcePhotoOpacity > 0 ? sourcePhotoRgba : null, cancellationToken);
     }

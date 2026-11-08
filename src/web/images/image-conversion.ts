@@ -1,4 +1,7 @@
+import type { AsciiPreviewResult } from "../rendering/ascii-preview-result";
+
 export type ImageConfiguration = {
+  defaultStyle: ImageStyle;
   defaultOutputWidthInCells: number;
   minOutputWidthInCells: number;
   maxOutputWidthInCells: number;
@@ -15,7 +18,10 @@ export type ImageConfiguration = {
 
 export type RgbColor = { red: number; green: number; blue: number };
 
+export type ImageStyle = "characters" | "braille";
+
 export type CharacterImageOptions = {
+  style: ImageStyle;
   outputWidthInCells: number;
   characterRamp: string;
   invert: boolean;
@@ -28,19 +34,13 @@ export type CharacterImageOptions = {
   backgroundColor: RgbColor;
 };
 
-export type ImageConversionResult = {
-  text: string;
-  widthInCells: number;
-  heightInCells: number;
-  pixels: Uint8ClampedArray<ArrayBuffer>;
-  widthInPixels: number;
-  heightInPixels: number;
-};
+export type ImageConversionResult = AsciiPreviewResult;
 
 export function createDefaultImageOptions(
   configuration: ImageConfiguration
 ): CharacterImageOptions {
   return {
+    style: configuration.defaultStyle,
     outputWidthInCells: configuration.defaultOutputWidthInCells,
     characterRamp: configuration.defaultCharacterRamp,
     invert: true,

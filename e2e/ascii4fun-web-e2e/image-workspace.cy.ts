@@ -37,8 +37,17 @@ describe("Still-image workspace", () => {
 
   it("exports the current full raster and glyph-only TXT independently of zoom", () => {
     const downloads: { name: string; blob: Promise<Blob> }[] = [];
+    let copiedText: string | null = null;
     cy.visit("/", {
       onBeforeLoad(win) {
+        Object.defineProperty(win.navigator, "clipboard", {
+          configurable: true,
+          value: {
+            writeText: async (text: string) => {
+              copiedText = text;
+            }
+          }
+        });
         win.HTMLAnchorElement.prototype.click = function () {
           downloads.push({
             name: this.download,
@@ -47,6 +56,7 @@ describe("Still-image workspace", () => {
         };
       }
     });
+    cy.get('[aria-label="Copy text"]').should("be.disabled");
     uploadImage();
     ready();
     columns(40);
@@ -58,6 +68,7 @@ describe("Still-image workspace", () => {
       .type("{end}");
     ready(40);
     cy.get('button[aria-label="Zoom in"]').click().click();
+    cy.get('[aria-label="Copy text"]').click().should("contain.text", "Copied");
     cy.contains("button", "Download PNG").click();
     cy.contains("button", "Download .txt").click();
     cy.wrap(downloads).should("have.length", 2);
@@ -71,7 +82,12 @@ describe("Still-image workspace", () => {
         "source.png",
         "source.txt"
       ]);
-      expect(await (await downloads[1]!.blob).text()).to.eq(native.text);
+      const txt = await (await downloads[1]!.blob).text();
+      expect(txt).to.eq(native.text);
+      expect(txt).to.contain(" ");
+      expect(txt).not.to.contain("\u2800");
+      expect(txt).not.to.contain("\u00a0");
+      expect(copiedText).to.eq(native.text);
       const actual = await pngPixels(win, await downloads[0]!.blob);
       const expected = await pngPixels(
         win,
@@ -94,6 +110,22 @@ describe("Still-image workspace", () => {
         if (preview.data[index] !== displayed.data[index]) differences++;
       expect(differences, "preview matches displayed export").to.eq(0);
     });
+  });
+
+  it("keeps Copy text and preview controls usable on a narrow screen", () => {
+    cy.viewport(320, 900);
+    cy.visit("/");
+    uploadImage();
+    ready();
+    cy.get('[aria-label="Copy text"]').should("be.visible").and("be.enabled");
+    cy.get('[aria-label="Zoom in"]').should("be.visible");
+    cy.get('[aria-label="Remove image"]').should("be.visible");
+    cy.document().should((document) =>
+      expect(document.documentElement.scrollWidth).to.be.at.most(320)
+    );
+    cy.screenshot("media-copy-320", { capture: "fullPage" });
+    cy.get('[aria-label="Remove image"]').click();
+    cy.get('[aria-label="Copy text"]').should("be.disabled");
   });
 
   it("matches native transparent input, Mono ink and background pixels", () => {

@@ -24,6 +24,13 @@ internal static class ConvertImageCommand
         };
         widthOption.Aliases.Add("-w");
 
+        var styleOption = new Option<string>("--style")
+        {
+            Description = "Image mapping: characters or spatial eight-dot braille.",
+            DefaultValueFactory = _ => CharacterImageOptions.DefaultStyle.ToString().ToLowerInvariant()
+        };
+        styleOption.AcceptOnlyFromAmong("characters", "braille");
+
         var rampOption = new Option<string>("--ramp")
         {
             Description = "Characters ordered from darkest to lightest.",
@@ -82,6 +89,7 @@ internal static class ConvertImageCommand
         {
             inputArgument,
             widthOption,
+            styleOption,
             rampOption,
             invertOption,
             sourceColorsOption,
@@ -120,6 +128,7 @@ internal static class ConvertImageCommand
                 var options = new CharacterImageOptions
                 {
                     OutputWidthInCells = parseResult.GetValue(widthOption),
+                    Style = Enum.Parse<ImageStyle>(parseResult.GetRequiredValue(styleOption), ignoreCase: true),
                     CharacterRamp = parseResult.GetRequiredValue(rampOption),
                     Invert = parseResult.GetValue(invertOption),
                     SourceColors = parseResult.GetValue(sourceColorsOption),

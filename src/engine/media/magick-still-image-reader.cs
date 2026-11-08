@@ -1,4 +1,5 @@
 using System.Buffers;
+using Ascii4Fun.Images;
 using Ascii4Fun.Rendering;
 using ImageMagick;
 
@@ -11,6 +12,7 @@ internal static class MagickStillImageReader
     public static async Task<PreparedStillImage> ReadAsync(
         Stream encodedImage,
         int outputWidthInCells,
+        ImageStyle style,
         double characterCellAspectRatio,
         ConversionLimits limits,
         bool includeSourcePhoto,
@@ -38,7 +40,10 @@ internal static class MagickStillImageReader
                 characterCellAspectRatio,
                 limits.MaxGridCells);
 
-            var geometry = new MagickGeometry((uint)outputWidthInCells, (uint)outputHeightInCells)
+            var (sampleColumns, sampleRows) = ImageSamplingGeometry.Scale(style);
+            var sampleWidthInPixels = outputWidthInCells * sampleColumns;
+            var sampleHeightInPixels = outputHeightInCells * sampleRows;
+            var geometry = new MagickGeometry((uint)sampleWidthInPixels, (uint)sampleHeightInPixels)
             {
                 IgnoreAspectRatio = true
             };
@@ -61,8 +66,8 @@ internal static class MagickStillImageReader
             if (includeSourcePhoto)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                geometry.Width *= CharacterCellGeometry.WidthInPixels;
-                geometry.Height *= CharacterCellGeometry.HeightInPixels;
+                geometry.Width = (uint)(outputWidthInCells * CharacterCellGeometry.WidthInPixels);
+                geometry.Height = (uint)(outputHeightInCells * CharacterCellGeometry.HeightInPixels);
                 if (cancellationToken.CanBeCanceled)
                 {
                     image.Progress += (_, progress) => progress.Cancel = cancellationToken.IsCancellationRequested;
@@ -74,7 +79,7 @@ internal static class MagickStillImageReader
                     ?? throw new InvalidDataException("The decoded photo did not expose RGBA pixels.");
             }
 
-            return new PreparedStillImage(new RgbaGrid(outputWidthInCells, outputHeightInCells, rgba), sourcePhotoRgba);
+            return new PreparedStillImage(new RgbaGrid(sampleWidthInPixels, sampleHeightInPixels, rgba), sourcePhotoRgba);
         }
         catch (MagickException exception)
         {

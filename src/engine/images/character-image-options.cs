@@ -3,7 +3,7 @@ using Ascii4Fun.Rendering;
 
 namespace Ascii4Fun.Images;
 
-/// <summary> Controls character-based conversion of a still image. </summary>
+/// <summary> Controls glyph-based conversion of a still image. </summary>
 public sealed class CharacterImageOptions
 {
     private const int MinimumOutputWidthInCells = 1;
@@ -21,6 +21,9 @@ public sealed class CharacterImageOptions
 
     /// <summary> The default output width measured in character cells. </summary>
     public static int DefaultOutputWidthInCells { get; } = 80;
+
+    /// <summary>The default image mapping shared by package, CLI, HTTP and browser configuration.</summary>
+    public static ImageStyle DefaultStyle { get; } = ImageStyle.Characters;
 
     /// <summary> The smallest supported output width, in character cells. </summary>
     public static int MinOutputWidthInCells => MinimumOutputWidthInCells;
@@ -42,6 +45,9 @@ public sealed class CharacterImageOptions
 
     /// <summary> The requested output width measured in character cells. </summary>
     public int OutputWidthInCells { get; init; } = DefaultOutputWidthInCells;
+
+    /// <summary>Character-ramp mapping by default, or spatial eight-dot Braille mapping.</summary>
+    public ImageStyle Style { get; init; } = DefaultStyle;
 
     /// <summary> The glyph ramp ordered from darkest to lightest. </summary>
     public string CharacterRamp { get; init; } = DefaultCharacterRamp;
@@ -74,6 +80,7 @@ public sealed class CharacterImageOptions
 
     internal Rune[] ValidateAndGetRamp()
     {
+        ImageSamplingGeometry.Scale(Style);
         ArgumentOutOfRangeException.ThrowIfNegative(ShadowLift);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(ShadowLift, MaxPercentage);
         ArgumentOutOfRangeException.ThrowIfNegative(SourcePhotoOpacity);
@@ -89,6 +96,8 @@ public sealed class CharacterImageOptions
                 OutputWidthInCells,
                 $"Output width must be between {MinimumOutputWidthInCells} and {MaximumOutputWidthInCells} cells.");
         }
+
+        if (Style == ImageStyle.Braille) return [];
 
         if (string.IsNullOrEmpty(CharacterRamp))
         {

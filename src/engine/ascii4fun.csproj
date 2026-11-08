@@ -17,6 +17,10 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Ascii4Fun.Tests" />
+    <EmbeddedResource Include="figlet/fonts/*.flf" LogicalName="Ascii4Fun.Figlet.Fonts.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="figlet/fonts/*.tdf" LogicalName="Ascii4Fun.Figlet.Fonts.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="figlet/fonts/selected-assets.json" LogicalName="Ascii4Fun.Figlet.Fonts.selected-assets.json" />
+    <EmbeddedResource Include="figlet/fonts/*.txt" LogicalName="Ascii4Fun.Figlet.Fonts.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

@@ -32,7 +32,7 @@ public sealed class AsciiCanvas
     /// <summary> The height in character cells. </summary>
     public int HeightInCells { get; }
 
-    /// <summary> Glyph-only projection, with LF separators and no trailing line break. </summary>
+    /// <summary> Glyph-only projection, preserving space glyphs, with LF separators and no trailing line break. </summary>
     public string Text
     {
         get

@@ -1,5 +1,5 @@
 // Ordered dark to light by convention, not calibrated glyph coverage.
-// Braille and quadrants are character ramps, not spatial sub-cell renderers.
+// These are character ramps; spatial Braille is a separate image style.
 export function getCharacterSets(classicRamp: string) {
   return [
     {
@@ -18,7 +18,7 @@ export function getCharacterSets(classicRamp: string) {
         { name: "Blocks", ramp: "█▓▒░ " },
         { name: "Bars", ramp: "█▇▆▅▄▃▂▁ " },
         { name: "Quadrants", ramp: "█▙▛▜▟▀▄▌▐▘▝▖▗ " },
-        { name: "Braille", ramp: "⣿⣷⣯⣟⡿⢿⣻⣽⣾⣶⣤⣀⠠⠄ " }
+        { name: "Braille density", ramp: "⣿⣷⣯⣟⡿⢿⣻⣽⣾⣶⣤⣀⠠⠄ " }
       ]
     },
     {
