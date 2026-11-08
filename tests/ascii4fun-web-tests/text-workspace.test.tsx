@@ -89,7 +89,6 @@ const configuration: ImageConfiguration = {
   defaultOutputWidthInCells: 80,
   minOutputWidthInCells: 16,
   maxOutputWidthInCells: 180,
-  defaultStyle: "characters",
   defaultCharacterRamp: "@ .",
   defaultCharacterCellAspectRatio: 0.5,
   maxEncodedBytes: 1024,

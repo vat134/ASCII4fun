@@ -1,4 +1,5 @@
 import type { CharacterImageOptions } from "../images/image-conversion";
+import type { AnimationPlaybackOptions } from "../animations/animation-conversion";
 
 export const browserEngineTimeoutMs = 30_000;
 
@@ -7,7 +8,6 @@ export type BrowserEngine = {
   SrgbProfile(): Uint8Array;
   CmykProfile(): Uint8Array;
   Geometry(): [number, number];
-  SamplingScale(style: string): [number, number];
   PhotoByteLength(widthInCells: number, heightInCells: number): number;
   SetSourcePhoto(
     rgba: Uint8Array,
@@ -16,6 +16,22 @@ export type BrowserEngine = {
   ): void;
   FontNames(ramp: string): string[];
   ValidateSource(bytes: Uint8Array): void;
+  IsGif(bytes: Uint8Array): boolean;
+  ValidateAnimationSource(width: number, height: number, count: number): void;
+  AnalyzeAnimationFrame(
+    rgba: Uint8Array,
+    width: number,
+    height: number
+  ): [number, number];
+  SetAnimationRange(minimum: number, maximum: number): void;
+  AnimationTiming(durationsJson: string, speed: number, fps: number): string;
+  SourceFramesPerSecond(durationsJson: string): number;
+  VideoTiming(
+    frameCount: number,
+    durationMs: number,
+    speed: number,
+    fps: number
+  ): string;
   Height(width: number, height: number, columns: number): number;
   Convert(
     rgba: Uint8Array,
@@ -36,4 +52,25 @@ export type BrowserEngine = {
 
 export type WorkerRequest =
   | { id: number; type: "load"; bytes: Uint8Array }
-  | { id: number; type: "convert"; options: CharacterImageOptions };
+  | {
+      id: number;
+      type: "video-timing";
+      frameCount: number;
+      durationMs: number;
+      playback: AnimationPlaybackOptions;
+    }
+  | {
+      id: number;
+      type: "video-frame";
+      bytes: Uint8Array;
+      width: number;
+      height: number;
+      options: CharacterImageOptions;
+    }
+  | {
+      id: number;
+      type: "convert";
+      options: CharacterImageOptions;
+      frameIndex?: number;
+      playback?: AnimationPlaybackOptions;
+    };

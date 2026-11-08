@@ -4,7 +4,7 @@ internal static class AutoToneMapper
 {
     private const double MinimumUsefulLuminanceRange = 1d / byte.MaxValue;
 
-    public static LuminanceGrid Normalize(LuminanceGrid source, CancellationToken cancellationToken)
+    public static LuminanceGrid Normalize(LuminanceGrid source, CancellationToken cancellationToken, LuminanceRange? sequenceRange = null)
     {
         var minimum = double.MaxValue;
         var maximum = double.MinValue;
@@ -20,6 +20,8 @@ internal static class AutoToneMapper
             maximum = Math.Max(maximum, source.Values[index]);
         }
 
+        minimum = sequenceRange?.Minimum ?? minimum;
+        maximum = sequenceRange?.Maximum ?? maximum;
         var range = maximum - minimum;
 
         if (range < MinimumUsefulLuminanceRange)

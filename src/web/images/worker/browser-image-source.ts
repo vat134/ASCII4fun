@@ -1,13 +1,11 @@
 import {
-  ColorProfile,
-  ColorSpace,
   ImageMagick,
   MagickImageCollection,
   MagickReadSettings,
   type IMagickImage
 } from "@imagemagick/magick-wasm";
 import type { BrowserEngine } from "../../browser-engine/browser-engine";
-import type { ImageStyle } from "../image-conversion";
+import { normalizeMagickImage } from "./normalize-magick-image";
 import { sampleRgbaImage } from "./sample-rgba-image";
 import { maxRasterDimensionInPixels } from "../../rendering/raster-limits";
 
@@ -17,7 +15,6 @@ const workingBytesPerSourcePixel = 32;
 const workingBytesPerRasterPixel = 19;
 const workingBytesPerRasterPixelWithPhoto = 27;
 const workingBytesPerCell = 256;
-const workingBytesPerAdditionalSample = 32;
 const stillImageFrameProbeLimit = 2;
 
 /** One normalized original, kept alive by ImageMagick's documented async read callback. */
@@ -49,18 +46,12 @@ export class BrowserImageSource {
     } finally {
       images.dispose();
     }
-    const srgb = new ColorProfile(this.engine.SrgbProfile());
-    const cmyk = new ColorProfile(this.engine.CmykProfile());
     // Worker termination on Clear/replacement releases the callback and all native allocations.
     await new Promise<void>((resolve, reject) => {
       const lifetime = ImageMagick.read(bytes, async (image) => {
         image.autoOrient();
         this.engine.Height(image.width, image.height, 1);
-        if (!image.transformColorSpace(srgb)) {
-          if (image.colorSpace === ColorSpace.CMYK)
-            image.transformColorSpace(cmyk, srgb);
-          else image.colorSpace = ColorSpace.sRGB;
-        }
+        normalizeMagickImage(image, this.engine);
         this.image = image;
         resolve();
         await new Promise<void>(() => {});
@@ -69,7 +60,7 @@ export class BrowserImageSource {
     });
   }
 
-  sample(columns: number, includeSourcePhoto: boolean, style: ImageStyle) {
+  sample(columns: number, includeSourcePhoto: boolean) {
     if (!this.image) throw new Error("Load an image before converting.");
     const height = this.engine.Height(
       this.image.width,
@@ -77,7 +68,6 @@ export class BrowserImageSource {
       columns
     );
     const [cellWidth, cellHeight] = this.engine.Geometry();
-    const [sampleColumns, sampleRows] = this.engine.SamplingScale(style);
     if (includeSourcePhoto) this.engine.PhotoByteLength(columns, height);
     const widthInPixels = columns * cellWidth,
       heightInPixels = height * cellHeight;
@@ -88,14 +78,9 @@ export class BrowserImageSource {
     this.checkBudget(
       widthInPixels * heightInPixels,
       columns * height,
-      includeSourcePhoto,
-      columns * height * (sampleColumns * sampleRows - 1)
+      includeSourcePhoto
     );
-    const rgba = sampleRgbaImage(
-      this.image,
-      columns * sampleColumns,
-      height * sampleRows
-    );
+    const rgba = sampleRgbaImage(this.image, columns, height);
     // null reuses the one prepared .NET photo; an empty buffer explicitly releases it.
     let sourcePhotoRgba: Uint8Array | null = null;
     if (!includeSourcePhoto) {
@@ -115,8 +100,7 @@ export class BrowserImageSource {
   private checkBudget(
     rasterPixels: number,
     outputCells: number,
-    includeSourcePhoto = false,
-    additionalSamples = 0
+    includeSourcePhoto = false
   ) {
     // Conservative admission includes source/clone, interop copies, raster, presentation and export scratch.
     const bytes =
@@ -126,8 +110,7 @@ export class BrowserImageSource {
         (includeSourcePhoto
           ? workingBytesPerRasterPixelWithPhoto
           : workingBytesPerRasterPixel) +
-      outputCells * workingBytesPerCell +
-      additionalSamples * workingBytesPerAdditionalSample;
+      outputCells * workingBytesPerCell;
     if (bytes > workingBudgetInBytes)
       throw new Error(
         "This image and output size exceed the browser working-buffer budget. Choose a smaller image or fewer columns."

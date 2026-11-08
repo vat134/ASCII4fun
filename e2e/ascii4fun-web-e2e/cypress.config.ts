@@ -16,7 +16,8 @@ export default defineConfig({
           // The headless display must contain our largest desktop test viewport.
           launchOptions.args.push(
             "--window-size=2048,1344",
-            "--force-device-scale-factor=1"
+            "--force-device-scale-factor=1",
+            "--mute-audio"
           );
         }
         return launchOptions;

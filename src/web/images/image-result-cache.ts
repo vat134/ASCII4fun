@@ -8,6 +8,7 @@ function estimateBytes(key: string, result: ImageConversionResult): number {
   return (
     (key.length + result.text.length) * 2 +
     result.pixels.byteLength +
+    (result.animation ? result.animation.timeline.length * 64 + 128 : 0) +
     entryOverheadInBytes
   );
 }

@@ -44,11 +44,10 @@ public sealed class StillImageConverter
         var prepared = await MagickStillImageReader.ReadAsync(
             encodedImage,
             options.OutputWidthInCells,
-            options.Style,
             CharacterCellGeometry.AspectRatio,
             limits,
             includeSourcePhoto: options.SourcePhotoOpacity > 0,
             cancellationToken);
-        return CharacterImagePipeline.Convert(prepared.Grid, options, prepared.SourcePhotoRgba, cancellationToken);
+        return CharacterImagePipeline.Convert(prepared.Grid, options, prepared.SourcePhotoRgba, cancellationToken: cancellationToken);
     }
 }

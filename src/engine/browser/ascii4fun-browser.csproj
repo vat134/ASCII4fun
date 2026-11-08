@@ -13,12 +13,14 @@
     <Content Include="notices/*" CopyToPublishDirectory="PreserveNewest" />
     <PackageReference Include="Magick.NET.Core" GeneratePathProperty="true" />
     <Compile Include="../images/*.cs" Exclude="../images/still-image-converter.cs" LinkBase="images" />
+    <Compile Include="../animations/animation-*.cs" LinkBase="animations" />
+    <Compile Include="../videos/video-timeline.cs" LinkBase="videos" />
     <Compile Include="../figlet/*.cs" LinkBase="figlet" />
     <EmbeddedResource Include="../figlet/fonts/*.flf" LogicalName="Ascii4Fun.Figlet.Fonts.%(Filename)%(Extension)" />
     <EmbeddedResource Include="../figlet/fonts/*.tdf" LogicalName="Ascii4Fun.Figlet.Fonts.%(Filename)%(Extension)" />
     <EmbeddedResource Include="../figlet/fonts/selected-assets.json" LogicalName="Ascii4Fun.Figlet.Fonts.selected-assets.json" />
     <EmbeddedResource Include="../figlet/fonts/*.txt" LogicalName="Ascii4Fun.Figlet.Fonts.%(Filename)%(Extension)" />
-    <Compile Include="../media/*.cs" Exclude="../media/magick-still-image-reader.cs" LinkBase="media" />
+    <Compile Include="../media/*.cs" Exclude="../media/magick-still-image-reader.cs;../media/magick-gif-reader.cs;../media/magick-color-normalizer.cs" LinkBase="media" />
     <Compile Include="../rendering/*.cs" Exclude="../rendering/png-exporter.cs;../rendering/magick-glyph-renderer.cs" LinkBase="rendering" />
   </ItemGroup>
   <Target Name="CopyBrowserRuntimeNotices" AfterTargets="Publish">

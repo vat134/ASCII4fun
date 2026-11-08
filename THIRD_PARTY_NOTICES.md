@@ -1,5 +1,9 @@
 # Third-party notices
 
+## External video tools
+
+Video processing invokes separately installed FFmpeg/ffprobe executables; no executable or wrapper package is included in this repository or its NuGet package. See [FFmpeg licensing](https://ffmpeg.org/legal.html) and the exact installed build's notices. Local verification uses the Gyan FFmpeg 9.0.2 essentials GPLv3 build in ignored development artifacts. Distributors that include a codec build must supply its required notices and corresponding source. The authored video test fixtures use FFmpeg test patterns and generated sine audio, with no third-party footage.
+
 ## UI and icons
 
 - shadcn/ui source components: [MIT](https://github.com/shadcn-ui/ui/blob/main/LICENSE.md), Copyright (c) 2023 shadcn.

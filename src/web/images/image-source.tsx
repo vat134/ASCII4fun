@@ -2,6 +2,8 @@ import { Button } from "../ui/base/button";
 import { AsciiType } from "../workspace/ascii-type";
 import { UploadIcon } from "../ui/icons";
 import type { SelectedImage } from "./use-image-conversion";
+import { SourceThumbnail } from "./source-thumbnail";
+import { isVideo } from "../videos/prepare-video";
 
 type ImageSourceProps = {
   selection: SelectedImage | null;
@@ -22,11 +24,25 @@ export function ImageSource({
         </h3>
         {selection ? (
           <>
-            <img
-              src={selection.url}
-              alt="Uploaded source thumbnail"
-              className="max-h-64 w-full rounded-md bg-muted object-contain"
-            />
+            {isVideo(selection.file) ? (
+              <video
+                src={selection.url}
+                muted
+                playsInline
+                preload="metadata"
+                aria-label="Uploaded video thumbnail"
+                className="max-h-64 w-full rounded-md bg-muted object-contain"
+              />
+            ) : selection.file.type === "image/gif" ||
+              /\.gif$/iu.test(selection.file.name) ? (
+              <SourceThumbnail key={selection.url} selection={selection} />
+            ) : (
+              <img
+                src={selection.url}
+                alt="Uploaded source thumbnail"
+                className="max-h-64 w-full rounded-md bg-muted object-contain"
+              />
+            )}
             <p className="break-all font-mono text-xs leading-relaxed">
               {selection.file.name}
             </p>
@@ -40,9 +56,9 @@ export function ImageSource({
           </>
         ) : (
           <p className="font-mono text-xs leading-relaxed text-muted-foreground">
-            JPEG, PNG or WebP.
+            JPEG, PNG, WebP, GIF, MP4, WebM or MOV.
             <br />
-            One image at a time.
+            One file at a time. Video up to 60 seconds.
           </p>
         )}
       </AsciiType>

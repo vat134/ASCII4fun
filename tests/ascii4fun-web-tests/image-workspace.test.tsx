@@ -32,7 +32,6 @@ const configuration: ImageConfiguration = {
   defaultOutputWidthInCells: 80,
   minOutputWidthInCells: 16,
   maxOutputWidthInCells: 180,
-  defaultStyle: "characters",
   defaultCharacterRamp: "@%#*+=-:. ",
   defaultCharacterCellAspectRatio: 0.5,
   maxEncodedBytes: 1024,
@@ -101,6 +100,7 @@ test("exposes neutral tone, Original mode, white Mono and black background defau
   expect(screen.getByLabelText("Mono color")).toHaveValue("#ffffff");
   expect(screen.getByLabelText("Mono color")).toBeDisabled();
   expect(screen.getByLabelText("Background")).toHaveValue("#000000");
+  expect(screen.queryByLabelText("Style")).not.toBeInTheDocument();
   for (const label of ["Contrast", "Brightness", "Shadow lift", "Source photo"])
     expect(
       screen.getByLabelText(label, { selector: 'input[type="range"]' })

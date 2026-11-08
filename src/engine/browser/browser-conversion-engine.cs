@@ -32,13 +32,6 @@ internal static partial class BrowserConversionEngine
     public static int[] Geometry() => [CharacterCellGeometry.WidthInPixels, CharacterCellGeometry.HeightInPixels];
 
     [JSExport]
-    public static int[] SamplingScale(string style)
-    {
-        var (columns, rows) = ImageSamplingGeometry.Scale(Enum.Parse<ImageStyle>(style, ignoreCase: true));
-        return [columns, rows];
-    }
-
-    [JSExport]
     public static int PhotoByteLength(int widthInCells, int heightInCells) => SourcePhotoGeometry.ByteLength(widthInCells, heightInCells);
 
     [JSExport]
@@ -66,7 +59,7 @@ internal static partial class BrowserConversionEngine
             throw new InvalidDataException("Choose a non-empty image within the input limit.");
         }
 
-        StillImageSignature.Validate(bytes);
+        if (!IsGif(bytes)) StillImageSignature.Validate(bytes);
     }
 
     [JSExport]
@@ -84,11 +77,8 @@ internal static partial class BrowserConversionEngine
         var options = JsonSerializer.Deserialize(optionsJson, BrowserJson.Default.CharacterImageOptions)
             ?? throw new ArgumentException("Conversion settings are required.", nameof(optionsJson));
         options.ValidateAndGetRamp();
-        var (sampleColumns, sampleRows) = ImageSamplingGeometry.Scale(options.Style);
-        var sampleWidth = (long)width * sampleColumns;
-        var sampleHeight = (long)height * sampleRows;
         if (width != options.OutputWidthInCells || height < 1 || (long)width * height > ConversionLimits.Default.MaxGridCells
-            || rgba.LongLength != sampleWidth * sampleHeight * 4)
+            || rgba.LongLength != (long)width * height * 4)
         {
             throw new InvalidDataException("The sampled grid does not match the requested geometry.");
         }
@@ -97,8 +87,8 @@ internal static partial class BrowserConversionEngine
         {
             throw new InvalidOperationException("Prepare the source photo for this geometry before conversion.");
         }
-        current = CharacterImagePipeline.Convert(new RgbaGrid(checked((int)sampleWidth), checked((int)sampleHeight), rgba), options,
-            sourcePhotoRgba: options.SourcePhotoOpacity > 0 ? sourcePhoto?.Rgba : null);
+        current = CharacterImagePipeline.Convert(new RgbaGrid(width, height, rgba), options,
+            sourcePhotoRgba: options.SourcePhotoOpacity > 0 ? sourcePhoto?.Rgba : null, sequenceRange: animationRange);
         return JsonSerializer.Serialize(new BrowserCanvasResult(current.Text, width, height), BrowserJson.Default.BrowserCanvasResult);
     }
 
@@ -124,7 +114,7 @@ internal static partial class BrowserConversionEngine
 internal sealed record BrowserCanvasResult(string Text, int WidthInCells, int HeightInCells);
 internal sealed record BrowserSourcePhoto(byte[] Rgba, int WidthInCells, int HeightInCells);
 
-[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase, UseStringEnumConverter = true)]
+[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 [JsonSerializable(typeof(CharacterImageOptions))]
 [JsonSerializable(typeof(BrowserCanvasResult))]
 internal sealed partial class BrowserJson : JsonSerializerContext;

@@ -8,6 +8,8 @@ internal static class CliApplication
     {
         var rootCommand = new RootCommand("Convert images and text into ASCII art.");
         rootCommand.Subcommands.Add(ConvertImageCommand.Create());
+        rootCommand.Subcommands.Add(ConvertGifCommand.Create());
+        rootCommand.Subcommands.Add(ConvertVideoCommand.Create());
         rootCommand.Subcommands.Add(ConvertTextCommand.Create());
         rootCommand.Subcommands.Add(ConvertTextCommand.CreateFontList());
 
