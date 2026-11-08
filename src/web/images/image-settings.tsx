@@ -1,4 +1,4 @@
-import { ArtworkExport } from "../rendering/artwork-export";
+import type { ReactNode } from "react";
 import { useState } from "react";
 import { Button } from "../ui/base/button";
 import { ToneColorSettings } from "./tone-color-settings";
@@ -17,10 +17,7 @@ type ImageSettingsProps = {
   options: CharacterImageOptions;
   onChange: (options: CharacterImageOptions) => void;
   onReset: () => void;
-  canExport: boolean;
-  exportError: string | null;
-  onExport: (format: "txt" | "png") => void;
-  dimensions: string;
+  exportPanel: ReactNode;
 };
 
 export function ImageSettings({
@@ -28,10 +25,7 @@ export function ImageSettings({
   options,
   onChange,
   onReset,
-  canExport,
-  exportError,
-  onExport,
-  dimensions
+  exportPanel
 }: ImageSettingsProps) {
   const defaultEditor: CharacterEditor = {
     selectedSet: "Classic ASCII",
@@ -91,12 +85,7 @@ export function ImageSettings({
         />
       </div>
 
-      <ArtworkExport
-        canExport={canExport}
-        error={exportError}
-        dimensions={dimensions}
-        onExport={onExport}
-      />
+      {exportPanel}
     </aside>
   );
 }

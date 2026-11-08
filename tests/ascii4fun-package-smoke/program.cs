@@ -1,7 +1,9 @@
 using System.Buffers.Binary;
 using Ascii4Fun.Figlet;
+using Ascii4Fun.Animations;
 using Ascii4Fun.Images;
 using Ascii4Fun.Rendering;
+using Ascii4Fun.Videos;
 
 // Owned black/white fixture; the consumer has no project reference or direct media dependency.
 var encoded = Convert.FromBase64String(
@@ -38,15 +40,6 @@ foreach (var glyph in new[] { "@", "█", "𝔸" })
     }
 }
 
-using (var input = new MemoryStream(encoded))
-{
-    var canvas = await new StillImageConverter().ConvertAsync(input,
-        new CharacterImageOptions { Style = ImageStyle.Braille, OutputWidthInCells = 4, Invert = true });
-    var png = await PngExporter.ExportAsync(canvas);
-    if (canvas.Text != "\u2800\u2800⣿⣿" || png.Length < 24)
-        throw new InvalidDataException("Packaged spatial Braille changed its text or PNG contract.");
-}
-
 foreach (var font in FigletConverter.Fonts)
 {
     var canvas = FigletConverter.Convert("ASCII Text", font.Id);
@@ -69,4 +62,21 @@ if (palette.Count != 15 || authored.Text != recolored.Text || authored.Cells.Seq
     throw new InvalidDataException("Packaged font palette replacement changed layout or failed to recolor PNG.");
 }
 
-Console.WriteLine("Published NuGet consumer: image Unicode, bundled text fonts and palette replacements render to PNG.");
+using (var input = new MemoryStream(Convert.FromBase64String(
+    "R0lGODlhBAAEAPAAAP8AAAAAACH/C05FVFNDQVBFMi4wAwECAAAh+QQEAwAAACwAAAAABAAEAAACBISPCQUAIfkEDAcAAAAsAQABAAIAAgCAAP8AAAAAAgKEUQAh+QQICwAAACwDAAMAAQABAIAAAP8AAAACAkQBADs=")))
+using (var animation = await GifAnimation.OpenAsync(input))
+{
+    var gif = await animation.ExportAsync(new CharacterImageOptions { OutputWidthInCells = 4 },
+        new AnimationPlaybackOptions { Speed = 2, FramesPerSecond = 10 });
+    var png = await PngExporter.ExportAsync(animation.ConvertFrame(2));
+    if (animation.Iterations != 3 || animation.FrameDurationsMs.Count != 3
+        || !gif.AsSpan(0, 6).SequenceEqual("GIF89a"u8) || png.Length < 24)
+        throw new InvalidDataException("Packaged animation lost its frames, looping or GIF/PNG exports.");
+}
+
+var videoTimeline = VideoTimeline.Create(60, 1000, new AnimationPlaybackOptions { Speed = 2, FramesPerSecond = 30 });
+if (videoTimeline.Count != 15 || videoTimeline.Sum(frame => frame.FrameDurationMs) != 500
+    || videoTimeline[^1].SourceFrameIndex != 56 || VideoClip.MaxEncodedBytes != 100 * 1024 * 1024)
+    throw new InvalidDataException("Packaged video timing or media admission changed.");
+
+Console.WriteLine("Published NuGet consumer: image, text, animated GIF exports and video timing passed.");

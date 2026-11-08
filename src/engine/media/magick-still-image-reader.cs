@@ -1,4 +1,3 @@
-using System.Buffers;
 using Ascii4Fun.Images;
 using Ascii4Fun.Rendering;
 using ImageMagick;
@@ -8,17 +7,15 @@ namespace Ascii4Fun.Media;
 internal static class MagickStillImageReader
 {
     private const int StillImageFrameProbeLimit = 2;
-    private const int ReadBufferSizeInBytes = 81_920;
     public static async Task<PreparedStillImage> ReadAsync(
         Stream encodedImage,
         int outputWidthInCells,
-        ImageStyle style,
         double characterCellAspectRatio,
         ConversionLimits limits,
         bool includeSourcePhoto,
         CancellationToken cancellationToken)
     {
-        var encodedBytes = await ReadEncodedBytesAsync(encodedImage, limits.MaxEncodedBytes, cancellationToken);
+        var encodedBytes = await EncodedMediaReader.ReadAsync(encodedImage, limits.MaxEncodedBytes, cancellationToken);
 
         StillImageSignature.Validate(encodedBytes);
         await ValidateMetadataAsync(encodedBytes, limits, cancellationToken);
@@ -31,7 +28,7 @@ internal static class MagickStillImageReader
 
             image.AutoOrient();
             ImageGridGeometry.ValidateDimensions(image.Width, image.Height, limits);
-            NormalizeColorSpace(image);
+            MagickColorNormalizer.Apply(image);
 
             var outputHeightInCells = ImageGridGeometry.CalculateOutputHeight(
                 image.Width,
@@ -40,9 +37,8 @@ internal static class MagickStillImageReader
                 characterCellAspectRatio,
                 limits.MaxGridCells);
 
-            var (sampleColumns, sampleRows) = ImageSamplingGeometry.Scale(style);
-            var sampleWidthInPixels = outputWidthInCells * sampleColumns;
-            var sampleHeightInPixels = outputHeightInCells * sampleRows;
+            var sampleWidthInPixels = outputWidthInCells;
+            var sampleHeightInPixels = outputHeightInCells;
             var geometry = new MagickGeometry((uint)sampleWidthInPixels, (uint)sampleHeightInPixels)
             {
                 IgnoreAspectRatio = true
@@ -139,61 +135,6 @@ internal static class MagickStillImageReader
             or MagickFormat.Png64
             or MagickFormat.WebP;
 
-    private static void NormalizeColorSpace(MagickImage image)
-    {
-        if (image.TransformColorSpace(ColorProfiles.SRGB))
-        {
-            return;
-        }
 
-        if (image.ColorSpace == ColorSpace.CMYK)
-        {
-            image.TransformColorSpace(ColorProfiles.USWebCoatedSWOP, ColorProfiles.SRGB);
-            return;
-        }
 
-        image.ColorSpace = ColorSpace.sRGB;
-    }
-
-    private static async Task<byte[]> ReadEncodedBytesAsync(
-        Stream source,
-        long maxEncodedBytes,
-        CancellationToken cancellationToken)
-    {
-        var buffer = ArrayPool<byte>.Shared.Rent(ReadBufferSizeInBytes);
-
-        try
-        {
-            using var destination = new MemoryStream();
-
-            while (true)
-            {
-                var bytesRead = await source.ReadAsync(buffer.AsMemory(), cancellationToken);
-
-                if (bytesRead == 0)
-                {
-                    break;
-                }
-
-                if (destination.Length + bytesRead > maxEncodedBytes)
-                {
-                    throw new InvalidDataException(
-                        $"The encoded image exceeds the current {maxEncodedBytes:N0}-byte input limit.");
-                }
-
-                destination.Write(buffer, 0, bytesRead);
-            }
-
-            if (destination.Length == 0)
-            {
-                throw new InvalidDataException("The encoded image is empty.");
-            }
-
-            return destination.ToArray();
-        }
-        finally
-        {
-            ArrayPool<byte>.Shared.Return(buffer, clearArray: true);
-        }
-    }
 }

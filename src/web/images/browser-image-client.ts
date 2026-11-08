@@ -1,4 +1,5 @@
 import { browserEngineTimeoutMs } from "../browser-engine/browser-engine";
+import type { AnimationPlaybackOptions } from "../animations/animation-conversion";
 import type {
   CharacterImageOptions,
   ImageConversionResult
@@ -18,7 +19,7 @@ export class BrowserImageClient {
   private failure: Error | null = null;
   private readonly ready: Promise<void>;
 
-  constructor(file: File) {
+  constructor(file?: File) {
     this.worker = new Worker(
       new URL("../browser-engine/conversion-worker.ts", import.meta.url),
       { type: "module" }
@@ -36,14 +37,22 @@ export class BrowserImageClient {
       );
     this.worker.onmessageerror = () =>
       this.fail(new Error("The browser engine returned an unreadable result."));
-    this.ready = this.load(file);
+    this.ready = file ? this.load(file) : Promise.resolve();
   }
 
   async convert(
-    options: CharacterImageOptions
+    options: CharacterImageOptions,
+    frameIndex = 0,
+    playback?: AnimationPlaybackOptions
   ): Promise<ImageConversionResult> {
     await this.ready;
-    const result = await this.send({ id: 1, type: "convert", options });
+    const result = await this.send({
+      id: 1,
+      type: "convert",
+      options,
+      frameIndex,
+      playback
+    });
     if (!result) throw new Error("The browser engine returned no artwork.");
     return result;
   }
@@ -51,6 +60,37 @@ export class BrowserImageClient {
   dispose() {
     this.disposed = true;
     this.fail(new DOMException("Image processing cancelled.", "AbortError"));
+  }
+
+  async videoTiming(
+    frameCount: number,
+    durationMs: number,
+    playback: AnimationPlaybackOptions
+  ) {
+    const result = await this.send({
+      id: 2,
+      type: "video-timing",
+      frameCount,
+      durationMs,
+      playback
+    });
+    if (!result?.animation)
+      throw new Error("The video timeline is unavailable.");
+    return result.animation;
+  }
+
+  async videoFrame(
+    bytes: Uint8Array<ArrayBuffer>,
+    width: number,
+    height: number,
+    options: CharacterImageOptions
+  ) {
+    const result = await this.send(
+      { id: 3, type: "video-frame", bytes, width, height, options },
+      [bytes.buffer]
+    );
+    if (!result) throw new Error("The video frame is unavailable.");
+    return result;
   }
 
   private async load(file: File) {

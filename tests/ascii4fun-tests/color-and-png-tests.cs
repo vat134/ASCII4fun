@@ -8,22 +8,6 @@ namespace Ascii4Fun.Tests;
 public sealed class ColorAndPngTests
 {
     [Fact]
-    public async Task BrailleBlankInCustomRampMatchesOrdinarySpaceWithoutChangingPixels()
-    {
-        var encoded = CreateColorImage();
-        using var first = new MemoryStream(encoded);
-        using var second = new MemoryStream(encoded);
-        var ordinary = await new StillImageConverter().ConvertAsync(first,
-            new CharacterImageOptions { OutputWidthInCells = 4, CharacterRamp = "@ " });
-        var braille = await new StillImageConverter().ConvertAsync(second,
-            new CharacterImageOptions { OutputWidthInCells = 4, CharacterRamp = "@⠀" });
-        Assert.Contains(' ', ordinary.Text);
-        Assert.DoesNotContain('\u2800', ordinary.Text);
-        Assert.Equal(ordinary.Text, braille.Text.Replace('\u2800', ' '));
-        Assert.Equal(await PngExporter.ExportAsync(ordinary), await PngExporter.ExportAsync(braille));
-    }
-
-    [Fact]
     public void CanvasPreservesOriginalSpaceGlyphsAndUtf8Projection()
     {
         var ink = new RgbColor(255, 255, 255);
@@ -37,7 +21,7 @@ public sealed class ColorAndPngTests
     }
 
     [Fact]
-    public void EmptyBrailleCellsNeverRequestAGlyphMaskOrPaintTheBackground()
+    public void BlankGlyphsNeverRequestAGlyphMaskOrPaintTheBackground()
     {
         var ink = new RgbColor(255, 255, 255);
         var background = new RgbColor(10, 20, 30);

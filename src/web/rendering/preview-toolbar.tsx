@@ -1,6 +1,5 @@
 import { Button } from "../ui/base/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/base/tooltip";
-import { XIcon, ZoomInIcon, ZoomOutIcon } from "../ui/icons";
+import { ZoomInIcon, ZoomOutIcon } from "../ui/icons";
 import { previewZoom } from "./preview-zoom";
 import { CopyTextButton } from "./copy-text-button";
 
@@ -9,32 +8,18 @@ type PreviewToolbarProps = {
   onZoomChange: (zoom: number) => void;
   information?: string;
   text: string | null;
-  onClear?: (() => void) | undefined;
 };
 
 export function PreviewToolbar({
   zoom,
   onZoomChange,
   information,
-  text,
-  onClear
+  text
 }: PreviewToolbarProps) {
   return (
     <div className="grid shrink-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 border-b px-4 sm:flex sm:px-5">
       <div className="flex min-h-14 shrink-0 items-center gap-2">
         <h2 className="text-sm">Preview</h2>
-        {onClear && (
-          <Tooltip>
-            <TooltipTrigger
-              render={<Button variant="ghost" size="icon" />}
-              aria-label="Remove image"
-              onClick={onClear}
-            >
-              <XIcon aria-hidden="true" />
-            </TooltipTrigger>
-            <TooltipContent>Remove image</TooltipContent>
-          </Tooltip>
-        )}
       </div>
       {information && (
         <span

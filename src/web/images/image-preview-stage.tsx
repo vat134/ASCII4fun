@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { AsciiSpinner } from "../ui/ascii-spinner";
 import { Button } from "../ui/base/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/base/tooltip";
+import { XIcon } from "../ui/icons";
 import { AsciiPreview } from "../rendering/ascii-preview";
 import { ImageUploadPrompt } from "./image-upload-prompt";
 import type { ConversionState } from "./image-preview-session";
@@ -46,6 +48,19 @@ export function ImagePreviewStage({
         if (file) onSelect(file);
       }}
     >
+      {hasImage && (
+        <Tooltip>
+          <TooltipTrigger
+            render={<Button variant="ghost" size="icon" />}
+            className="absolute top-3 right-3 z-10 size-11 bg-background/80"
+            aria-label="Remove image"
+            onClick={onClear}
+          >
+            <XIcon aria-hidden="true" />
+          </TooltipTrigger>
+          <TooltipContent>Remove image</TooltipContent>
+        </Tooltip>
+      )}
       {result ? (
         <div className="size-full p-5">
           <AsciiPreview result={result} zoom={zoom} />
@@ -63,7 +78,7 @@ export function ImagePreviewStage({
           className="absolute rounded-lg border bg-card px-5 py-3 text-sm shadow-lg"
         >
           <span className="flex items-center gap-3">
-            <AsciiSpinner /> Converting image
+            <AsciiSpinner /> Preparing media
           </span>
         </div>
       )}

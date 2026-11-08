@@ -22,13 +22,15 @@ export function ImageUploadPrompt({
           className="size-7 text-muted-foreground"
           aria-hidden="true"
         />
-        <span>Drop an image here</span>
+        <span>Drop an image or video here</span>
         <span className="font-mono text-xs text-muted-foreground">
           or click to browse
         </span>
       </Button>
       <p className="font-mono text-xs text-muted-foreground">
-        JPEG / PNG / WebP · up to {maxEncodedBytes / (1024 * 1024)} MiB
+        JPEG / PNG / WebP / GIF · up to {maxEncodedBytes / (1024 * 1024)} MiB
+        <br />
+        MP4 / WebM / MOV · 60 seconds · 100 MiB · 1080p
       </p>
       <div className="relative">
         <LinkIcon

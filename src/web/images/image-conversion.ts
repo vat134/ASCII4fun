@@ -1,7 +1,7 @@
 import type { AsciiPreviewResult } from "../rendering/ascii-preview-result";
+import type { AnimationFrameTiming } from "../animations/animation-conversion";
 
 export type ImageConfiguration = {
-  defaultStyle: ImageStyle;
   defaultOutputWidthInCells: number;
   minOutputWidthInCells: number;
   maxOutputWidthInCells: number;
@@ -18,10 +18,7 @@ export type ImageConfiguration = {
 
 export type RgbColor = { red: number; green: number; blue: number };
 
-export type ImageStyle = "characters" | "braille";
-
 export type CharacterImageOptions = {
-  style: ImageStyle;
   outputWidthInCells: number;
   characterRamp: string;
   invert: boolean;
@@ -34,13 +31,19 @@ export type CharacterImageOptions = {
   backgroundColor: RgbColor;
 };
 
-export type ImageConversionResult = AsciiPreviewResult;
+export type ImageConversionResult = AsciiPreviewResult & {
+  animation?: {
+    sourceFramesPerSecond: number;
+    timeline: AnimationFrameTiming[];
+    iterations: number;
+    frameIndex: number;
+  };
+};
 
 export function createDefaultImageOptions(
   configuration: ImageConfiguration
 ): CharacterImageOptions {
   return {
-    style: configuration.defaultStyle,
     outputWidthInCells: configuration.defaultOutputWidthInCells,
     characterRamp: configuration.defaultCharacterRamp,
     invert: true,

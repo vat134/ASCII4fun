@@ -23,7 +23,6 @@ internal static class ImageConversionEndpoints
             return Results.Ok(new
             {
                 CharacterImageOptions.DefaultOutputWidthInCells,
-                DefaultStyle = CharacterImageOptions.DefaultStyle.ToString().ToLowerInvariant(),
                 MinOutputWidthInCells = Math.Max(MinEditorWidthInCells, CharacterImageOptions.MinOutputWidthInCells),
                 MaxOutputWidthInCells = Math.Min(MaxEditorWidthInCells, CharacterImageOptions.MaxOutputWidthInCells),
                 CharacterImageOptions.DefaultCharacterRamp,
@@ -57,8 +56,7 @@ internal static class ImageConversionEndpoints
         [FromForm] string? monochromeColor = null,
         [FromForm] string? backgroundColor = null,
         [FromForm] int shadowLift = 0,
-        [FromForm] int sourcePhotoOpacity = 0,
-        [FromForm] string? style = null)
+        [FromForm] int sourcePhotoOpacity = 0)
     {
         context.Response.Headers.CacheControl = "no-store";
 
@@ -83,7 +81,6 @@ internal static class ImageConversionEndpoints
             var options = new CharacterImageOptions
             {
                 OutputWidthInCells = outputWidthInCells,
-                Style = style is null ? CharacterImageOptions.DefaultStyle : Enum.Parse<ImageStyle>(style, ignoreCase: true),
                 CharacterRamp = characterRamp,
                 Invert = invert,
                 SourceColors = sourceColors,

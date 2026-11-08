@@ -15,6 +15,8 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
+    <Compile Include="../video-fixture.cs" Link="video-fixture.cs" />
+    <EmbeddedResource Include="fixtures/video-*" LogicalName="Fixtures.%(Filename)%(Extension)" />
     <EmbeddedResource Include="fixtures/figlet-selection-goldens.json" LogicalName="Ascii4Fun.Tests.FigletSelectionGoldens.json" />
     <EmbeddedResource Include="fixtures/thedraw-color-goldens.json" LogicalName="Ascii4Fun.Tests.ThedrawColorGoldens.json" />
     <EmbeddedResource Include="fixtures/figlet-font-goldens.json" LogicalName="Ascii4Fun.Tests.FigletFontGoldens.json" />

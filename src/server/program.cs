@@ -1,6 +1,9 @@
 using Ascii4Fun.Images;
+using Ascii4Fun.Server.Animations;
 using Ascii4Fun.Server.Figlet;
 using Ascii4Fun.Server.Images;
+using Ascii4Fun.Server.Videos;
+using Ascii4Fun.Videos;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.StaticFiles;
@@ -11,10 +14,12 @@ var converter = new StillImageConverter();
 const int multipartOverheadInBytes = 64 * 1024;
 // Provisional interactive request budget; revise with the performance baseline.
 const int conversionTimeoutInSeconds = 30;
-var maxRequestBytes = converter.MaxEncodedBytes + multipartOverheadInBytes;
+var maxRequestBytes = VideoClip.MaxEncodedBytes + multipartOverheadInBytes;
 
 builder.Services.AddHealthChecks();
 builder.Services.AddSingleton(converter);
+builder.Services.AddSingleton(new VideoTools(builder.Configuration["Video:FfmpegPath"] ?? "ffmpeg",
+    builder.Configuration["Video:FfprobePath"] ?? "ffprobe"));
 builder.Services.AddProblemDetails();
 // Binding failures are client errors in development as well as published builds.
 builder.Services.Configure<RouteHandlerOptions>(options => options.ThrowOnBadRequest = false);
@@ -22,7 +27,7 @@ builder.Services.AddAntiforgery(options => options.HeaderName = ImageConversionE
 builder.WebHost.ConfigureKestrel(options => options.Limits.MaxRequestBodySize = maxRequestBytes);
 builder.Services.Configure<FormOptions>(options =>
 {
-    options.MultipartBodyLengthLimit = converter.MaxEncodedBytes;
+    options.MultipartBodyLengthLimit = VideoClip.MaxEncodedBytes;
     // Keep bounded uploads in memory instead of spilling source images into temporary files.
     options.MemoryBufferThreshold = checked((int)maxRequestBytes);
     options.ValueLengthLimit = multipartOverheadInBytes;
@@ -43,6 +48,8 @@ builder.Services.AddRateLimiter(options =>
 builder.Services.AddRequestTimeouts(options => options.AddPolicy(
     ImageConversionEndpoints.PolicyName,
     TimeSpan.FromSeconds(conversionTimeoutInSeconds)));
+builder.Services.AddRequestTimeouts(options => options.AddPolicy(AnimationConversionEndpoints.TimeoutPolicy, TimeSpan.FromMinutes(5)));
+builder.Services.AddRequestTimeouts(options => options.AddPolicy(VideoConversionEndpoints.TimeoutPolicy, TimeSpan.FromMinutes(15)));
 
 var app = builder.Build();
 
@@ -59,6 +66,8 @@ app.UseAntiforgery();
 app.MapHealthChecks("/health");
 app.MapImageConversion();
 app.MapTextConversion();
+app.MapAnimationConversion();
+app.MapVideoConversion();
 
 app.Run();
 

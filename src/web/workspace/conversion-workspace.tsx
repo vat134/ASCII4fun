@@ -30,6 +30,7 @@ export function ConversionWorkspace({
         className={mode === "media" ? "flex min-h-0 flex-1 flex-col" : "hidden"}
       >
         <ImageWorkspace
+          active={mode === "media"}
           configuration={configuration}
           onTextMode={() => {
             setTextOpened(true);

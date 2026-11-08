@@ -2,25 +2,25 @@ import type {
   BrowserEngine,
   WorkerRequest
 } from "../../browser-engine/browser-engine";
-import type { BrowserImageSource } from "./browser-image-source";
+import type { BrowserMediaSource } from "./browser-media-source";
 import { loadFonts } from "../../browser-engine/magick-glyph-renderer";
 import { rgbToRgba } from "../../rendering/rgb-to-rgba";
 import type { AsciiCanvasProjection } from "../../rendering/ascii-preview-result";
 
 export async function renderImageRequest(
   engine: BrowserEngine,
-  source: BrowserImageSource,
-  data: WorkerRequest
+  source: BrowserMediaSource,
+  data: Extract<WorkerRequest, { type: "load" | "convert" }>
 ) {
   if (data.type === "load") {
-    await source.load(data.bytes);
-    self.postMessage({ id: data.id, value: null });
+    const metadata = await source.load(data.bytes);
+    self.postMessage({ id: data.id, value: metadata });
     return;
   }
+  const animation = source.animation(data.frameIndex ?? 0, data.playback);
   const sampled = source.sample(
-    data.options.outputWidthInCells,
-    data.options.sourcePhotoOpacity > 0,
-    data.options.style
+    data.options,
+    animation ? animation.timeline[animation.frameIndex]!.sourceFrameIndex : 0
   );
   if (sampled.sourcePhotoRgba !== null)
     engine.SetSourcePhoto(
@@ -44,6 +44,7 @@ export async function renderImageRequest(
       id: data.id,
       value: {
         ...result,
+        animation,
         pixels,
         widthInPixels: sampled.widthInPixels,
         heightInPixels: sampled.heightInPixels

@@ -34,6 +34,8 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test:tools
       - run: pnpm test:web
+      - name: Install video codecs
+        run: sudo apt-get update && sudo apt-get install --yes ffmpeg
       - run: dotnet workload install wasm-tools
       - run: pnpm build:web
       - run: dotnet restore ascii4fun.slnx
@@ -58,6 +60,12 @@ jobs:
         with:
           global-json-file: global.json
 
+      - name: Install Windows video codecs
+        if: runner.os == 'Windows'
+        run: choco install ffmpeg --yes --no-progress
+      - name: Install macOS video codecs
+        if: runner.os == 'macOS'
+        run: brew install ffmpeg
       - run: dotnet restore tests/ascii4fun-tests/ascii4fun-tests.csproj
       - run: dotnet test tests/ascii4fun-tests/ascii4fun-tests.csproj --configuration Release --no-restore
       - uses: actions/setup-node@v7
