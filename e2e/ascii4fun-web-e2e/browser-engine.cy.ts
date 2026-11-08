@@ -7,6 +7,54 @@ import {
 } from "./workspace-actions";
 
 describe("Shared browser engine", () => {
+  it("defaults to measured density, loads new fonts and restores density on reset", () => {
+    cy.visit("/");
+    cy.get(
+      '[role="switch"][aria-describedby="measured-density-description"]'
+    ).should("have.attr", "aria-checked", "true");
+    uploadImage();
+    ready();
+    columns(16);
+    compareWithNative(imageBase64, {
+      outputWidthInCells: "16",
+      useMeasuredGlyphDensity: "true"
+    });
+    cy.get("#image-upload").selectFile("fixtures/gradient.webp", {
+      force: true
+    });
+    ready(16);
+    cy.readFile("fixtures/gradient.webp", "base64").then((source) =>
+      compareWithNative(source, {
+        outputWidthInCells: "16",
+        useMeasuredGlyphDensity: "true"
+      })
+    );
+    uploadImage();
+    ready(16);
+    cy.get("#character-set").click();
+    cy.get('[role="option"]').contains("Custom characters").click();
+    cy.get("#character-ramp").clear().type("@Σム𝔸𐀀⣿ ");
+    ready(16);
+    compareWithNative(imageBase64, {
+      outputWidthInCells: "16",
+      characterRamp: "@Σム𝔸𐀀⣿ ",
+      useMeasuredGlyphDensity: "true"
+    });
+    cy.get(
+      '[role="switch"][aria-describedby="measured-density-description"]'
+    ).click();
+    ready(16);
+    compareWithNative(imageBase64, {
+      outputWidthInCells: "16",
+      characterRamp: "@Σム𝔸𐀀⣿ ",
+      useMeasuredGlyphDensity: "false"
+    });
+    cy.get('[aria-label="Reset to default"]').click();
+    cy.get(
+      '[role="switch"][aria-describedby="measured-density-description"]'
+    ).should("have.attr", "aria-checked", "true");
+  });
+
   for (const name of ["large-portrait.jpg", "twelve-megapixel.jpg"]) {
     it(`adjusts ${name} with a full-size photo background`, () => {
       cy.visit("/");

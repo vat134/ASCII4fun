@@ -35,6 +35,10 @@ internal static class ConvertImageCommand
         {
             Description = "Use sampled source colors for PNG; TXT still saves glyphs only."
         };
+        var densityOption = new Option<bool>("--measured-density")
+        {
+            Description = "Choose glyphs by measured bundled-font density instead of ramp order."
+        };
         var contrastOption = new Option<int>("--contrast") { Description = "Contrast from -100 to 100; 0 preserves tone." };
         var brightnessOption = new Option<int>("--brightness") { Description = "Brightness from -100 to 100; 0 preserves tone." };
         var monochromeOption = new Option<string>("--mono-color")
@@ -81,6 +85,7 @@ internal static class ConvertImageCommand
             rampOption,
             invertOption,
             sourceColorsOption,
+            densityOption,
             contrastOption,
             brightnessOption,
             shadowLiftOption,
@@ -119,6 +124,7 @@ internal static class ConvertImageCommand
                     CharacterRamp = parseResult.GetRequiredValue(rampOption),
                     Invert = parseResult.GetValue(invertOption),
                     SourceColors = parseResult.GetValue(sourceColorsOption),
+                    UseMeasuredGlyphDensity = parseResult.GetValue(densityOption),
                     Contrast = parseResult.GetValue(contrastOption),
                     Brightness = parseResult.GetValue(brightnessOption),
                     ShadowLift = parseResult.GetValue(shadowLiftOption),

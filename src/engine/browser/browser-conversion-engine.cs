@@ -88,7 +88,8 @@ internal static partial class BrowserConversionEngine
             throw new InvalidOperationException("Prepare the source photo for this geometry before conversion.");
         }
         current = CharacterImagePipeline.Convert(new RgbaGrid(width, height, rgba), options,
-            sourcePhotoRgba: options.SourcePhotoOpacity > 0 ? sourcePhoto?.Rgba : null, sequenceRange: animationRange);
+            sourcePhotoRgba: options.SourcePhotoOpacity > 0 ? sourcePhoto?.Rgba : null, sequenceRange: animationRange,
+            renderGlyph: RenderGlyph);
         return JsonSerializer.Serialize(new BrowserCanvasResult(current.Text, width, height), BrowserJson.Default.BrowserCanvasResult);
     }
 

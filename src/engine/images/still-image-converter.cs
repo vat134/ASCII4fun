@@ -48,6 +48,7 @@ public sealed class StillImageConverter
             limits,
             includeSourcePhoto: options.SourcePhotoOpacity > 0,
             cancellationToken);
-        return CharacterImagePipeline.Convert(prepared.Grid, options, prepared.SourcePhotoRgba, cancellationToken: cancellationToken);
+        return CharacterImagePipeline.Convert(prepared.Grid, options, prepared.SourcePhotoRgba,
+            cancellationToken: cancellationToken, renderGlyph: MagickGlyphRenderer.Render);
     }
 }

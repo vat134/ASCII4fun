@@ -27,6 +27,27 @@ export function CharacterSettings({
         onEditorChange={onEditorChange}
         onChange={onChange}
       />
+      <div className="space-y-1">
+        <div className="flex min-h-11 items-center justify-between gap-3">
+          <label htmlFor="measured-density" className="text-sm">
+            Measured glyph density
+          </label>
+          <Switch
+            id="measured-density"
+            checked={options.useMeasuredGlyphDensity}
+            aria-describedby="measured-density-description"
+            onCheckedChange={(useMeasuredGlyphDensity) =>
+              onChange({ ...options, useMeasuredGlyphDensity })
+            }
+          />
+        </div>
+        <p
+          id="measured-density-description"
+          className="text-xs text-muted-foreground"
+        >
+          Match tones to glyph density instead of ramp order.
+        </p>
+      </div>
       <div className="flex min-h-11 items-center justify-between gap-3">
         <label htmlFor="invert-mapping" className="text-sm">
           Invert mapping

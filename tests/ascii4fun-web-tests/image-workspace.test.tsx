@@ -224,6 +224,26 @@ test("Retry restarts the source worker and Clear preserves settings through Stri
   expect(URL.revokeObjectURL).toHaveBeenCalled();
 });
 
+test("density is enabled by default and reset restores it after disabling", async () => {
+  render(
+    <ImageWorkspace configuration={configuration} onTextMode={jest.fn()} />
+  );
+  const toggle = screen.getByRole("switch", { name: "Measured glyph density" });
+  expect(toggle).toHaveAttribute("aria-checked", "true");
+  fireEvent.click(toggle);
+  await act(async () => upload());
+  expect(mockConvert.mock.lastCall![0]).toMatchObject({
+    useMeasuredGlyphDensity: false
+  });
+  await act(async () =>
+    fireEvent.click(screen.getByRole("button", { name: "Reset to default" }))
+  );
+  expect(toggle).toHaveAttribute("aria-checked", "true");
+  expect(mockConvert.mock.lastCall![0]).toMatchObject({
+    useMeasuredGlyphDensity: true
+  });
+});
+
 test("color controls update shared options and retain them when clearing an error", async () => {
   render(
     <ImageWorkspace configuration={configuration} onTextMode={jest.fn()} />

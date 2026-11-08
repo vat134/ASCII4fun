@@ -28,6 +28,8 @@ export async function renderImageRequest(
       data.options.outputWidthInCells,
       sampled.height
     );
+  if (data.options.useMeasuredGlyphDensity)
+    await loadFonts(engine.FontNames(data.options.characterRamp));
   const result = JSON.parse(
     engine.Convert(
       sampled.rgba,

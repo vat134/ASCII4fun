@@ -17,7 +17,8 @@ internal static class VideoFrameConverter
         var grid = Sample(options.OutputWidthInCells, height);
         var photo = options.SourcePhotoOpacity > 0
             ? Sample(options.OutputWidthInCells * CharacterCellGeometry.WidthInPixels, height * CharacterCellGeometry.HeightInPixels) : null;
-        var canvas = CharacterImagePipeline.Convert(new RgbaGrid(options.OutputWidthInCells, height, grid), options, photo, new LuminanceRange(0, 1), token);
+        var canvas = CharacterImagePipeline.Convert(new RgbaGrid(options.OutputWidthInCells, height, grid), options, photo,
+            new LuminanceRange(0, 1), renderGlyph: MagickGlyphRenderer.Render, cancellationToken: token);
         return CanvasRasterizer.Render(canvas, MagickGlyphRenderer.Render, token);
 
         byte[] Sample(int width, int sampleHeight)

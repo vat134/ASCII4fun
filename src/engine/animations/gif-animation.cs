@@ -60,7 +60,8 @@ public sealed class GifAnimation : IDisposable
             SourcePhotoGeometry.ByteLength(options.OutputWidthInCells, height);
             photo = SamplePixels(frames[frameIndex], options.OutputWidthInCells * CharacterCellGeometry.WidthInPixels, height * CharacterCellGeometry.HeightInPixels, cancellationToken);
         }
-        return CharacterImagePipeline.Convert(grid, options, photo, toneRange.Value.Range, cancellationToken);
+        return CharacterImagePipeline.Convert(grid, options, photo, toneRange.Value.Range,
+            renderGlyph: MagickGlyphRenderer.Render, cancellationToken: cancellationToken);
     }
 
     /// <summary>Exports the same canvases with shared playback timing; progress counts rendered output frames.</summary>

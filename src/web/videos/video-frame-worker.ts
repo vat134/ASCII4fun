@@ -56,6 +56,8 @@ export async function renderVideoFrame(
   );
   engine.SetAnimationRange(0, 1);
   engine.SetSourcePhoto(sampled.photo, columns, height);
+  if (data.options.useMeasuredGlyphDensity)
+    await loadFonts(engine.FontNames(data.options.characterRamp));
   const result = JSON.parse(
     engine.Convert(sampled.rgba, columns, height, JSON.stringify(data.options))
   ) as AsciiCanvasProjection;

@@ -46,6 +46,11 @@ public sealed class CharacterImageOptions
     /// <summary> The glyph ramp ordered from darkest to lightest. </summary>
     public string CharacterRamp { get; init; } = DefaultCharacterRamp;
 
+    /// <summary> Selects nearest measured glyph coverage instead of equally spaced ramp positions. Defaults to false. </summary>
+    /// <remarks>Uses bundled raster fonts and relative coverage within the selected set, ignoring ramp order except for ties.
+    /// Supports up to 256 distinct glyphs. Equal-density sets select the first glyph; external text fonts can differ.</remarks>
+    public bool UseMeasuredGlyphDensity { get; init; }
+
     /// <summary> Reverses light and dark glyph mapping. </summary>
     public bool Invert { get; init; }
 
@@ -97,6 +102,11 @@ public sealed class CharacterImageOptions
         }
 
         var ramp = CharacterRamp.EnumerateRunes().ToArray();
+
+        if (UseMeasuredGlyphDensity && ramp.Distinct().Take(257).Count() > 256)
+        {
+            throw new ArgumentException("Measured density supports up to 256 distinct glyphs.", nameof(CharacterRamp));
+        }
 
         if (ramp.Length < MinimumCharacterRampLength)
         {

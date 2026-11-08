@@ -13,6 +13,37 @@ public sealed class ImageConversionEndpointTests(WebApplicationFactory<Program> 
     : IClassFixture<WebApplicationFactory<Program>>
 {
     [Fact]
+    public async Task MeasuredDensityReturnsTheSameTextAndPngAsThePackage()
+    {
+        using var client = application.CreateClient();
+        await GetConfigurationAsync(client);
+        var encoded = CreateImage(MagickFormat.Png);
+        using var input = new MemoryStream(encoded);
+        var expected = await new StillImageConverter().ConvertAsync(input, new CharacterImageOptions
+        {
+            OutputWidthInCells = 4,
+            CharacterRamp = ".@ ",
+            Invert = true,
+            UseMeasuredGlyphDensity = true
+        });
+        input.Position = 0;
+        var baseline = await new StillImageConverter().ConvertAsync(input, new CharacterImageOptions
+        {
+            OutputWidthInCells = 4,
+            CharacterRamp = ".@ ",
+            Invert = true
+        });
+        Assert.NotEqual(baseline.Text, expected.Text);
+        using var body = CreateBody(encoded, "image/png", ramp: ".@ ");
+        body.Add(new StringContent("true"), "useMeasuredGlyphDensity");
+        using var response = await client.PostAsync("/api/images/convert", body);
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(expected.Text, result.GetProperty("text").GetString());
+        Assert.Equal(await PngExporter.ExportAsync(expected), result.GetProperty("png").GetBytesFromBase64());
+    }
+
+    [Fact]
     public async Task EditorUsesPracticalColumnAndToneRanges()
     {
         using var client = application.CreateClient();
