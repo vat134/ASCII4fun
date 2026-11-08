@@ -19,6 +19,7 @@ jest.mock("../../src/web/images/browser-image-client", () => ({
 }));
 const defaults: CharacterImageOptions = {
   outputWidthInCells: 80,
+  style: "characters",
   characterRamp: "@ ",
   invert: true,
   sourceColors: true,
@@ -118,8 +119,9 @@ test("keys every option canonically including tone and composition colors", asyn
   mockConvert.mockImplementation(async (options) =>
     result(options.outputWidthInCells)
   );
-  const variants = [
+  const variants: CharacterImageOptions[] = [
     defaults,
+    { ...defaults, style: "braille" },
     { ...defaults, invert: false },
     { ...defaults, sourceColors: false },
     { ...defaults, characterRamp: "# " },

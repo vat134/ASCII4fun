@@ -1,3 +1,4 @@
+import { browserEngineTimeoutMs } from "../browser-engine/browser-engine";
 import type {
   CharacterImageOptions,
   ImageConversionResult
@@ -19,7 +20,7 @@ export class BrowserImageClient {
 
   constructor(file: File) {
     this.worker = new Worker(
-      new URL("./worker/image-worker.ts", import.meta.url),
+      new URL("../browser-engine/conversion-worker.ts", import.meta.url),
       { type: "module" }
     );
     this.worker.onmessage = ({ data }) => {
@@ -78,7 +79,7 @@ export class BrowserImageClient {
               "The browser engine took too long. Retry or choose a smaller image."
             )
           ),
-        30_000
+        browserEngineTimeoutMs
       );
       this.worker.postMessage(message, transfer);
     });

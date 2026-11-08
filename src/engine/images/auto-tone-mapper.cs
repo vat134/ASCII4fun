@@ -11,7 +11,7 @@ internal static class AutoToneMapper
 
         for (var index = 0; index < source.Values.Length; index++)
         {
-            if (index % source.WidthInCells == 0)
+            if (index % source.WidthInPixels == 0)
             {
                 cancellationToken.ThrowIfCancellationRequested();
             }
@@ -31,7 +31,7 @@ internal static class AutoToneMapper
 
         for (var index = 0; index < source.Values.Length; index++)
         {
-            if (index % source.WidthInCells == 0)
+            if (index % source.WidthInPixels == 0)
             {
                 cancellationToken.ThrowIfCancellationRequested();
             }
@@ -39,6 +39,6 @@ internal static class AutoToneMapper
             normalized[index] = (source.Values[index] - minimum) / range;
         }
 
-        return new LuminanceGrid(source.WidthInCells, source.HeightInCells, normalized);
+        return new LuminanceGrid(source.WidthInPixels, source.HeightInPixels, normalized);
     }
 }

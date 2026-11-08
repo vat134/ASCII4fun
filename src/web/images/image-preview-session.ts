@@ -20,6 +20,7 @@ type PreviewRequest = {
 function optionsKey(options: CharacterImageOptions): string {
   return JSON.stringify({
     outputWidthInCells: options.outputWidthInCells,
+    style: options.style,
     characterRamp: options.characterRamp,
     invert: options.invert,
     sourceColors: options.sourceColors,
@@ -89,17 +90,22 @@ export class ImagePreviewSession {
       return;
     this.active = true;
     try {
-      while (!this.disposed && this.latest!.key !== this.displayed?.key) {
-        const requested = this.latest!;
+      while (
+        !this.disposed &&
+        this.latest &&
+        this.latest.key !== this.displayed?.key
+      ) {
+        const requested: PreviewRequest = this.latest;
         try {
           const result = await this.client.convert(requested.options);
-          if (this.disposed) return;
+          const latest: PreviewRequest | null = this.latest;
+          if (this.disposed || !latest) return;
           this.cache.set(requested.key, result);
-          if (this.latest!.key === requested.key) {
+          if (latest.key === requested.key) {
             this.displayed = {
               key: requested.key,
               result,
-              revision: this.latest!.revision
+              revision: latest.revision
             };
             this.publish({ status: "ready", result });
           } else if (requested.revision >= (this.displayed?.revision ?? 0)) {
@@ -112,7 +118,7 @@ export class ImagePreviewSession {
             this.publish({ status: "pending", result });
           }
         } catch (error) {
-          if (!this.disposed && this.latest!.key === requested.key) {
+          if (!this.disposed && this.latest?.key === requested.key) {
             this.publish({
               status: "error",
               message:
@@ -122,7 +128,7 @@ export class ImagePreviewSession {
             });
           }
         }
-        if (this.disposed || this.latest!.key === requested.key) break;
+        if (this.disposed || this.latest?.key === requested.key) break;
       }
     } finally {
       this.active = false;

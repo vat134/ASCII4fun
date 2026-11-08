@@ -3,6 +3,10 @@
 *.bat text eol=crlf
 *.cmd text eol=crlf
 
+# Preserve font asset bytes for provenance checks.
+*.flf -text
+*.tdf binary
+
 *.gif binary
 *.ico binary
 *.jpeg binary

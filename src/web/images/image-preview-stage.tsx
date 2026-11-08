@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AsciiSpinner } from "../ui/ascii-spinner";
 import { Button } from "../ui/base/button";
-import { AsciiPreview } from "./ascii-preview";
+import { AsciiPreview } from "../rendering/ascii-preview";
 import { ImageUploadPrompt } from "./image-upload-prompt";
 import type { ConversionState } from "./image-preview-session";
 

@@ -6,12 +6,19 @@ import {
   MagickReadSettings,
   type IMagickImage
 } from "@imagemagick/magick-wasm";
-import type { BrowserEngine } from "./browser-engine";
+import type { BrowserEngine } from "../../browser-engine/browser-engine";
+import type { ImageStyle } from "../image-conversion";
 import { sampleRgbaImage } from "./sample-rgba-image";
+import { maxRasterDimensionInPixels } from "../../rendering/raster-limits";
 
 // Admission ceiling, not an eager allocation or a cap on total browser RAM.
 const workingBudgetInBytes = 768 * 1024 * 1024;
-const maxRasterDimensionInPixels = 16_384;
+const workingBytesPerSourcePixel = 32;
+const workingBytesPerRasterPixel = 19;
+const workingBytesPerRasterPixelWithPhoto = 27;
+const workingBytesPerCell = 256;
+const workingBytesPerAdditionalSample = 32;
+const stillImageFrameProbeLimit = 2;
 
 /** One normalized original, kept alive by ImageMagick's documented async read callback. */
 export class BrowserImageSource {
@@ -29,7 +36,7 @@ export class BrowserImageSource {
     const images = MagickImageCollection.create();
     try {
       const settings = new MagickReadSettings();
-      settings.frameCount = 2;
+      settings.frameCount = stillImageFrameProbeLimit;
       images.ping(bytes, settings);
       if (images.length !== 1)
         throw new Error(
@@ -62,7 +69,7 @@ export class BrowserImageSource {
     });
   }
 
-  sample(columns: number, includeSourcePhoto: boolean) {
+  sample(columns: number, includeSourcePhoto: boolean, style: ImageStyle) {
     if (!this.image) throw new Error("Load an image before converting.");
     const height = this.engine.Height(
       this.image.width,
@@ -70,9 +77,10 @@ export class BrowserImageSource {
       columns
     );
     const [cellWidth, cellHeight] = this.engine.Geometry();
+    const [sampleColumns, sampleRows] = this.engine.SamplingScale(style);
     if (includeSourcePhoto) this.engine.PhotoByteLength(columns, height);
-    const widthInPixels = columns * cellWidth!,
-      heightInPixels = height * cellHeight!;
+    const widthInPixels = columns * cellWidth,
+      heightInPixels = height * cellHeight;
     if (Math.max(widthInPixels, heightInPixels) > maxRasterDimensionInPixels)
       throw new Error(
         "This output exceeds the browser raster side limit. Choose fewer columns or a shorter image."
@@ -80,9 +88,14 @@ export class BrowserImageSource {
     this.checkBudget(
       widthInPixels * heightInPixels,
       columns * height,
-      includeSourcePhoto
+      includeSourcePhoto,
+      columns * height * (sampleColumns * sampleRows - 1)
     );
-    const rgba = sampleRgbaImage(this.image, columns, height);
+    const rgba = sampleRgbaImage(
+      this.image,
+      columns * sampleColumns,
+      height * sampleRows
+    );
     // null reuses the one prepared .NET photo; an empty buffer explicitly releases it.
     let sourcePhotoRgba: Uint8Array | null = null;
     if (!includeSourcePhoto) {
@@ -100,16 +113,21 @@ export class BrowserImageSource {
   }
 
   private checkBudget(
-    pixels: number,
-    cells: number,
-    includeSourcePhoto = false
+    rasterPixels: number,
+    outputCells: number,
+    includeSourcePhoto = false,
+    additionalSamples = 0
   ) {
     // Conservative admission includes source/clone, interop copies, raster, presentation and export scratch.
     const bytes =
       this.encodedBytes +
-      this.sourcePixels * 32 +
-      pixels * (includeSourcePhoto ? 27 : 19) +
-      cells * 256;
+      this.sourcePixels * workingBytesPerSourcePixel +
+      rasterPixels *
+        (includeSourcePhoto
+          ? workingBytesPerRasterPixelWithPhoto
+          : workingBytesPerRasterPixel) +
+      outputCells * workingBytesPerCell +
+      additionalSamples * workingBytesPerAdditionalSample;
     if (bytes > workingBudgetInBytes)
       throw new Error(
         "This image and output size exceed the browser working-buffer budget. Choose a smaller image or fewer columns."

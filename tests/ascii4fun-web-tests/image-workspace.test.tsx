@@ -25,13 +25,14 @@ jest.mock("../../src/web/images/browser-image-client", () => ({
     dispose = () => mockDispose();
   }
 }));
-jest.mock("../../src/web/images/export-preview-png", () => ({
+jest.mock("../../src/web/rendering/export-preview-png", () => ({
   exportPreviewPng: () => mockExport()
 }));
 const configuration: ImageConfiguration = {
   defaultOutputWidthInCells: 80,
   minOutputWidthInCells: 16,
   maxOutputWidthInCells: 180,
+  defaultStyle: "characters",
   defaultCharacterRamp: "@%#*+=-:. ",
   defaultCharacterCellAspectRatio: 0.5,
   maxEncodedBytes: 1024,
@@ -90,7 +91,9 @@ afterEach(() => {
 });
 
 test("exposes neutral tone, Original mode, white Mono and black background defaults", () => {
-  render(<ImageWorkspace configuration={configuration} />);
+  render(
+    <ImageWorkspace configuration={configuration} onTextMode={jest.fn()} />
+  );
   expect(screen.getByRole("button", { name: "Original" })).toHaveAttribute(
     "aria-pressed",
     "true"
@@ -103,18 +106,32 @@ test("exposes neutral tone, Original mode, white Mono and black background defau
       screen.getByLabelText(label, { selector: 'input[type="range"]' })
     ).toHaveValue("0");
   expect(screen.getByRole("button", { name: "Download PNG" })).toBeDisabled();
+  expect(screen.getByRole("button", { name: "Copy text" })).toBeDisabled();
   expect(screen.getByRole("textbox", { name: "Media URL" })).toBeDisabled();
 });
 
 test("renders current pixels, blocks pending exports and keeps zoom local", async () => {
+  const writeText = jest
+    .fn<(value: string) => Promise<void>>()
+    .mockResolvedValue();
+  Object.defineProperty(navigator, "clipboard", {
+    configurable: true,
+    value: { writeText }
+  });
   const downloads: string[] = [];
   jest.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function (
     this: HTMLAnchorElement
   ) {
     downloads.push(this.download);
   });
-  render(<ImageWorkspace configuration={configuration} />);
+  render(
+    <ImageWorkspace configuration={configuration} onTextMode={jest.fn()} />
+  );
   await act(async () => upload());
+  const copy = screen.getByRole("button", { name: "Copy text" });
+  expect(copy).toBeEnabled();
+  await act(async () => fireEvent.click(copy));
+  expect(writeText).toHaveBeenCalledWith("@ ");
   expect(screen.getByRole("img", { name: /ASCII preview/ })).toHaveAttribute(
     "width",
     "24"
@@ -130,10 +147,14 @@ test("renders current pixels, blocks pending exports and keeps zoom local", asyn
   fireEvent.click(screen.getByRole("button", { name: "Mono" }));
   expect(screen.queryByText("Converting image")).toBeNull();
   expect(screen.getByRole("button", { name: "Download PNG" })).toBeDisabled();
+  expect(copy).toBeDisabled();
   fireEvent.click(screen.getByRole("button", { name: "Zoom in" }));
   expect(screen.getByLabelText("Preview zoom level")).toHaveTextContent("125%");
   expect(mockConvert).toHaveBeenCalledTimes(2);
-  await act(async () => finish(artwork));
+  await act(async () => finish({ ...artwork, text: "X " }));
+  expect(copy).toBeEnabled();
+  await act(async () => fireEvent.click(copy));
+  expect(writeText).toHaveBeenLastCalledWith("X ");
   await act(async () =>
     fireEvent.click(screen.getByRole("button", { name: "Download PNG" }))
   );
@@ -183,7 +204,7 @@ test("Retry restarts the source worker and Clear preserves settings through Stri
   mockConvert.mockRejectedValueOnce(new Error("Unreadable image"));
   render(
     <StrictMode>
-      <ImageWorkspace configuration={configuration} />
+      <ImageWorkspace configuration={configuration} onTextMode={jest.fn()} />
     </StrictMode>
   );
   fireEvent.click(screen.getByRole("button", { name: "Mono" }));
@@ -204,7 +225,9 @@ test("Retry restarts the source worker and Clear preserves settings through Stri
 });
 
 test("color controls update shared options and retain them when clearing an error", async () => {
-  render(<ImageWorkspace configuration={configuration} />);
+  render(
+    <ImageWorkspace configuration={configuration} onTextMode={jest.fn()} />
+  );
   fireEvent.click(screen.getByRole("button", { name: "Mono" }));
   fireEvent.change(screen.getByLabelText("Mono color"), {
     target: { value: "#00ff00" }
@@ -218,6 +241,7 @@ test("color controls update shared options and retain them when clearing an erro
     monochromeColor: { red: 0, green: 255, blue: 0 },
     backgroundColor: { red: 16, green: 32, blue: 48 }
   });
+  expect(screen.getByRole("button", { name: "Copy text" })).toBeDisabled();
   fireEvent.click(screen.getByRole("button", { name: "Clear" }));
   expect(screen.queryByRole("alert")).toBeNull();
   expect(screen.getByLabelText("Background")).toHaveValue("#102030");
@@ -227,7 +251,9 @@ test("color controls update shared options and retain them when clearing an erro
 
 test("reports PNG encoding failure and keeps the current result available for retry", async () => {
   mockExport.mockRejectedValueOnce(new Error("PNG encoding failed"));
-  render(<ImageWorkspace configuration={configuration} />);
+  render(
+    <ImageWorkspace configuration={configuration} onTextMode={jest.fn()} />
+  );
   await act(async () => upload());
   await act(async () =>
     fireEvent.click(screen.getByRole("button", { name: "Download PNG" }))

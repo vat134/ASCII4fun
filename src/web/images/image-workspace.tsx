@@ -1,4 +1,4 @@
-import { useImageDownload } from "./use-image-download";
+import { useArtworkDownload } from "../rendering/use-artwork-download";
 import { useRef, useState } from "react";
 import {
   createDefaultImageOptions,
@@ -7,14 +7,16 @@ import {
 import { ImagePreviewStage } from "./image-preview-stage";
 import { ImageSettings } from "./image-settings";
 import { ImageSource } from "./image-source";
-import { PreviewToolbar } from "./preview-toolbar";
-import { previewZoom } from "./preview-zoom";
+import { PreviewToolbar } from "../rendering/preview-toolbar";
+import { previewZoom } from "../rendering/preview-zoom";
 import { useImageConversion } from "./use-image-conversion";
 
 export function ImageWorkspace({
-  configuration
+  configuration,
+  onTextMode
 }: {
   configuration: ImageConfiguration;
+  onTextMode: () => void;
 }) {
   const {
     selection,
@@ -36,7 +38,7 @@ export function ImageWorkspace({
     download,
     busy: exporting,
     error: exportError
-  } = useImageDownload(
+  } = useArtworkDownload(
     state.status === "ready" ? state.result : null,
     selection?.file.name
   );
@@ -58,6 +60,7 @@ export function ImageWorkspace({
       />
 
       <ImageSource
+        onTextMode={onTextMode}
         selection={selection}
         onBrowse={() => inputRef.current?.click()}
       />
@@ -69,8 +72,8 @@ export function ImageWorkspace({
         <PreviewToolbar
           zoom={zoom}
           onZoomChange={setZoom}
-          hasImage={selection !== null}
-          onClear={clear}
+          text={state.status === "ready" ? state.result.text : null}
+          onClear={selection ? clear : undefined}
         />
 
         <ImagePreviewStage

@@ -1,6 +1,10 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": { "lib": ["ES2022", "WebWorker"] },
-  "include": ["src/web/images/worker/**/*.ts"],
+  "include": [
+    "src/web/images/worker/**/*.ts",
+    "src/web/figlet/worker/**/*.ts",
+    "src/web/browser-engine/**/*.ts"
+  ],
   "exclude": ["node_modules", "e2e"]
 }

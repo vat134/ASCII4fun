@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ImageWorkspace } from "./images/image-workspace";
+import { ConversionWorkspace } from "./workspace/conversion-workspace";
 import {
   loadImageConfiguration,
   type ImageConfiguration
@@ -39,7 +39,7 @@ export function App() {
         <h1 className="sr-only">ASCII4fun</h1>
       </header>
       {configuration ? (
-        <ImageWorkspace configuration={configuration} />
+        <ConversionWorkspace configuration={configuration} />
       ) : (
         <main className="grid flex-1 place-items-center p-6">
           <div className="max-w-sm space-y-5 text-center text-sm">

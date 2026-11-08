@@ -29,7 +29,8 @@ export function PhotoBackgroundSettings({
         max={configuration.maxPercentage}
         value={[options.sourcePhotoOpacity]}
         onValueChange={(value) => {
-          const [sourcePhotoOpacity] = value as number[];
+          const sourcePhotoOpacity =
+            typeof value === "number" ? value : value[0];
           if (sourcePhotoOpacity !== undefined)
             onChange({ ...options, sourcePhotoOpacity });
         }}

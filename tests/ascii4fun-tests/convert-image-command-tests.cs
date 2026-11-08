@@ -8,6 +8,42 @@ namespace Ascii4Fun.Tests;
 
 public sealed class ConvertImageCommandTests
 {
+    [Theory]
+    [InlineData("txt")]
+    [InlineData("png")]
+    public async Task BrailleUsesSharedEngineForUtf8AndRasterExports(string format)
+    {
+        var directory = Directory.CreateTempSubdirectory("ascii4fun-cli-braille-");
+        try
+        {
+            var encoded = CreateImage();
+            var inputPath = Path.Combine(directory.FullName, "input.png");
+            var outputPath = Path.Combine(directory.FullName, "art." + format);
+            await File.WriteAllBytesAsync(inputPath, encoded);
+            using var input = new MemoryStream(encoded);
+            var canvas = await new StillImageConverter().ConvertAsync(input,
+                new CharacterImageOptions { Style = ImageStyle.Braille, OutputWidthInCells = 4, Invert = true });
+            Assert.Equal(0, await CliApplication.RunAsync([
+                "convert-image", inputPath, "--style", "braille", "--width", "4", "--invert", "--format", format, "--output", outputPath]));
+            var actual = await File.ReadAllBytesAsync(outputPath);
+            if (format == "txt")
+            {
+                Assert.Equal(Encoding.UTF8.GetBytes(canvas.Text + '\n'), actual);
+                Assert.Contains('\u2800', canvas.Text);
+                Assert.DoesNotContain(' ', canvas.Text);
+            }
+            else
+            {
+                Assert.Equal(await PngExporter.ExportAsync(canvas), actual);
+            }
+            Assert.Equal(1, await CliApplication.RunAsync(["convert-image", inputPath, "--style", "unknown"]));
+        }
+        finally
+        {
+            directory.Delete(recursive: true);
+        }
+    }
+
     [Fact]
     public async Task PhotoAndShadowControlsMatchThePackageRaster()
     {
@@ -80,9 +116,11 @@ public sealed class ConvertImageCommandTests
     }
 
     [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task WritesEngineResultToUtf8File(bool sourceColors)
+    [InlineData(false, "@█", "@@██\n")]
+    [InlineData(true, "@█", "@@██\n")]
+    [InlineData(false, "@ ", "@@  \n")]
+    [InlineData(true, "@ ", "@@  \n")]
+    public async Task WritesEngineResultToUtf8File(bool sourceColors, string ramp, string expectedText)
     {
         var directory = Directory.CreateTempSubdirectory("ascii4fun-cli-");
 
@@ -92,12 +130,13 @@ public sealed class ConvertImageCommandTests
             var outputPath = Path.Combine(directory.FullName, "output.txt");
             await File.WriteAllBytesAsync(inputPath, CreateImage());
 
-            var args = new List<string> { "convert-image", inputPath, "--width", "4", "--ramp", "@█", "--output", outputPath };
+            var args = new List<string> { "convert-image", inputPath, "--width", "4", "--ramp", ramp, "--output", outputPath };
             if (sourceColors) args.Add("--source-colors");
             var exitCode = await CliApplication.RunAsync(args.ToArray());
 
             Assert.Equal(0, exitCode);
-            Assert.Equal("@@██\n", await File.ReadAllTextAsync(outputPath));
+            Assert.Equal(expectedText, await File.ReadAllTextAsync(outputPath));
+            Assert.Equal(Encoding.UTF8.GetBytes(expectedText), await File.ReadAllBytesAsync(outputPath));
             Assert.False((await File.ReadAllBytesAsync(outputPath)).AsSpan().StartsWith(Encoding.UTF8.Preamble));
         }
         finally

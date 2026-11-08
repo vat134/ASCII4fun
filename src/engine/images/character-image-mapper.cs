@@ -18,7 +18,7 @@ internal static class CharacterImageMapper
 
         for (var index = 0; index < cells.Length; index++)
         {
-            if (index % grid.WidthInCells == 0)
+            if (index % grid.WidthInPixels == 0)
             {
                 cancellationToken.ThrowIfCancellationRequested();
             }
@@ -43,7 +43,7 @@ internal static class CharacterImageMapper
             cells[index] = new AsciiCell(ramp[rampIndex], color);
         }
 
-        return new AsciiCanvas(cells, grid.WidthInCells, grid.HeightInCells, options.BackgroundColor,
+        return new AsciiCanvas(cells, grid.WidthInPixels, grid.HeightInPixels, options.BackgroundColor,
             sourcePhotoRgba, options.SourcePhotoOpacity);
     }
 }

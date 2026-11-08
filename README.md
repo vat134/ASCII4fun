@@ -2,7 +2,7 @@
 
 Local-first toolkit for converting images, animations, and text into ASCII and cell-based art.
 
-Status: JPEG, PNG and still WebP to monochrome or source-colored ASCII, with TXT and PNG export through the browser, package and CLI. Text and animation conversion are planned.
+Status: JPEG, PNG and still WebP to character or spatial Braille art, with TXT/PNG export. The Text workspace uses the shared engine for FIGlet/TheDraw and TXT/PNG export. Animation is planned.
 
 ## Stack
 
@@ -54,11 +54,11 @@ pnpm convert:image dev-assets/input/photo.webp --width 100
 
 Development defaults and Zod validation live in `tools/development-environment.cjs`. Copy `.env.example` to `.env.local` for overrides; shell variables take priority. Restart development processes after editing it or changing engine code. The server launcher, Parcel proxy and Cypress share these settings. Direct .NET launches use standard ASP.NET Core configuration instead.
 
-`convert-image` accepts JPEG, PNG, and still WebP. Use `--ramp`, `--invert`, or `--output` for the initial text controls.
+`convert-image` accepts JPEG, PNG, and still WebP. Use `--style braille` for spatial dots; `--ramp` controls the default character style.
 
 ## PNG export
 
-Web defaults to Original color; package, CLI and omitted HTTP flags remain monochrome. Tone and background controls share engine semantics. Mono defaults to white on black. TXT always saves characters only.
+Web defaults to Original color; package, CLI and omitted HTTP flags remain monochrome. Tone and background controls share engine semantics. Mono defaults to white on black. TXT and Copy preserve generated glyphs and ordinary spaces. Spatial Braille retains its own Unicode dot patterns, including the empty pattern. Chat alignment still depends on the receiving font and line width.
 
 ```powershell
 pnpm convert:image dev-assets/input/photo.webp --width 160 --invert --source-colors --format png
@@ -72,6 +72,6 @@ The package returns `AsciiCanvas` (replacing the pre-release `AsciiText` type). 
 
 PNG uses fixed 12 × 24 px cells, bundled OFL fonts and an opaque background (black by default). Downloaded PNG pixels match preview; zoom and dragging only affect the view. Font details and licenses are in [rendering/fonts](src/engine/rendering/fonts/README.md).
 
-The existing multipart `/api/images/convert` accepts optional `sourceColors=false`, `contrast=0`, `brightness=0`, `shadowLift=0`, `sourcePhotoOpacity=0`, `monochromeColor=#FFFFFF` and `backgroundColor=#000000` and returns `{ text, widthInCells, heightInCells, png }`, with base64 PNG. Uploaded media remains transient.
+The existing multipart `/api/images/convert` accepts optional `style=characters` (`braille` selects spatial dots), `sourceColors=false`, `contrast=0`, `brightness=0`, `shadowLift=0`, `sourcePhotoOpacity=0`, `monochromeColor=#FFFFFF` and `backgroundColor=#000000` and returns `{ text, widthInCells, heightInCells, png }`, with base64 PNG. Uploaded media remains transient.
 
 Browser working buffers and result history are bounded; oversized work fails explicitly. First use loads the WASM runtimes and required fonts. See [architecture](docs/architecture.md) for ownership and limits.

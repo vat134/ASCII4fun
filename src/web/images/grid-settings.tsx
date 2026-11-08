@@ -125,7 +125,7 @@ export function GridSettings({
         max={maxWidthInCells}
         value={[widthInCells]}
         onValueChange={(value) => {
-          const [width] = value as number[];
+          const width = typeof value === "number" ? value : value[0];
           if (width !== undefined) applyWidth(width);
         }}
       />

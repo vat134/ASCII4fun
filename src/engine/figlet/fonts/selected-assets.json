@@ -1,0 +1,1874 @@
+[
+  {
+    "id": "3d-diagonal",
+    "file": "3d-diagonal.flf",
+    "sha256": "9cb387ee14aab213f11bb1623720559487a9da0b2a51d17bc99a7d69ec0158ed",
+    "sourceSha256": "0ac661d00e3132e0b2e9b9f2e23c28971a6b75b03e9a698ea6c5243e387e2e97",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "FIGfont modification permission"
+  },
+  {
+    "id": "avatar",
+    "file": "avatar.flf",
+    "sha256": "3550e42b25df4ecbe98cb54e71ab32bf3d7772b9a49131295c4f40897ed22f8c",
+    "sourceSha256": "3550e42b25df4ecbe98cb54e71ab32bf3d7772b9a49131295c4f40897ed22f8c",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "FIGfont modification permission"
+  },
+  {
+    "id": "big-money-ne",
+    "file": "big-money-ne.flf",
+    "sha256": "0bd3c247227779711d646b0389c806bedd2fc665c7384583c63cfd2b74412d7e",
+    "sourceSha256": "e69ebd240b687c1fc1806818ee8d516d76294d11b46ed24be5d1d6a4c18ac982",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "big-money-nw",
+    "file": "big-money-nw.flf",
+    "sha256": "54effaff61d4b14d493df574e2a7104b0986e0868a1c382dbb6c8d128d300538",
+    "sourceSha256": "35d15067d68270d0959d45aa5ffca18fd0db5cc754ae071580ca9b0ab20f0a7a",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "big-money-se",
+    "file": "big-money-se.flf",
+    "sha256": "79347115cc4ea3922aeac903d5ad4efc1bc1c5620c8c349588beb72ad6a92685",
+    "sourceSha256": "178808c076406a6d56db4c19320e1de3f2f829cfed39c6f4907d6680b178c816",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "big-money-sw",
+    "file": "big-money-sw.flf",
+    "sha256": "aa638ac2dd769d9c1556c9d283a34c8d2ea4a730748f7f0c455b84c7981a4cf8",
+    "sourceSha256": "9a56e3822b708838560a32c5a2f1db215318fdfe76e7096c65f170d34794d818",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "big",
+    "file": "big.flf",
+    "sha256": "3cdf2dd15945c4f3f04d9a0f75724afbbcefef172332a4301f72e94dcf62971f",
+    "sourceSha256": "3cdf2dd15945c4f3f04d9a0f75724afbbcefef172332a4301f72e94dcf62971f",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "FIGfont modification permission"
+  },
+  {
+    "id": "blocks",
+    "file": "blocks.flf",
+    "sha256": "57f217a810580c820247ec0d7658ccb62c6a85b02a2bea871ea6db2d3c7818b7",
+    "sourceSha256": "ebed66f57eea6666ba8cc6b0887fdf6633da46e29fc4829503e01dc8426a2ad8",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "FIGfont modification permission"
+  },
+  {
+    "id": "blurvision-ascii",
+    "file": "blurvision-ascii.flf",
+    "sha256": "50c620f3e1d77af482c96bb057c544dbbd7eff25995710b82b9af56715daa018",
+    "sourceSha256": "8fb892feff7e9015da7faff92b3b1f699242eac47aeea04852c07467eb02068e",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "bulbhead",
+    "file": "bulbhead.flf",
+    "sha256": "2f33f9f8718bd645f51c9002a534977cc361bc275266bc3eb068476128219720",
+    "sourceSha256": "e392ca9b773f541180695bf3ea20ee5117e4a09a64aa26394c1a5c0ada54ec16",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "doh",
+    "file": "doh.flf",
+    "sha256": "7ce23e7e19f3b5fb98ade454c38cdde56d516e23e8e864be6312975c0c04beb0",
+    "sourceSha256": "1524624f5155f0480d9e8261b9192acf7e5cf514a6d165eeb91fe99733cecd9a",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "doom",
+    "file": "doom.flf",
+    "sha256": "3d8fe9963526329ff9d5414a97b0f47e3a852d2f288a693f2938730f5a230e75",
+    "sourceSha256": "3d8fe9963526329ff9d5414a97b0f47e3a852d2f288a693f2938730f5a230e75",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "FIGfont modification permission"
+  },
+  {
+    "id": "epic",
+    "file": "epic.flf",
+    "sha256": "7f38796cdcbc746b42ba68049a74b1359fbaee776bd90ff5b1a2a85b75bf9226",
+    "sourceSha256": "7f38796cdcbc746b42ba68049a74b1359fbaee776bd90ff5b1a2a85b75bf9226",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "FIGfont modification permission"
+  },
+  {
+    "id": "graceful",
+    "file": "graceful.flf",
+    "sha256": "b9b61bb9b68601f40ed72092585de738b890618dd2e3951742d6277eadd25228",
+    "sourceSha256": "b9b61bb9b68601f40ed72092585de738b890618dd2e3951742d6277eadd25228",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "FIGfont modification permission"
+  },
+  {
+    "id": "js-bracket-letters",
+    "file": "js-bracket-letters.flf",
+    "sha256": "4bc434633f1c6d8a56bb121cc757e2bcda5fdbb58969d2209ae440c96fb08a85",
+    "sourceSha256": "11ead24640ffa87c4c1f17e7f59090247d15ad8b155848506faf94f26b79b843",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "modular",
+    "file": "modular.flf",
+    "sha256": "8bba64b6222f332410b136d35488156664eb56ff18b2e063c26735def0b04e7f",
+    "sourceSha256": "dafe1d33dd9dfaf1fb134a97712bbdd1de5980bfea7408c689da9958a04114d4",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "FIGfont modification permission"
+  },
+  {
+    "id": "ogre",
+    "file": "ogre.flf",
+    "sha256": "3be7e2b701014604a773f0b712dd71593350db07b9f69fe7f7e55d334c2c8649",
+    "sourceSha256": "c6e88144edc8e4fce435f38eaf54f946b03d5774dab8a347fcc9ad8fae8f1284",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "rectangles",
+    "file": "rectangles.flf",
+    "sha256": "c639bcff3f536b72bb5f711f111db33ff89ce0d8112f77125741513867bab9ad",
+    "sourceSha256": "edae7049b9c4b3032354025c2ec954ba29cb82b783edb49f9b26a16f62f8cabf",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "shaded-blocky",
+    "file": "shaded-blocky.flf",
+    "sha256": "7df36b8d5d01f7b9d9739caf31285416ac3a47715491abb792b931c2b072f3c0",
+    "sourceSha256": "ac43b55046979b86c5d281e8496508601cf47b622fbb38c14f189d351a9fbd85",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "slant",
+    "file": "slant.flf",
+    "sha256": "0a1f6ebfa9b0a1658107765d5273f537e2a626c79a6fb431e1ca1e5330a74f2a",
+    "sourceSha256": "0a1f6ebfa9b0a1658107765d5273f537e2a626c79a6fb431e1ca1e5330a74f2a",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "FIGfont modification permission"
+  },
+  {
+    "id": "slant-relief",
+    "file": "slant-relief.flf",
+    "sha256": "010496378b233c8fbb728d1f78874c03c8d1d0bf12239d5821296cb4df4cda7b",
+    "sourceSha256": "010496378b233c8fbb728d1f78874c03c8d1d0bf12239d5821296cb4df4cda7b",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "FIGfont modification permission"
+  },
+  {
+    "id": "small",
+    "file": "small.flf",
+    "sha256": "6326d8a718cb57689d5eaa98d301b9297ef6f6300279635b901532a2f3d6aadf",
+    "sourceSha256": "6326d8a718cb57689d5eaa98d301b9297ef6f6300279635b901532a2f3d6aadf",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "FIGfont modification permission"
+  },
+  {
+    "id": "standard",
+    "file": "standard.flf",
+    "sha256": "44573a1b2145dfdf0110b6a2d3d98bdc47a98cca50795bd7b78278ee5ca96f79",
+    "sourceSha256": "44573a1b2145dfdf0110b6a2d3d98bdc47a98cca50795bd7b78278ee5ca96f79",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "FIGfont modification permission"
+  },
+  {
+    "id": "star-wars",
+    "file": "star-wars.flf",
+    "sha256": "6571fcd174c14a6f29b8503a5b87e663d23cebfd99905c9d3a17d723f2bf56ed",
+    "sourceSha256": "a31359c883de277eeba13f4f66cb4d0556ee88e890bcacc280812b82048b2ea8",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "sweet",
+    "file": "sweet.flf",
+    "sha256": "22bf5b52a107b2d18f3e303cc225fc34ff045ce9651ee3055c68eb21392decc9",
+    "sourceSha256": "670b80ea12f67966b12a7c27a76c1e84d7361486e1d38ca1558519d2a41ff8b3",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "FIGfont modification permission"
+  },
+  {
+    "id": "terrace",
+    "file": "terrace.flf",
+    "sha256": "617ec00f038d043452f9898f84e0fff2233206698e2782ed3328077bf7bc3571",
+    "sourceSha256": "b64ac30d9e3d9349e7ed604337efd25f2a3114b0fd130c151a6a4f8019a0624c",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tmplr",
+    "file": "tmplr.flf",
+    "sha256": "87590fcc7283d79965228215dbac4db166260bfefbc823f01e97d852f6b9276b",
+    "sourceSha256": "73d02a6034f26b6d5a035ed7d9251c49251d53f6405946fa50d44f4592b59dfc",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "varsity",
+    "file": "varsity.flf",
+    "sha256": "1915d9be8864df533524b8b12aab7dd243a61d2ceeb43062a4692d8fafacb783",
+    "sourceSha256": "96b103d68065a448dcc4e5a50533886eabab6c9a2ff40195efc772802d02070b",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "FIGfont modification permission"
+  },
+  {
+    "id": "3d-ascii",
+    "file": "3d-ascii.flf",
+    "sha256": "41d220f27a982c5a1e0d9434c8600c2a5b5c6c1a1fd72153cd15e0e486b7af88",
+    "sourceSha256": "52ad704a6d5e652a7b89544969d14781aed846fd0d94e6304dcc6f7bf635e6b8",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "ansi-compact",
+    "file": "ansi-compact.flf",
+    "sha256": "7725d789f12f20f854a2d0fb6f23df3080fefd0753e94055f2078b3853afe30f",
+    "sourceSha256": "7725d789f12f20f854a2d0fb6f23df3080fefd0753e94055f2078b3853afe30f",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "MIT"
+  },
+  {
+    "id": "ansi-regular",
+    "file": "ansi-regular.flf",
+    "sha256": "b635ccfdcf7407790c93cc04c891323892ea0b507cb5ca6d9e51edf8a6b6e7d5",
+    "sourceSha256": "f4b8365d3b658908374fe03f8a3c02d47f620f4af88ec136b88540e788b463b4",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "ansi-shadow",
+    "file": "ansi-shadow.flf",
+    "sha256": "41f707f3686ab1f8b6225499e0dec368ce6daeae821769f16f5a75ee52008d58",
+    "sourceSha256": "5b3141fa14163c90ff199d169331333875df557fa463b9fb05b85fee6eca6dc1",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "bloody",
+    "file": "bloody.flf",
+    "sha256": "a25ea8d6181e72d0534597af9a2806d52eb488def45fba1995979a376cb634bf",
+    "sourceSha256": "e3a6a25f8113bfce06a3444f299f67b46d53b27a3604f2f1e328c345ad47ded3",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "classy",
+    "file": "classy.flf",
+    "sha256": "c738ee428830b85bd7cdbe3edc7a296f1f1540b73910ee61756933ec43e06998",
+    "sourceSha256": "c738ee428830b85bd7cdbe3edc7a296f1f1540b73910ee61756933ec43e06998",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "MIT"
+  },
+  {
+    "id": "coder-mini",
+    "file": "coder-mini.flf",
+    "sha256": "08857103cca94c8c3f515875af04389ec90f926876973c13ca11756c7d724592",
+    "sourceSha256": "08857103cca94c8c3f515875af04389ec90f926876973c13ca11756c7d724592",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "MIT"
+  },
+  {
+    "id": "delta-corps-priest-1",
+    "file": "delta-corps-priest-1.flf",
+    "sha256": "edbed4bdd56633a92fc34477700b4c7033d373308d0e597723ffed4e375fe13e",
+    "sourceSha256": "5065f00aa615c5e2fa18e9f7871628cb0384e9d9154d1531096e3adc0d84d41f",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "electronic",
+    "file": "electronic.flf",
+    "sha256": "b0f676d4e28e7c78c634b80136332b8afa5e985409360d7992c4ee13dbec2306",
+    "sourceSha256": "bffe1417c47f19b3e15644cf65ef9c64cbff4d831d54dc8b5d4a29ba77d35b19",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "the-edge",
+    "file": "the-edge.flf",
+    "sha256": "7f3109749a56f7859fc214d4febcacea401814a64f01bc7bf1b0e11eab4b15bc",
+    "sourceSha256": "1cce94bcf34d9e760971f0be960c0ac4d35f588bd8bf10762fbd22c1713d0bbf",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "ascii-12",
+    "file": "ascii-12.flf",
+    "sha256": "5c56984547c85f8fccef758a35f5383fdac044193ab8471e09a9a4cebff5c085",
+    "sourceSha256": "719a0e501f476bce407783b581441125f17543e4950669b2aa0a5f3b79d6ffa3",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "ascii-9",
+    "file": "ascii-9.flf",
+    "sha256": "a94d76f0e621ee10768256a05ff0648db0ec285b52ec15fdc988f7cbc80bbe3c",
+    "sourceSha256": "024e83a5435e0c8ac28a1875a071f3c597b2f0da1e4e1d434fa58ec036915d4d",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "big-ascii-12",
+    "file": "big-ascii-12.flf",
+    "sha256": "dbe10987f2494ef25a192368a4318f0be0b1ada602708a178fc4e8d17c403131",
+    "sourceSha256": "e6639435e8d792eebe155a082a0b19cb53d7347474d28a679f81a305e424d7a2",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "big-ascii-9",
+    "file": "big-ascii-9.flf",
+    "sha256": "09311e8c5da737a956e7097e0b3482db3f53adaa22d9db8489f01dee44800394",
+    "sourceSha256": "fb021ab060012074d7f37efe2e74bc5d8cf5a5e90596b699aa1faa3f77b9b742",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "emboss",
+    "file": "emboss.flf",
+    "sha256": "29d5bcdec27868ba65688d2508890abc4020000a5e06af07e11052a633dc01ac",
+    "sourceSha256": "e1e5179817e06a39ec37ee66be627e39c3184921d13cb54327aea36f805813b6",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "future",
+    "file": "future.flf",
+    "sha256": "72fa8cad0c0769df21b740984f53472f36d06a52aa7a5280777afc0e4ba6170b",
+    "sourceSha256": "d3f82bef2625e99b750e81f230d5f4d2b122eb621250e94d2c5317da3e039682",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "future-smooth",
+    "file": "future-smooth.flf",
+    "sha256": "1e3366f3007e34dea88dc56d91bc830bed012417d938259d55119df2a0d3a72e",
+    "sourceSha256": "5dd4a5add7e3c8a76b9a0c6fce69b64292d2efd634f86882ebb3e217741a20f4",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "letter",
+    "file": "letter.flf",
+    "sha256": "061061c8f661bc94a4af828f36bdaac5f02aac775bc7bd587a2164d9aa7603ec",
+    "sourceSha256": "fb19317d1bc7c3c398b31ea26947aecc905f1dce8ce39bbfe7d9c7ece1d9c7f7",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "mono-12",
+    "file": "mono-12.flf",
+    "sha256": "c64470a7671ba488b2ff955e7f16b27fb9defb81eb40c98870d71d0abaa84495",
+    "sourceSha256": "a5385ff14c654d0a4f1ea09e6c64dbb2ac6951d81880913b1046a1784c3a0cfd",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "mono-9",
+    "file": "mono-9.flf",
+    "sha256": "4f982bac38a0ad8b36b732e2c7b37ab4d59d6e563d77faa6b2dbc526caf378e9",
+    "sourceSha256": "9386c4515d68c89c3a95802a67b3accf04755217c5c1a13e6d8c4f2c672043f5",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "pagga",
+    "file": "pagga.flf",
+    "sha256": "f8a3c12f969c52c9e3d2a6ea34e1c65e05d71c314ca6bad1be9cda189fb9bfc7",
+    "sourceSha256": "ac5693a0d48e73bc0ef816755fcb0ff04631fcc0a40ed35f22e21dfdafbbede2",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "rebel",
+    "file": "rebel.flf",
+    "sha256": "0b69265ab54ce3f1043db0db09cd2042d26a7e8e0d19d3f214516fedbfab86fd",
+    "sourceSha256": "420c2bedf8c5af44458b1a1d93acda2dd473ad2ee14d08d223a73592c08c41e9",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "small-braille",
+    "file": "small-braille.flf",
+    "sha256": "4f13bd00d9c2dd44317da45630b7f30100a9eb6b8d8d82245885dcd6f929ae72",
+    "sourceSha256": "b556845b33323a2100b79b2a8192f925c4a712a809a5ddc4be7669cef1f60d00",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "4max",
+    "file": "4max.flf",
+    "sha256": "3841f5af0180b2eb14c0d1efd1aa01139dc0fdee4577783935df06869dda8db5",
+    "sourceSha256": "71f6cddcdfeecfb779729e9272e0973717f395e1cc67b40e4fe38700a056451e",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "5-line-oblique",
+    "file": "5-line-oblique.flf",
+    "sha256": "42ffe039d8812003b3aac8f5db057626e8b10b1adb416c64e7f8e5c3d7228e1f",
+    "sourceSha256": "792232541ee36a1def9d2f736b84e3ec60a5c36a7bc25943a08b77746a8230d7",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "alligator",
+    "file": "alligator.flf",
+    "sha256": "68587cf4cd79f2606b4f2ddaa7f0211d7aea0c2a127df60b489e301a9d238fbc",
+    "sourceSha256": "904ee05f6e2c55ff8623c151cdcbb822366fbb19431240047504a7bd7283338f",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "alligator2",
+    "file": "alligator2.flf",
+    "sha256": "4e3760c487526e4a26582ba8450ebb9cf6a451da8b717456665c927959077f9a",
+    "sourceSha256": "0cecdc8605f2a095518bb014ac54353114732370372ed99198816cc20ae5c042",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "amc-3-line",
+    "file": "amc-3-line.flf",
+    "sha256": "bd50cada2299462f1fef60d0c38d334f7d129e8c9f698ef267c12099554281d8",
+    "sourceSha256": "0f5f62465c6fff00bd8affdb52ecfd7f86cbb672bc062a972f8f2d8adafc2a5f",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "amc-aaa01",
+    "file": "amc-aaa01.flf",
+    "sha256": "5281aaca4fd3900b047b20f86a984eb45012851cef95ad09631c02e1b714d0b5",
+    "sourceSha256": "5feb9e4cd074b30e441201e903ace131c0ccb64cdc6127691d5e0f7469ffc481",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "amc-slider",
+    "file": "amc-slider.flf",
+    "sha256": "f74843383fa5565a8752dd8b39813c86513314b1f59d5fd060b1332abb425705",
+    "sourceSha256": "e3787352fb6392a432817286d8408e75798ca2b3fc7c1dd98aac60b2ced0eba6",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "arrows",
+    "file": "arrows.flf",
+    "sha256": "05f5f53e29dc62a704cd931bd72f9185e65079998ae37c83c73bb644919a19ff",
+    "sourceSha256": "e0516b6bf99a4d28375218b1467f63755858c9190b0f77c4c133fff1335c7513",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "b1ff",
+    "file": "b1ff.flf",
+    "sha256": "97bcd5c88dccb87091093bbd9b2dbcbcd842296853e1037d07eda281343bcaec",
+    "sourceSha256": "9da3178f71e5c57063c04237c850c66eea6ac9e343bce97730515e909ddf3130",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "FIGfont modification permission"
+  },
+  {
+    "id": "banner3",
+    "file": "banner3.flf",
+    "sha256": "8430e0026f762217302622126fc9abdd18838178255b8d2ef506881f9f1e3baa",
+    "sourceSha256": "d34042b857075dc95aadce2d569e8db63959b3bcf4b4defbb485ed8c4f8473d1",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "banner4",
+    "file": "banner4.flf",
+    "sha256": "fe9b0a1594d656aba636de38e09c03aa03cf07189eb95f38f66dbcac89dffead",
+    "sourceSha256": "24042a4eca80ef9869be6841abca55f49fa60807ebafe502359c33b10a395a8b",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "basic",
+    "file": "basic.flf",
+    "sha256": "8167d9a39783dbc1f2af37dd9a9ecccecd0ef31914cb6c7e393f098665401b5d",
+    "sourceSha256": "305ef45c592450579229faa924fc30c7807aa1c66739dd46cb9285e4b880a34f",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "bear",
+    "file": "bear.flf",
+    "sha256": "dc11047b01c0502c00f903d943f16d6e841fcefb82b7665d05a211266c843e7c",
+    "sourceSha256": "124f873ce24fe22512b4b42bc22a658005e9aaf3ba3069ea77f4c195528fdf1c",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "FIGfont modification permission"
+  },
+  {
+    "id": "bell",
+    "file": "bell.flf",
+    "sha256": "ac4d067574fd33ac15b56e2dce8f778cc1ea81d2c584d7b72fadf9b14f4548da",
+    "sourceSha256": "fa2d76b9d5c577d2f12006e4c3a87b5dc1a9f3bf0774f6f5902d448f610983de",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "braced",
+    "file": "braced.flf",
+    "sha256": "de2c3b682b3b2fd9ca33b8fdcd691a590780a439ead2db969c5f7bb47ac7810d",
+    "sourceSha256": "de2c3b682b3b2fd9ca33b8fdcd691a590780a439ead2db969c5f7bb47ac7810d",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "FIGfont modification permission"
+  },
+  {
+    "id": "bright",
+    "file": "bright.flf",
+    "sha256": "8f14f84fce268ad048d65e0bd6e92eb223c4452d6248176356d69e711aa5d99b",
+    "sourceSha256": "cc45b0a8d6b4ed3494baa306063299d27432b566edbc3efc63deb0d7b446cbef",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "chunky",
+    "file": "chunky.flf",
+    "sha256": "c7f7a4f339f1cd09cef2d0b10a8ca7b873877a31a5e09ded2d941b210cf02d3d",
+    "sourceSha256": "bba134e875f5c1406fb5f817b70398ee6c04b06d72d021c5a371de2242cc63e4",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "colossal",
+    "file": "colossal.flf",
+    "sha256": "c5eab1eea30bfe198c27cd73fbbfacfb229cd5b66b6afefae75325b56d7a4fc5",
+    "sourceSha256": "f716a383fc75ca1bbe0470c338a50fe9e91d9e4795c57a8a1eff6f37270c22cb",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "cyberlarge",
+    "file": "cyberlarge.flf",
+    "sha256": "52990f82f5bcc49b5c4e9a0bc9551c02a3cbf88227eb4cedb44c7fcbde533e0b",
+    "sourceSha256": "ba9b64f63caa5a7e49d3aca1e61267adb81d9dd0469c3da0eafbb4cc1476ba9c",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "cybermedium",
+    "file": "cybermedium.flf",
+    "sha256": "47647610f0799c8371b4a7cbea7d18c29cc23dc838e4c74344b1e6c0668c5e5d",
+    "sourceSha256": "fcbb6ba53c8eaa4fd64407c02df04240b5c4822dae7bb27357fdc7446d7a88f7",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "digital",
+    "file": "digital.flf",
+    "sha256": "f9eaa0b93cd680f8a30b7f95328f9c55df496f7fd94f6694f8690fdaaf3d8643",
+    "sourceSha256": "02b63b2d40d45716ceb949d89af9390aa6c2ab709447ed6d09d6aaf1fbacbe23",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "FIGfont modification permission"
+  },
+  {
+    "id": "dos-rebel",
+    "file": "dos-rebel.flf",
+    "sha256": "141900eeae5447fdb6a02e92837c7319d6998cd6b6183dac3e99b8a99ff4e89f",
+    "sourceSha256": "0a167aaab7a99e59dc8034b6621f9bc87343734e4ca71acbad8b3c1d3800767d",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "double",
+    "file": "double.flf",
+    "sha256": "e7ee23d02ccb30cad18585aab632e62fbc09f9377fce74b9ab16456e8e653c5d",
+    "sourceSha256": "6d3a549b5dcf1bf9fb3519dc8e8bb81654abb89d68cb4ab453d56b33808cc9bd",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "dr-pepper",
+    "file": "dr-pepper.flf",
+    "sha256": "9199766b021ae5e79a54625d757c8c80b5e5fa6cb861f58aa3cda50c2eedc051",
+    "sourceSha256": "2623674f584d25df3108052c3b929cec2401727ae536eb782ee92560614878bf",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "fender",
+    "file": "fender.flf",
+    "sha256": "36e14f1f0a9e364b409d4b6e78513782ae6b9d19fb24d4e9b8d1d7b0385631cd",
+    "sourceSha256": "b73e0d5779c1037a20bbda9124f1234b5360043988dfc279740a48fee89f859a",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "fraktur",
+    "file": "fraktur.flf",
+    "sha256": "bd32aa76c6fe42d2455c568196f7ad7993cac710230f5786ffeee1b0181a03f3",
+    "sourceSha256": "15c6f861dd77ddde7e8521984162b84a37987d6bc3527ce0259acc93ca4a2f69",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "georgi16",
+    "file": "georgi16.flf",
+    "sha256": "6d4ca3001ddbb97989cfb834373e732ed27bd94a3325e65119aad0d1a0f792c9",
+    "sourceSha256": "3f277d6435008d720eb9e19c594705d4c9964e203fefb018c7a6a1fdfd54d85f",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "georgia11",
+    "file": "georgia11.flf",
+    "sha256": "0bb4b9f63cd0f45e90616f709ccf56a8461e9035b60e2264baf117fa027b253c",
+    "sourceSha256": "f647ccc1242fbbbac36a21871ebdd13ac91a61375b28e9385dce55962803fdf1",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "ghoulish",
+    "file": "ghoulish.flf",
+    "sha256": "f122dcd5d8e8b74ec895801d7c581dc76a51437c235b98c4dfef26b135f62de5",
+    "sourceSha256": "66916ef886f2d2d73dfd940a938b724613f21eb6b74e1556a430e89d433f4668",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "FIGfont modification permission"
+  },
+  {
+    "id": "glenyn",
+    "file": "glenyn.flf",
+    "sha256": "b5a951a4b1894375bccb9f295188c1be1f11c609fb96e8d4751f093af0cd737f",
+    "sourceSha256": "47322f64059e1bc225e3d021f8859eec52e6b71ee93424faf6e7cac61fb89377",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "greek",
+    "file": "greek.flf",
+    "sha256": "7411ef5d659322669dcc1fa5864ab8876ad9e14cb328869a5f878893ed3a3721",
+    "sourceSha256": "10603ff2e9dbf975a21c44c73e02f5d765a2bb823d78d7bf8f802dac300ca572",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "js-stick-letters",
+    "file": "js-stick-letters.flf",
+    "sha256": "34b267deed0c934e5a7d5429797b2c32db7007f3c7c8486921bc11ab8a2dd63d",
+    "sourceSha256": "edd513405762da185ab09a1ab6d24ae37170ac952a92945c16390b263b167111",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "kban",
+    "file": "kban.flf",
+    "sha256": "44351f3a9357f27ad3b7e0d980c6b6319c74f8a542b6c78019fa9b820bca8326",
+    "sourceSha256": "70993cb0f7606effcfed057fbdbab968e8094d8be9ba9134e0eb71340e32b4f2",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "keyboard",
+    "file": "keyboard.flf",
+    "sha256": "da7d4c6955f30be0eb55783d85f6808cbd935b84c52899a27804efa7196a6317",
+    "sourceSha256": "f3cf4e06eef47b37012052c2d289e263465ceec6af3836e2d7b532c50598e73b",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "larry-3d",
+    "file": "larry-3d.flf",
+    "sha256": "a15e0293e81e53007068435267b7bc16acf78b08dc267caf2844c27e3c302af4",
+    "sourceSha256": "43268db69544ddb1ac3f2e3647dbb5994ffb0624dd182976395ac9de958fc70b",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "larry-3d-2",
+    "file": "larry-3d-2.flf",
+    "sha256": "a15e0293e81e53007068435267b7bc16acf78b08dc267caf2844c27e3c302af4",
+    "sourceSha256": "43268db69544ddb1ac3f2e3647dbb5994ffb0624dd182976395ac9de958fc70b",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "line-blocks",
+    "file": "line-blocks.flf",
+    "sha256": "6d84f33a736f265575ab59e10e172ac1131416c903ba3b76d124b9e836221ab3",
+    "sourceSha256": "61436a0f778f5f6d1b3f8a6686399426bfd5e47c39c3b76aed37f1bec8fbbe67",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "FIGfont modification permission"
+  },
+  {
+    "id": "linguaholic-mini-block",
+    "file": "linguaholic-mini-block.flf",
+    "sha256": "0021532634acc42e50b69b35dda71ab451b23e6cdef305cde5b1db986ba6689f",
+    "sourceSha256": "0021532634acc42e50b69b35dda71ab451b23e6cdef305cde5b1db986ba6689f",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "MIT"
+  },
+  {
+    "id": "linguaholic-neon",
+    "file": "linguaholic-neon.flf",
+    "sha256": "9d2127f761bd8a319bddb336a6f866cc46b3b81ed873c4936e53569d5e353d89",
+    "sourceSha256": "9d2127f761bd8a319bddb336a6f866cc46b3b81ed873c4936e53569d5e353d89",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "MIT"
+  },
+  {
+    "id": "linguaholic-shadow-3d",
+    "file": "linguaholic-shadow-3d.flf",
+    "sha256": "22e08f610ecc93e160ecb6772327cc3d642a44479a4e9f91193173916bf4338c",
+    "sourceSha256": "22e08f610ecc93e160ecb6772327cc3d642a44479a4e9f91193173916bf4338c",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "MIT"
+  },
+  {
+    "id": "mini",
+    "file": "mini.flf",
+    "sha256": "eadc342fe59dc04be56039fe05067c2f458dc50e0ab4a97e6449b608bd76d9f3",
+    "sourceSha256": "45b79cc5974bd2254d6f09a35e23fb7977a1a742e1cf809807bc22585a7106d0",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "FIGfont modification permission"
+  },
+  {
+    "id": "moscow",
+    "file": "moscow.flf",
+    "sha256": "6c0307ed575e97adf763efba97e7ff6f7aa13bfc12047c972f209075e7eca948",
+    "sourceSha256": "028a6ae7c7f175b854bd5521c2c1e146b3c18bcb0489aa4d6bc89f329d333e81",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "muzzle",
+    "file": "muzzle.flf",
+    "sha256": "6601948e07d23aa592ead57db32773152635cf83ec41bf5284a4aa78c5043a33",
+    "sourceSha256": "a75135984e6e3f21bd18a9d4c0250e641df0f803fa2228ff8276e8d72c183427",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "FIGfont modification permission"
+  },
+  {
+    "id": "nscript",
+    "file": "nscript.flf",
+    "sha256": "cdcbb0f9ef30922dd20794b31cdd5a78e5d6751c94e720d8c35247f792dee036",
+    "sourceSha256": "e04f140b008e3790739d85425d3687e4e43351b065a407aad1204fd9f90e43b0",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "puffy",
+    "file": "puffy.flf",
+    "sha256": "97e30ed9561fb0681b7b57c68e7257269ccf48895896e6ae7145d729e9f5749c",
+    "sourceSha256": "459369f3d6acea147f7ec360f72d346d4cccab4dd05c9966b9b56ba30e71b800",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "reverse",
+    "file": "reverse.flf",
+    "sha256": "106054b1df67f5d9cc05a2f5eac0bb389ddde328524a3d85c46a5bae010afbbf",
+    "sourceSha256": "c045fcff5d5ad370fa9b2cd59583d4b6f411816b0738eb522122d826cdcd7b9c",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "roman",
+    "file": "roman.flf",
+    "sha256": "07c23ca6d01996f6a7c0f312e762bcaf453b30963a08c14a377c6242136bdbb9",
+    "sourceSha256": "b6c07c67224446d5d21e4c69387dffcc96c10854bede65414266c22a54c65395",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "rowan-cap",
+    "file": "rowan-cap.flf",
+    "sha256": "a7dea59c3e41178b6588abdfee9b920589eeecf010ba0e2ed1de787ee17606bd",
+    "sourceSha256": "bd321dda947e56e911e7930ab46cd3655b08f7b971ba1ea9993eb7acbca54a37",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "small-keyboard",
+    "file": "small-keyboard.flf",
+    "sha256": "0272457e40c3440cdb971e56847635666e2f00853eec6522ed921fb9d3edb79a",
+    "sourceSha256": "f16beb25472b19a9aab463f55dea60bb54c4ace37167f65503733e20830488fd",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "stforek",
+    "file": "stforek.flf",
+    "sha256": "795e9a81fa9b2416f75aa6c1cfc66903b08e3239775260f538b42b3603e1fd48",
+    "sourceSha256": "67e1089959e3dd7e60dc063e6a50debba3f9c9ab8418e01310e9c983d753b280",
+    "source": "figlet.js",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "x99",
+    "file": "x99.flf",
+    "sha256": "755ceb3f850f9007a100f360b738bb321effdaa9fd00f8767d67f1057ee4060b",
+    "sourceSha256": "210e86b19d3d8beb1eba5d7bcde48e55d7495fb896d46cf1e5218df5e6013aa4",
+    "source": "TAAG",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "x992",
+    "file": "x992.flf",
+    "sha256": "ec6da9f7b803d0e9d5a511f805ee6edaa62da70d967b2aac108460489104ee28",
+    "sourceSha256": "a64a229afa0a631bb3513004f002e000bf1d8e75d7696655eee458d24d6dc610",
+    "source": "TAAG",
+    "variant": null,
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-1911",
+    "file": "tdf-1911.tdf",
+    "sha256": "50ec818097e9550c1036ee02151fb5ae923a243df263ff283d0ea453e2f5bb46",
+    "sourceSha256": null,
+    "source": "tdf-chunk-00a.tdf",
+    "variant": "1911 Blue",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-208",
+    "file": "tdf-208.tdf",
+    "sha256": "d4dd6d907654e5db391d0899522c69de09d1c314a92d1ac3fad3a536776923a6",
+    "sourceSha256": null,
+    "source": "tdf-chunk-00a.tdf",
+    "variant": "208 Cyan",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-4max-col",
+    "file": "tdf-4max-col.tdf",
+    "sha256": "739b3882d6d5f5dbaf465d2aaa73ab9defc70fec1cd6c43181b2342532bf69a0",
+    "sourceSha256": null,
+    "source": "tdf-chunk-00a.tdf",
+    "variant": "4Max Col Cyn",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-acid-3d",
+    "file": "tdf-acid-3d.tdf",
+    "sha256": "5df2350ad06fad3a0a88921da73132d3b6cdedd734cd29a606276d416f7aff33",
+    "sourceSha256": null,
+    "source": "tdf-chunk-00a.tdf",
+    "variant": "ACID 3D Blue",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-acidscape2",
+    "file": "tdf-acidscape2.tdf",
+    "sha256": "9d9825cb7f9770e9157f2d8ce7b8b552b7ff6262489363bce8adecd318c797da",
+    "sourceSha256": null,
+    "source": "tdf-chunk-00a.tdf",
+    "variant": "Acidscape2B",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-acidtronics",
+    "file": "tdf-acidtronics.tdf",
+    "sha256": "234b93f14c793a76be9a7c5e41ad1afe38b4080a1ea525160c938c64615cc565",
+    "sourceSha256": null,
+    "source": "tdf-chunk-00a.tdf",
+    "variant": "Acidtronics",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-acrylic",
+    "file": "tdf-acrylic.tdf",
+    "sha256": "e793646ce2e514bdd2a929457ed0e7de78b721bed11d3fb8035af1d47828289f",
+    "sourceSha256": null,
+    "source": "tdf-chunk-00a.tdf",
+    "variant": "Acrylic Cyan",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-adarkness",
+    "file": "tdf-adarkness.tdf",
+    "sha256": "430f612442abafbb7f922a68aa25ec83be1def7410c3bbc13c518379cf126032",
+    "sourceSha256": null,
+    "source": "tdf-chunk-00a.tdf",
+    "variant": "ADarknessP",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-adome",
+    "file": "tdf-adome.tdf",
+    "sha256": "7a8730e5d71c0dd1ea6d24d0bb9c54c45c1f65dc64bc92e8a52680b83f039f67",
+    "sourceSha256": null,
+    "source": "tdf-chunk-00a.tdf",
+    "variant": "Adome Blue",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-adrena",
+    "file": "tdf-adrena.tdf",
+    "sha256": "e8cc99b89cbab2ad745735ea171e50d2e0029a4a50d3b1794627cc6ffffaf46e",
+    "sourceSha256": null,
+    "source": "tdf-chunk-00a.tdf",
+    "variant": "Adrena Blue",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-afterhours",
+    "file": "tdf-afterhours.tdf",
+    "sha256": "276ebad74c99d0ca5fee2dd4c455c4047adb9ab1c5fc11a50baca6202e9459b8",
+    "sourceSha256": null,
+    "source": "tdf-chunk-00a.tdf",
+    "variant": "AfterHoursB",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-ansiltr3",
+    "file": "tdf-ansiltr3.tdf",
+    "sha256": "78c93ba8c291233e137ad2e4b152eb2f855a48d5fd8ec835f785189dd27dd55d",
+    "sourceSha256": null,
+    "source": "tdf-chunk-01a.tdf",
+    "variant": "Ansiltr3",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-ansiltr4",
+    "file": "tdf-ansiltr4.tdf",
+    "sha256": "d01f0bce4fde18aa0161df6937ee0d4c4f232138e330befe0bb7162cb9f576d2",
+    "sourceSha256": null,
+    "source": "tdf-chunk-01a.tdf",
+    "variant": "Ansiltr4",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-ansiltr5",
+    "file": "tdf-ansiltr5.tdf",
+    "sha256": "14081e19c9860ab23f4b328f2c83267c5be5cf791e0ab44ffac7b36b8d2b9046",
+    "sourceSha256": null,
+    "source": "tdf-chunk-01a.tdf",
+    "variant": "Ansiltr5",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-beyond2",
+    "file": "tdf-beyond2.tdf",
+    "sha256": "3c71742b9dec219844208bac779f51eaeeb5b2f6ec42e15249197a2ca5493967",
+    "sourceSha256": null,
+    "source": "tdf-chunk-02.tdf",
+    "variant": "Beyond2Cyn",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-black",
+    "file": "tdf-black.tdf",
+    "sha256": "87dcdb4c413d2dc921ee288083ed9116317c5b60db01a6c351ebe83069bbd187",
+    "sourceSha256": null,
+    "source": "tdf-chunk-02.tdf",
+    "variant": "Black Blue",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-blade",
+    "file": "tdf-blade.tdf",
+    "sha256": "29d13ee4a560e9027010944de8270aaabb1fbba2a648ea4b8b1bd7044bf32bc4",
+    "sourceSha256": null,
+    "source": "tdf-chunk-03a.tdf",
+    "variant": "Blade Blue",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-block-3d",
+    "file": "tdf-block-3d.tdf",
+    "sha256": "fc5ca4a915384d000e24d469f75c4e817b1573c0dcc674d5d6c2bc7c6d5fed96",
+    "sourceSha256": null,
+    "source": "tdf-chunk-03a.tdf",
+    "variant": "Block3D",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-blood-lgcol",
+    "file": "tdf-blood-lgcol.tdf",
+    "sha256": "2ba74354ae02e9e505672af083f31ebe2164a499951e4d269bad9decad2270a7",
+    "sourceSha256": null,
+    "source": "tdf-chunk-03a.tdf",
+    "variant": "Blood-LgCol",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-bloodsmlcol",
+    "file": "tdf-bloodsmlcol.tdf",
+    "sha256": "cce76da8dc06e3dafe71f77a17d2a7ea36aa5e3c52567e99547016a875e477ba",
+    "sourceSha256": null,
+    "source": "tdf-chunk-03a.tdf",
+    "variant": "BloodSmlCol",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-bloody",
+    "file": "tdf-bloody.tdf",
+    "sha256": "a54bf74a56710ca06101f779f4d438a5ec978b6ce84131b3e6bc859112587f35",
+    "sourceSha256": null,
+    "source": "tdf-chunk-03a.tdf",
+    "variant": "Bloody Brown",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-blunder",
+    "file": "tdf-blunder.tdf",
+    "sha256": "a672907b03c9f564147ed18f4c65ae87e3505dd5b93369b1a96d8922dc06c0f4",
+    "sourceSha256": null,
+    "source": "tdf-chunk-03a.tdf",
+    "variant": "Blunder",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-blunder-smal",
+    "file": "tdf-blunder-smal.tdf",
+    "sha256": "e31b94727d71746ab9896b7a34c9f698086647c03b71fcd9ed0e16045fc886ae",
+    "sourceSha256": null,
+    "source": "tdf-chunk-03a.tdf",
+    "variant": "Blunder Smal",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-board",
+    "file": "tdf-board.tdf",
+    "sha256": "92b6bdc414b5bc81376788f67d82f7f74df6c67ce308ea76e0cccbb3c88df090",
+    "sourceSha256": null,
+    "source": "tdf-chunk-03a.tdf",
+    "variant": "Board Blue",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-bodily",
+    "file": "tdf-bodily.tdf",
+    "sha256": "d6f0ee80dfca97cb1c3927790c0d76f1641d6adac6c7be71f325da7f356e7f29",
+    "sourceSha256": null,
+    "source": "tdf-chunk-04.tdf",
+    "variant": "Bodily",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-boilingpoint",
+    "file": "tdf-boilingpoint.tdf",
+    "sha256": "da2b380c0362f6da2884d6457575ef4c29fddcf0b995af2251c8222b0e55307f",
+    "sourceSha256": null,
+    "source": "tdf-chunk-04.tdf",
+    "variant": "BoilingPoint",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-boldmedium",
+    "file": "tdf-boldmedium.tdf",
+    "sha256": "c8a16727559929dc9b3be453942d3639ce09d4fa137887140e130ee600b694c4",
+    "sourceSha256": null,
+    "source": "tdf-chunk-04.tdf",
+    "variant": "BoldMedium",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-bollux",
+    "file": "tdf-bollux.tdf",
+    "sha256": "05a23ccdc61cfab9211375fa80406e64c6c9018fd4c22966843ea1fb1e0ba841",
+    "sourceSha256": null,
+    "source": "tdf-chunk-04.tdf",
+    "variant": "Bollux Blue",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-boner",
+    "file": "tdf-boner.tdf",
+    "sha256": "5488024f772d5a3e99966e4aee10417e4cf715c1a7f5ac79f53a05c12085d8f1",
+    "sourceSha256": null,
+    "source": "tdf-chunk-04.tdf",
+    "variant": "Boner Blue",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-braindmg",
+    "file": "tdf-braindmg.tdf",
+    "sha256": "f53726066d5b694ee0fc474d637aae2dd3b89240547381a4e3d0943469e853b1",
+    "sourceSha256": null,
+    "source": "tdf-chunk-04.tdf",
+    "variant": "BrainDmgBlu",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-brotherhood",
+    "file": "tdf-brotherhood.tdf",
+    "sha256": "8be946f5180d2eb89b9535f51b88f8f59b7c5e81b85f7a86dc78ed36191f7e86",
+    "sourceSha256": null,
+    "source": "tdf-chunk-04.tdf",
+    "variant": "Brotherhood",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-circuits",
+    "file": "tdf-circuits.tdf",
+    "sha256": "d1d08b6939c1f9b3b275ee71e195f70433615acbe6534309a11adb7512ab72cc",
+    "sourceSha256": null,
+    "source": "tdf-chunk-06a.tdf",
+    "variant": "Circuits Blu",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-closed",
+    "file": "tdf-closed.tdf",
+    "sha256": "651d9bbf484041bb18b3391b3ab28e386ddaba475a28821a34508b4dae66b8c1",
+    "sourceSha256": null,
+    "source": "tdf-chunk-06a.tdf",
+    "variant": "Closed Blue",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-coder",
+    "file": "tdf-coder.tdf",
+    "sha256": "7a48e403611185d5901fa258d157aee61038af59a4ffd0269e41983ab5e35f2d",
+    "sourceSha256": null,
+    "source": "tdf-chunk-06a.tdf",
+    "variant": "Coder",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-coloredhard",
+    "file": "tdf-coloredhard.tdf",
+    "sha256": "9c12a56adbeb9311af44657eaba5e8dcb44f5f9f6c8c0c6bf47409453c95f774",
+    "sourceSha256": null,
+    "source": "tdf-chunk-06a.tdf",
+    "variant": "ColoredHard",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-colorrounded",
+    "file": "tdf-colorrounded.tdf",
+    "sha256": "81c273408f5cf383464b867a9f7b12d983ae48204412962a29b354011ba9dc45",
+    "sourceSha256": null,
+    "source": "tdf-chunk-06a.tdf",
+    "variant": "ColorRounded",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-colosscol",
+    "file": "tdf-colosscol.tdf",
+    "sha256": "8758349bafae30cac69b26b668f54dd78e9542f71c3d6f8de1843a521b67ffbc",
+    "sourceSha256": null,
+    "source": "tdf-chunk-06a.tdf",
+    "variant": "ColossCol",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-compact",
+    "file": "tdf-compact.tdf",
+    "sha256": "74bd3f782eff52967b890be66fb243015ace6b64ac3643f48fa740ce8eecf9e7",
+    "sourceSha256": null,
+    "source": "tdf-chunk-07.tdf",
+    "variant": "Compact",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-crewel",
+    "file": "tdf-crewel.tdf",
+    "sha256": "659c46b19f8cd791e696e9ab9410159e0b8037c710e9f502d6ff302f6ed4237f",
+    "sourceSha256": null,
+    "source": "tdf-chunk-08.tdf",
+    "variant": "Crewel Blue",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-crimson",
+    "file": "tdf-crimson.tdf",
+    "sha256": "a350651bd58e3d48854e0eeaafbffe67ea64126ed2d06920f6eb8f23f5b4c5c5",
+    "sourceSha256": null,
+    "source": "tdf-chunk-08.tdf",
+    "variant": "Crimson",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-darkcs3d",
+    "file": "tdf-darkcs3d.tdf",
+    "sha256": "cc90e95ab8d98f0b29de4eb52438528e97badacf72a2bacb984ac2747da0dd8a",
+    "sourceSha256": null,
+    "source": "tdf-chunk-09.tdf",
+    "variant": "DarkCS3DBlue",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-darklands",
+    "file": "tdf-darklands.tdf",
+    "sha256": "ae092c3fa61791c3c2f04ab201cfef04c6b51e1032110776dd56f01fa9203ba9",
+    "sourceSha256": null,
+    "source": "tdf-chunk-09.tdf",
+    "variant": "Darklands Bl",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-darkrealm",
+    "file": "tdf-darkrealm.tdf",
+    "sha256": "bd748db9854ebc87ccedc820b0f6ad28336e8abec2ac03551d46391b9482ab48",
+    "sourceSha256": null,
+    "source": "tdf-chunk-09.tdf",
+    "variant": "DarkRealm",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-deathstar",
+    "file": "tdf-deathstar.tdf",
+    "sha256": "f44beffc2998844208c1e68cac1c813240165e9f82a0df1c9b04468ce43d2bf8",
+    "sourceSha256": null,
+    "source": "tdf-chunk-09.tdf",
+    "variant": "DeathStar",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-delusion",
+    "file": "tdf-delusion.tdf",
+    "sha256": "c0c41d57d9b7e17002e0f2eae2f4d56170a740de86d492b479bf724ed32c58b4",
+    "sourceSha256": null,
+    "source": "tdf-chunk-10.tdf",
+    "variant": "Delusion",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-destinatn",
+    "file": "tdf-destinatn.tdf",
+    "sha256": "ac354a3e94f4d0b5480c859f24ab6b372d2f87336f342cdcd7fef12060ca7fef",
+    "sourceSha256": null,
+    "source": "tdf-chunk-10.tdf",
+    "variant": "DestinatnBL",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-destruct",
+    "file": "tdf-destruct.tdf",
+    "sha256": "80e75dc3a81007f52028089c446afb29eb31ebc83bc4e794b09386757a4492a5",
+    "sourceSha256": null,
+    "source": "tdf-chunk-10.tdf",
+    "variant": "Destruct",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-eclipse",
+    "file": "tdf-eclipse.tdf",
+    "sha256": "f0d7f52548898970bc614ccb080ccfbc640e413fdc514b78ccf46589d246318d",
+    "sourceSha256": null,
+    "source": "tdf-chunk-12a.tdf",
+    "variant": "Eclipse Blue",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-eclipse2",
+    "file": "tdf-eclipse2.tdf",
+    "sha256": "65d76d18e50cf383523c4b1a9936dd588d7eaae468615ca665f9ed385a784ad5",
+    "sourceSha256": null,
+    "source": "tdf-chunk-12a.tdf",
+    "variant": "Eclipse2",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-elusive",
+    "file": "tdf-elusive.tdf",
+    "sha256": "49e8ec53f82e3022cddb2224809d06e1ab46082d85365046c08a357cdecfc97f",
+    "sourceSha256": null,
+    "source": "tdf-chunk-12a.tdf",
+    "variant": "Elusive",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-file",
+    "file": "tdf-file.tdf",
+    "sha256": "da0e1b0c31dabafd359f942f6cce156a1e613baca0f96d79fd22753b5fb05f38",
+    "sourceSha256": null,
+    "source": "tdf-chunk-13a.tdf",
+    "variant": "File (Org)",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-font-20",
+    "file": "tdf-font-20.tdf",
+    "sha256": "e41dec987034eb1ac92fb9c2c6ba8c653e809a50d8b8e40510bd7746da41603c",
+    "sourceSha256": null,
+    "source": "tdf-chunk-14.tdf",
+    "variant": "Font 20",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-forbidden",
+    "file": "tdf-forbidden.tdf",
+    "sha256": "0f8496db0399e38dfa963278c7bf1932226551738d0b27d3681752414f2d8cbb",
+    "sourceSha256": null,
+    "source": "tdf-chunk-16a.tdf",
+    "variant": "Forbidden Bl",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-forgotten",
+    "file": "tdf-forgotten.tdf",
+    "sha256": "4401d76f589d1734ac7be18e07e4d9830b81739ee3b2955cf6174e35bc8b84ef",
+    "sourceSha256": null,
+    "source": "tdf-chunk-16a.tdf",
+    "variant": "Forgotten Bl",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-foundation",
+    "file": "tdf-foundation.tdf",
+    "sha256": "236f82d6b32cdcde8632d3f57a6070c60bfe1b062e3c0e1033bcef8a212ceccf",
+    "sourceSha256": null,
+    "source": "tdf-chunk-16a.tdf",
+    "variant": "Foundation B",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-friendship",
+    "file": "tdf-friendship.tdf",
+    "sha256": "98e26c345f20c2d223b9579cc56e0c14a012ce27f560bd336b1d10cfd2bfb2e0",
+    "sourceSha256": null,
+    "source": "tdf-chunk-16a.tdf",
+    "variant": "Friendship",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-funderbird",
+    "file": "tdf-funderbird.tdf",
+    "sha256": "ae0da81d9abbebfbb67162954f0f1d5d20a8f5b7f1aedee9a17817336fe10a86",
+    "sourceSha256": null,
+    "source": "tdf-chunk-16a.tdf",
+    "variant": "Funderbird",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-fungi",
+    "file": "tdf-fungi.tdf",
+    "sha256": "bbebae945c6aec474b3b71f9d9d206d6ce88ec28e4e2228228f8c5949c07b961",
+    "sourceSha256": null,
+    "source": "tdf-chunk-16a.tdf",
+    "variant": "Fungi",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-future",
+    "file": "tdf-future.tdf",
+    "sha256": "d7c0c477af9845567d3f8f52d4ea4acf2aec8bf59eb714da8a79adfdf967310c",
+    "sourceSha256": null,
+    "source": "tdf-chunk-16a.tdf",
+    "variant": "Future",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-gangland",
+    "file": "tdf-gangland.tdf",
+    "sha256": "5f0216d07ffd269f7b03d6f6bf6bcebc7367a05f138dc70bf1528b2a44e98449",
+    "sourceSha256": null,
+    "source": "tdf-chunk-17.tdf",
+    "variant": "Gangland Blu",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-garden",
+    "file": "tdf-garden.tdf",
+    "sha256": "0a7cbb4a618e9b1c76cd2539cb52ef5ca116182478eb91cbe291a9993e6ba546",
+    "sourceSha256": null,
+    "source": "tdf-chunk-17.tdf",
+    "variant": "Garden Blue",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-gloom",
+    "file": "tdf-gloom.tdf",
+    "sha256": "6d5cef00c4b0192be31709498f830a36d7e077c4c0331259f1504f74c59f9a52",
+    "sourceSha256": null,
+    "source": "tdf-chunk-17.tdf",
+    "variant": "Gloom Cyan",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-grand",
+    "file": "tdf-grand.tdf",
+    "sha256": "83cdb70acd5e3b975b1344312925a1e51ec34daefb853f4f70a55e28f5826565",
+    "sourceSha256": null,
+    "source": "tdf-chunk-17.tdf",
+    "variant": "Grand Blue",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-greenchaos",
+    "file": "tdf-greenchaos.tdf",
+    "sha256": "18f4d45b2a6c14e0060f3d2f5f73eeffb466d00c94f3e30b633872c49147c013",
+    "sourceSha256": null,
+    "source": "tdf-chunk-17.tdf",
+    "variant": "GreenChaosC",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-hobbes",
+    "file": "tdf-hobbes.tdf",
+    "sha256": "767365cb17deb9b6752a761811d850558769520796dd28794a490ba6a2202008",
+    "sourceSha256": null,
+    "source": "tdf-chunk-18.tdf",
+    "variant": "Hobbes",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-ice-blue",
+    "file": "tdf-ice-blue.tdf",
+    "sha256": "fcf8967bf95eb5094375157aba7411d098350805ff17679ed95c974691ce431a",
+    "sourceSha256": null,
+    "source": "tdf-chunk-19.tdf",
+    "variant": "ICE Blue Cya",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-ice-zone",
+    "file": "tdf-ice-zone.tdf",
+    "sha256": "8f115b2fe496603ff1b6cee32e0f6cf2ed5e1aaa4dfde6f5b7cbb734d7edf304",
+    "sourceSha256": null,
+    "source": "tdf-chunk-19.tdf",
+    "variant": "Ice Zone Blu",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-illusion-2",
+    "file": "tdf-illusion-2.tdf",
+    "sha256": "905aecea4cd035e142a9d02fd2ad76168c6579d04be580b40ff1908a08849d1c",
+    "sourceSha256": null,
+    "source": "tdf-chunk-19.tdf",
+    "variant": "Illusion 2",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-illusion-chr",
+    "file": "tdf-illusion-chr.tdf",
+    "sha256": "e8720607faf25a8a971da66801cab6a2b09725e1d3b3f3f9960ad2c94367b826",
+    "sourceSha256": null,
+    "source": "tdf-chunk-19.tdf",
+    "variant": "Illusion Chr",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-imgmnuset",
+    "file": "tdf-imgmnuset.tdf",
+    "sha256": "9e892c9e8bdf68489e092b27e8da6ea35b8de9067f7e0c349c6b7e15e7bbc13b",
+    "sourceSha256": null,
+    "source": "tdf-chunk-19.tdf",
+    "variant": "ImgMnuSet",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-inch",
+    "file": "tdf-inch.tdf",
+    "sha256": "8e1790766bd8dff9d44920b10e37ea03593624813b813be39a73a03d236ebb6f",
+    "sourceSha256": null,
+    "source": "tdf-chunk-19.tdf",
+    "variant": "Inch",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-insomiac",
+    "file": "tdf-insomiac.tdf",
+    "sha256": "b2150a1c04b18d9a4bdeaafb435322bea144cd18167161b3debe31e13a32b3ad",
+    "sourceSha256": null,
+    "source": "tdf-chunk-20.tdf",
+    "variant": "Insomiac Cya",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-intentions",
+    "file": "tdf-intentions.tdf",
+    "sha256": "9c34e9ed809d74207a2c545d10a7e1ee61788316846bdedf0a182c3a0c165de8",
+    "sourceSha256": null,
+    "source": "tdf-chunk-20.tdf",
+    "variant": "Intentions C",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-intoxicatn",
+    "file": "tdf-intoxicatn.tdf",
+    "sha256": "aad39cd76cf69d38bceed9f9b5589562f599015a5703d6ee70addbaf43a0af17",
+    "sourceSha256": null,
+    "source": "tdf-chunk-20.tdf",
+    "variant": "IntoxicatnBl",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-iridium",
+    "file": "tdf-iridium.tdf",
+    "sha256": "446b76b53e10738b9e57746594b66feec0363a237809c4db4e46fb2d0d615cea",
+    "sourceSha256": null,
+    "source": "tdf-chunk-20.tdf",
+    "variant": "Iridium",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-juice",
+    "file": "tdf-juice.tdf",
+    "sha256": "56f9d7ec925906b2c03c512d8390e9bf660ba06944b5367447b9116e79e8e90b",
+    "sourceSha256": null,
+    "source": "tdf-chunk-20.tdf",
+    "variant": "Juice Cyan",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-kevin3",
+    "file": "tdf-kevin3.tdf",
+    "sha256": "9e048ed52bb4b664da917a7d87af7a79147c98c3b905dabcbd9a27752f26a50d",
+    "sourceSha256": null,
+    "source": "tdf-chunk-20.tdf",
+    "variant": "Kevin3",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-kewl",
+    "file": "tdf-kewl.tdf",
+    "sha256": "633d3b86c34d7414dd8fdd48598278b6f6f172f929070a89de30d19404d19734",
+    "sourceSha256": null,
+    "source": "tdf-chunk-20.tdf",
+    "variant": "KeWl",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-kolosal",
+    "file": "tdf-kolosal.tdf",
+    "sha256": "aa2261e0bd4ab6f0bda1a89170a1ea4493051b2534fd3b74d72bd35ca2170919",
+    "sourceSha256": null,
+    "source": "tdf-chunk-20.tdf",
+    "variant": "KolOsAl",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-mabus1",
+    "file": "tdf-mabus1.tdf",
+    "sha256": "13067b568fa8c89e81834260a16cad0a7149a43d29e89484a55632f8f5d901ac",
+    "sourceSha256": null,
+    "source": "tdf-chunk-21a.tdf",
+    "variant": "mabus1",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-magazine",
+    "file": "tdf-magazine.tdf",
+    "sha256": "0747f6433e1651998c8c2d2a1afb9fd991d6a9e09b9bc26338131c500bc30d7b",
+    "sourceSha256": null,
+    "source": "tdf-chunk-21a.tdf",
+    "variant": "Magazine",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-messages",
+    "file": "tdf-messages.tdf",
+    "sha256": "94c224ce8c7245619eb64984af4d3af15f994bfd36550b1bc5dcf557aca7b463",
+    "sourceSha256": null,
+    "source": "tdf-chunk-21a.tdf",
+    "variant": "Messages",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-midnight",
+    "file": "tdf-midnight.tdf",
+    "sha256": "cf26c817af7b28b0181a98ab886cfba52ad36f3de4895f25a366e43158c8b80c",
+    "sourceSha256": null,
+    "source": "tdf-chunk-21a.tdf",
+    "variant": "Midnight",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-nyndee",
+    "file": "tdf-nyndee.tdf",
+    "sha256": "75d9046233cab345de893db040873e88c5b4f7e07c513439f16613bcf67e6a11",
+    "sourceSha256": null,
+    "source": "tdf-chunk-23.tdf",
+    "variant": "Nyndee",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-optical",
+    "file": "tdf-optical.tdf",
+    "sha256": "aa644debd1b8c12b3f44ef30f85d39c428d7a128477fb879d146e85ee6790947",
+    "sourceSha256": null,
+    "source": "tdf-chunk-23.tdf",
+    "variant": "Optical",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-outline",
+    "file": "tdf-outline.tdf",
+    "sha256": "18dbfc1ee07535e36e5e7168dcb77a7d4f736dd47bef0d40772db62714dacbf2",
+    "sourceSha256": null,
+    "source": "tdf-chunk-23.tdf",
+    "variant": "Outline",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-psycosis",
+    "file": "tdf-psycosis.tdf",
+    "sha256": "48a9beef44cdcb5deefc74362a6c15e6764bdec0174408737332ab54c299f059",
+    "sourceSha256": null,
+    "source": "tdf-chunk-25.tdf",
+    "variant": "Psycosis",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-radiance",
+    "file": "tdf-radiance.tdf",
+    "sha256": "b82a812d17a6c0bdce09b5390c0873112d8f8a38c2fb55986ff2b8d09078813a",
+    "sourceSha256": null,
+    "source": "tdf-chunk-25.tdf",
+    "variant": "Radiance Blu",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-romanns",
+    "file": "tdf-romanns.tdf",
+    "sha256": "7427bf8aa7041827d5a77735fb2c41970cb048dae301878bcd35e6daec56813f",
+    "sourceSha256": null,
+    "source": "tdf-chunk-26.tdf",
+    "variant": "RomanNSBlue",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-rounded",
+    "file": "tdf-rounded.tdf",
+    "sha256": "7a65cce4382b7e16cdbff0335ce29199d737d1b3584b069429b81ba779fc1049",
+    "sourceSha256": null,
+    "source": "tdf-chunk-26.tdf",
+    "variant": "Rounded",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-silver",
+    "file": "tdf-silver.tdf",
+    "sha256": "3178e1076f008b10ec7c3021ad5fe41704b9bffe860839d4dc680509a4382ae2",
+    "sourceSha256": null,
+    "source": "tdf-chunk-28.tdf",
+    "variant": "Silver2",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-sip-hopeless",
+    "file": "tdf-sip-hopeless.tdf",
+    "sha256": "33640bfca2e130e94f411db1ba0943298f755953076f6ad1669c666c92d7e330",
+    "sourceSha256": null,
+    "source": "tdf-chunk-28.tdf",
+    "variant": "SiP_HoPeLeSS",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-stats-rs",
+    "file": "tdf-stats-rs.tdf",
+    "sha256": "36e28ec6d4a829067f159da33b4f9279ba84de3917a17a1708f88c527e7bda5a",
+    "sourceSha256": null,
+    "source": "tdf-chunk-29a.tdf",
+    "variant": "Stats RS",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-superturbo",
+    "file": "tdf-superturbo.tdf",
+    "sha256": "ffc963c16f5dee756910938dc7ba38191374f914baf1742d1d98c2b67da06523",
+    "sourceSha256": null,
+    "source": "tdf-chunk-29a.tdf",
+    "variant": "SuperTurbo",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-tech",
+    "file": "tdf-tech.tdf",
+    "sha256": "5742345f94dff84962fdaf17e275ce5901d4b23a183fa39debbaa8a3c567aca3",
+    "sourceSha256": null,
+    "source": "tdf-chunk-30a.tdf",
+    "variant": "Tech",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-termite",
+    "file": "tdf-termite.tdf",
+    "sha256": "fe92e5922c60fa780d478c507df84e7817d008c4b256738ce4e52402351974de",
+    "sourceSha256": null,
+    "source": "tdf-chunk-30a.tdf",
+    "variant": "Termite Blue",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-thickoutline",
+    "file": "tdf-thickoutline.tdf",
+    "sha256": "62b8aeac800a35ebf5d67751d069bb40e72e2f9a3eb752ab521e4290abd98499",
+    "sourceSha256": null,
+    "source": "tdf-chunk-30a.tdf",
+    "variant": "ThickOutline",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-thievesold",
+    "file": "tdf-thievesold.tdf",
+    "sha256": "390ca7c4aac3b8d9c3702fa8af5bcdebca5ab26e1bd379fa00f422c32d1b296a",
+    "sourceSha256": null,
+    "source": "tdf-chunk-30a.tdf",
+    "variant": "ThievesOldC",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-this",
+    "file": "tdf-this.tdf",
+    "sha256": "ad15bb8e27b0bd7acae2facf613b41e0b146caf6d540e61a59c3ee51d4d314fb",
+    "sourceSha256": null,
+    "source": "tdf-chunk-30a.tdf",
+    "variant": "THiS!",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-tiny",
+    "file": "tdf-tiny.tdf",
+    "sha256": "119ed1cb069c3e28399cd4c2cd177fc7128659b37abdc5b1b98325d39597f59d",
+    "sourceSha256": null,
+    "source": "tdf-chunk-30a.tdf",
+    "variant": "Tiny",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-tribes",
+    "file": "tdf-tribes.tdf",
+    "sha256": "d67c2c6b23d980ec07cee5c768e468aa1e81a6ada0f436d5885e43504f31f474",
+    "sourceSha256": null,
+    "source": "tdf-chunk-30a.tdf",
+    "variant": "Tribes",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-tusse",
+    "file": "tdf-tusse.tdf",
+    "sha256": "274db16d738d286f192cd2b73287084480ecdc90f1e05c9fc1221afcd629afa1",
+    "sourceSha256": null,
+    "source": "tdf-chunk-31.tdf",
+    "variant": "Tusse",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-undergronds",
+    "file": "tdf-undergronds.tdf",
+    "sha256": "5c95b66e2ebd26124dd4a498398860c87b747ec8dc6a35fb7a18a8251911c6ec",
+    "sourceSha256": null,
+    "source": "tdf-chunk-31.tdf",
+    "variant": "UndergrondsB",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-whit-blod",
+    "file": "tdf-whit-blod.tdf",
+    "sha256": "24151f609375a7ddcc61f9362f95724d4ee5490c7bec165d0a2de8504c8812ee",
+    "sourceSha256": null,
+    "source": "tdf-chunk-33a.tdf",
+    "variant": "WHIT-BLOD",
+    "permission": "Unresolved individual terms"
+  },
+  {
+    "id": "tdf-wpaint",
+    "file": "tdf-wpaint.tdf",
+    "sha256": "90f1293ffe962c19e3d5822fe3dcd9c409d89fbbde01973e26506629b1f2d92a",
+    "sourceSha256": null,
+    "source": "tdf-chunk-33a.tdf",
+    "variant": "WPaint",
+    "permission": "Unresolved individual terms"
+  }
+]

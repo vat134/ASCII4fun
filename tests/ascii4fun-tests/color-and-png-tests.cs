@@ -7,6 +7,47 @@ namespace Ascii4Fun.Tests;
 
 public sealed class ColorAndPngTests
 {
+    [Fact]
+    public async Task BrailleBlankInCustomRampMatchesOrdinarySpaceWithoutChangingPixels()
+    {
+        var encoded = CreateColorImage();
+        using var first = new MemoryStream(encoded);
+        using var second = new MemoryStream(encoded);
+        var ordinary = await new StillImageConverter().ConvertAsync(first,
+            new CharacterImageOptions { OutputWidthInCells = 4, CharacterRamp = "@ " });
+        var braille = await new StillImageConverter().ConvertAsync(second,
+            new CharacterImageOptions { OutputWidthInCells = 4, CharacterRamp = "@⠀" });
+        Assert.Contains(' ', ordinary.Text);
+        Assert.DoesNotContain('\u2800', ordinary.Text);
+        Assert.Equal(ordinary.Text, braille.Text.Replace('\u2800', ' '));
+        Assert.Equal(await PngExporter.ExportAsync(ordinary), await PngExporter.ExportAsync(braille));
+    }
+
+    [Fact]
+    public void CanvasPreservesOriginalSpaceGlyphsAndUtf8Projection()
+    {
+        var ink = new RgbColor(255, 255, 255);
+        var canvas = new AsciiCanvas(" A\u00a0█\u2800𝔸".EnumerateRunes()
+            .Select(glyph => new AsciiCell(glyph, ink)).ToArray(), 3, 2);
+
+        Assert.Equal(" A\u00a0\n█\u2800𝔸", canvas.Text);
+        Assert.Equal(6, canvas.Cells.Count);
+        Assert.Equal(canvas.Text, Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(canvas.Text)));
+        Assert.All(canvas.Cells.Where(cell => cell.Glyph.Value is 0x2800), cell => Assert.Equal(ink, cell.Color));
+    }
+
+    [Fact]
+    public void EmptyBrailleCellsNeverRequestAGlyphMaskOrPaintTheBackground()
+    {
+        var ink = new RgbColor(255, 255, 255);
+        var background = new RgbColor(10, 20, 30);
+        var canvas = new AsciiCanvas([new(new Rune(' '), ink), new(new Rune('\u2800'), ink)], 2, 1, background);
+        var pixels = CanvasRasterizer.Render(canvas, _ => throw new InvalidOperationException("Blank cells must not draw."));
+
+        for (var offset = 0; offset < pixels.Length; offset += 3)
+            Assert.Equal(new byte[] { 10, 20, 30 }, pixels.AsSpan(offset, 3).ToArray());
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

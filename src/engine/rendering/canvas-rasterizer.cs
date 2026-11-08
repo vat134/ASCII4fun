@@ -47,7 +47,18 @@ internal static class CanvasRasterizer
             }
 
             var cell = canvas.Cells[index];
-            if (cell.Glyph.Value == ' ')
+            var originX = (index % canvas.WidthInCells) * CharacterCellGeometry.WidthInPixels;
+            var originY = (index / canvas.WidthInCells) * CharacterCellGeometry.HeightInPixels;
+            if (cell.BackgroundColor is { } background)
+                for (var y = 0; y < CharacterCellGeometry.HeightInPixels; y++)
+                    for (var x = 0; x < CharacterCellGeometry.WidthInPixels; x++)
+                    {
+                        var offset = (((originY + y) * width) + originX + x) * 3;
+                        rgb[offset] = background.Red;
+                        rgb[offset + 1] = background.Green;
+                        rgb[offset + 2] = background.Blue;
+                    }
+            if (cell.Glyph.Value is ' ' or '\u2800')
             {
                 continue;
             }
@@ -58,8 +69,7 @@ internal static class CanvasRasterizer
                 masks.Add(cell.Glyph, mask);
             }
 
-            var originX = (index % canvas.WidthInCells) * CharacterCellGeometry.WidthInPixels;
-            var originY = (index / canvas.WidthInCells) * CharacterCellGeometry.HeightInPixels;
+
             for (var y = 0; y < CharacterCellGeometry.HeightInPixels; y++)
             {
                 for (var x = 0; x < CharacterCellGeometry.WidthInPixels; x++)

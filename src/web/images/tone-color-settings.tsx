@@ -55,7 +55,7 @@ export function ToneColorSettings({ configuration, options, onChange }: Props) {
               max={max}
               value={[options[key]]}
               onValueChange={(value) => {
-                const [next] = value as number[];
+                const next = typeof value === "number" ? value : value[0];
                 if (next !== undefined) onChange({ ...options, [key]: next });
               }}
             />

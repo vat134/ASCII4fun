@@ -1,6 +1,6 @@
 namespace Ascii4Fun.Media;
 
-internal sealed record RgbaGrid(int WidthInCells, int HeightInCells, byte[] Pixels)
+internal sealed record RgbaGrid(int WidthInPixels, int HeightInPixels, byte[] Pixels)
 {
     private const int ChannelsPerPixel = 4;
     private const int GreenChannelOffset = 1;
