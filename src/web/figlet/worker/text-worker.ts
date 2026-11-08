@@ -2,7 +2,10 @@ import type { BrowserEngine } from "../../browser-engine/browser-engine";
 import { loadFonts } from "../../browser-engine/magick-glyph-renderer";
 import { rgbToRgba } from "../../rendering/rgb-to-rgba";
 import { maxRasterDimensionInPixels } from "../../rendering/raster-limits";
-import type { AsciiPreviewResult } from "../../rendering/ascii-preview-result";
+import type {
+  AsciiCanvasProjection,
+  AsciiPreviewResult
+} from "../../rendering/ascii-preview-result";
 import {
   fontSampleText,
   defaultTextColor,
@@ -29,9 +32,9 @@ export async function renderTextRequest(
         foregroundColor,
         JSON.stringify(colorReplacements)
       )
-    ) as Pick<AsciiPreviewResult, "text" | "widthInCells" | "heightInCells">;
-    const widthInPixels = result.widthInCells * cellWidth!;
-    const heightInPixels = result.heightInCells * cellHeight!;
+    ) as AsciiCanvasProjection;
+    const widthInPixels = result.widthInCells * cellWidth;
+    const heightInPixels = result.heightInCells * cellHeight;
     if (Math.max(widthInPixels, heightInPixels) > maxRasterDimensionInPixels)
       throw new Error(
         "This text exceeds the browser raster side limit. Add a line break or choose a smaller font."

@@ -5,6 +5,7 @@ import type {
 import type { BrowserImageSource } from "./browser-image-source";
 import { loadFonts } from "../../browser-engine/magick-glyph-renderer";
 import { rgbToRgba } from "../../rendering/rgb-to-rgba";
+import type { AsciiCanvasProjection } from "../../rendering/ascii-preview-result";
 
 export async function renderImageRequest(
   engine: BrowserEngine,
@@ -34,7 +35,7 @@ export async function renderImageRequest(
       sampled.height,
       JSON.stringify(data.options)
     )
-  );
+  ) as AsciiCanvasProjection;
   await loadFonts(engine.FontNames(result.text));
   const rgb = engine.Rasterize();
   const pixels = rgbToRgba(rgb);

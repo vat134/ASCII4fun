@@ -1,3 +1,4 @@
+import { browserEngineTimeoutMs } from "../browser-engine/browser-engine";
 import type {
   CharacterImageOptions,
   ImageConversionResult
@@ -78,7 +79,7 @@ export class BrowserImageClient {
               "The browser engine took too long. Retry or choose a smaller image."
             )
           ),
-        30_000
+        browserEngineTimeoutMs
       );
       this.worker.postMessage(message, transfer);
     });

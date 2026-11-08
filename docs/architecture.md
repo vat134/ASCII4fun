@@ -7,17 +7,19 @@ Web -> Worker -> shared C# pipeline -> ImageMagick WASM adapter
 API / CLI / NuGet -> .NET engine ---> Magick.NET adapter
 ```
 
-| Owner                    | Responsibility                                                   |
-| ------------------------ | ---------------------------------------------------------------- |
-| `src/engine/images`      | Options, luminance, tone, immutable glyph/color cells            |
-| `src/engine/figlet`      | FIGfont parsing, layout, font catalog and glyph canvases         |
-| `src/engine/media`       | Input policy, aspect-correct grid and native decoding            |
-| `src/engine/rendering`   | Cell/font rules, shared RGB compositor and native PNG export     |
-| `src/engine/browser`     | .NET WASM host linking the authoritative engine source files     |
-| `src/web/browser-engine` | WASM runtime and shared font adapter                             |
-| `src/web/images/worker`  | Browser codecs, normalized source lifetime and sampling          |
-| `src/web/images`         | Controls, scheduling, bounded result cache, canvas and downloads |
-| `src/server`, `src/cli`  | HTTP and file-system boundaries                                  |
+| Owner                     | Responsibility                                                |
+| ------------------------- | ------------------------------------------------------------- |
+| `src/engine/images`       | Options, luminance, tone, immutable glyph/color cells         |
+| `src/engine/figlet`       | FIGfont parsing, layout, font catalog and glyph canvases      |
+| `src/engine/media`        | Input policy, aspect-correct grid and native decoding         |
+| `src/engine/rendering`    | Cell/font rules, shared RGB compositor and native PNG export  |
+| `src/engine/browser`      | .NET WASM host linking the authoritative engine source files  |
+| `src/web/browser-engine`  | WASM runtime and shared font adapter                          |
+| `src/web/images/worker`   | Browser codecs, normalized source lifetime and sampling       |
+| `src/web/images`          | Media controls, scheduling and bounded result cache           |
+| `src/web/rendering`       | Shared preview, zoom, copy and raster/text downloads          |
+| `src/cli/image-output.cs` | CLI file/stdout output and collision-safe generated filenames |
+| `src/server`, `src/cli`   | HTTP and file-system boundaries                               |
 
 The flow is decode/normalize -> sample -> analyze -> tone -> glyph/color mapping -> raster/export. Media adapters use ImageMagick; TypeScript does not implement ASCII mapping. Both hosts use the same ICC profile bytes, bundled fonts, 12 × 24 px geometry and C# raster compositor.
 

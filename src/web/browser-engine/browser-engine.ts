@@ -1,11 +1,13 @@
 import type { CharacterImageOptions } from "../images/image-conversion";
 
+export const browserEngineTimeoutMs = 30_000;
+
 export type BrowserEngine = {
-  Limits(): number[];
+  Limits(): [number, number, number];
   SrgbProfile(): Uint8Array;
   CmykProfile(): Uint8Array;
-  Geometry(): number[];
-  SamplingScale(style: string): number[];
+  Geometry(): [number, number];
+  SamplingScale(style: string): [number, number];
   PhotoByteLength(widthInCells: number, heightInCells: number): number;
   SetSourcePhoto(
     rgba: Uint8Array,

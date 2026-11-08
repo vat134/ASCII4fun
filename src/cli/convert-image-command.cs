@@ -1,14 +1,10 @@
 using System.CommandLine;
-using System.Text;
 using Ascii4Fun.Images;
-using Ascii4Fun.Rendering;
 
 namespace Ascii4Fun.Cli;
 
 internal static class ConvertImageCommand
 {
-    private static readonly UTF8Encoding Utf8WithoutBom = new(encoderShouldEmitUTF8Identifier: false);
-
     public static Command Create()
     {
         var inputArgument = new Argument<FileInfo>("input")
@@ -161,28 +157,7 @@ internal static class ConvertImageCommand
                 DirectoryInfo? outputDirectory = parseResult.GetValue(outputDirectoryOption);
                 var format = parseResult.GetRequiredValue(formatOption);
 
-                if (output is not null || outputDirectory is not null)
-                {
-                    var bytes = format == "png"
-                        ? await PngExporter.ExportAsync(result, cancellationToken)
-                        : Utf8WithoutBom.GetBytes(result.Text + '\n');
-                    if (output is not null)
-                    {
-                        await File.WriteAllBytesAsync(output.FullName, bytes, cancellationToken);
-                    }
-                    else
-                    {
-                        var generatedOutput = await WriteGeneratedOutputAsync(
-                            input, outputDirectory!, bytes, format, cancellationToken);
-                        Console.OutputEncoding = Utf8WithoutBom;
-                        Console.Out.WriteLine($"Saved: {generatedOutput.FullName}");
-                    }
-                }
-                else
-                {
-                    Console.OutputEncoding = Utf8WithoutBom;
-                    Console.Out.WriteLine(result.Text);
-                }
+                await ImageOutput.WriteAsync(result, input, output, outputDirectory, format, cancellationToken);
 
                 return 0;
             }
@@ -197,46 +172,5 @@ internal static class ConvertImageCommand
         });
 
         return command;
-    }
-
-    private static async Task<FileInfo> WriteGeneratedOutputAsync(
-        FileInfo input,
-        DirectoryInfo outputDirectory,
-        byte[] bytes,
-        string format,
-        CancellationToken cancellationToken)
-    {
-        var outputName = Path.GetFileNameWithoutExtension(input.Name);
-
-        for (var index = 0; ; index++)
-        {
-            var suffix = index == 0 ? string.Empty : $"-{index}";
-            var outputPath = Path.Combine(outputDirectory.FullName, $"{outputName}{suffix}.{format}");
-            FileStream outputStream;
-
-            try
-            {
-                outputStream = new FileStream(
-                    outputPath,
-                    new FileStreamOptions
-                    {
-                        Mode = FileMode.CreateNew,
-                        Access = FileAccess.Write,
-                        Share = FileShare.None,
-                        Options = FileOptions.Asynchronous
-                    });
-            }
-            catch (IOException) when (File.Exists(outputPath))
-            {
-                continue;
-            }
-
-            await using (outputStream)
-            {
-                await outputStream.WriteAsync(bytes, cancellationToken);
-            }
-
-            return new FileInfo(outputPath);
-        }
     }
 }

@@ -22,8 +22,8 @@ export async function loadBrowserEngine(): Promise<BrowserEngine> {
   // Original plus resize/color-profile buffers must fit without disk spill.
   ResourceLimits.memory = BigInt(256 * 1024 * 1024);
   ResourceLimits.disk = 0n;
-  ResourceLimits.width = BigInt(maxDimension!);
-  ResourceLimits.height = BigInt(maxDimension!);
+  ResourceLimits.width = BigInt(maxDimension);
+  ResourceLimits.height = BigInt(maxDimension);
   ResourceLimits.listLength = 2n;
   return engine;
 }

@@ -1,3 +1,4 @@
+import { browserEngineTimeoutMs } from "../browser-engine/browser-engine";
 import type { AsciiPreviewResult } from "../rendering/ascii-preview-result";
 import type {
   TextFont,
@@ -84,7 +85,7 @@ export class BrowserTextClient {
           this.stop(
             new Error("The text engine took too long. Retry to reopen it.")
           ),
-        30_000
+        browserEngineTimeoutMs
       );
       this.worker.postMessage({ ...request, id: ++this.nextId });
     });
