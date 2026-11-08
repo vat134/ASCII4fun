@@ -5,6 +5,8 @@ namespace Ascii4Fun.Figlet;
 
 internal static class ThedrawRenderer
 {
+    private const int SpaceWidthInCells = 4;
+
     internal static AsciiCanvas Render(string text, ThedrawFont font, RgbColor? foregroundColor, CancellationToken cancellationToken)
     {
         var lines = new List<AsciiCell[][]>();
@@ -27,7 +29,7 @@ internal static class ThedrawRenderer
                 letters.Add(glyph);
             }
             var lineHeight = Math.Max(1, letters.Select(g => g.Length).DefaultIfEmpty(0).Max());
-            var lineWidth = Math.Max(1, letters.Sum(g => g.Length == 0 ? 4 : g.Max(row => row.Length)) + Math.Max(0, letters.Count - 1) * font.LetterSpacingInCells);
+            var lineWidth = Math.Max(1, letters.Sum(GlyphWidthInCells) + Math.Max(0, letters.Count - 1) * font.LetterSpacingInCells);
             height += lineHeight;
             width = Math.Max(width, lineWidth);
             TextInput.ValidateOutput(width, height);
@@ -38,7 +40,7 @@ internal static class ThedrawRenderer
                 for (var y = 0; y < glyph.Length; y++)
                     for (var x = 0; x < glyph[y].Length; x++)
                         rows[y][origin + x] = foregroundColor is { } color ? glyph[y][x] with { Color = color } : glyph[y][x];
-                origin += (glyph.Length == 0 ? 4 : glyph.Max(row => row.Length)) + font.LetterSpacingInCells;
+                origin += GlyphWidthInCells(glyph) + font.LetterSpacingInCells;
             }
             lines.Add(rows);
         }
@@ -52,4 +54,7 @@ internal static class ThedrawRenderer
             }
         return new AsciiCanvas(cells, width, height);
     }
+
+    private static int GlyphWidthInCells(AsciiCell[][] glyph) =>
+        glyph.Length == 0 ? SpaceWidthInCells : glyph.Max(row => row.Length);
 }

@@ -51,7 +51,7 @@ internal static class FigletRenderer
 
     private static int GetOverlap(Rune[][] left, Rune[][] right, Figfont font)
     {
-        if ((font.Layout & 192) == 0)
+        if ((font.Layout & (FigletSmushing.HorizontalFitting | FigletSmushing.HorizontalSmushing)) == 0)
             return 0;
         var overlap = Math.Min(left.Min(row => row.Length), right.Min(row => row.Length));
         for (var row = 0; row < left.Length; row++)
@@ -64,7 +64,7 @@ internal static class FigletRenderer
                 rightStart++;
             var rowOverlap = left[row].Length - leftEnd - 1 + rightStart;
             if (leftEnd >= 0 && rightStart < right[row].Length &&
-                !((font.Layout & 63) == 0 && (left[row][leftEnd] == font.Hardblank || right[row][rightStart] == font.Hardblank)) &&
+                !((font.Layout & FigletSmushing.HorizontalRules) == 0 && (left[row][leftEnd] == font.Hardblank || right[row][rightStart] == font.Hardblank)) &&
                 FigletSmushing.Merge(left[row][leftEnd], right[row][rightStart], font) is not null)
                 rowOverlap++;
             overlap = Math.Min(overlap, rowOverlap);

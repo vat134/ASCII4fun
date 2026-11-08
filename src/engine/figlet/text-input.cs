@@ -5,13 +5,16 @@ namespace Ascii4Fun.Figlet;
 
 internal static class TextInput
 {
+    private const int MaxInputRunes = 256;
+    private const int MaxInputLines = 8;
+    private const int MaxUtf16UnitsPerRune = 2;
     internal const int MaxOutputCells = 32_768;
     internal const int MaxOutputWidthInCells = 4096;
 
     internal static string[] Lines(string text)
     {
-        if (text.Length is 0 or > 512)
-            throw new ArgumentException("Enter 1–256 characters on at most 8 lines.", nameof(text));
+        if (text.Length == 0 || text.Length > MaxInputRunes * MaxUtf16UnitsPerRune)
+            throw new ArgumentException($"Enter 1–{MaxInputRunes} characters on at most {MaxInputLines} lines.", nameof(text));
         var normalized = text.Replace("\r\n", "\n", StringComparison.Ordinal).Replace('\r', '\n');
         var remaining = normalized.AsSpan();
         var runeCount = 0;
@@ -24,8 +27,8 @@ internal static class TextInput
             if (rune.Value == '\n') lineCount++;
             else if (Rune.IsControl(rune))
                 throw new ArgumentException("Text contains an unsupported control character.", nameof(text));
-            if (runeCount > 256 || lineCount > 8)
-                throw new ArgumentException("Enter at most 256 characters on at most 8 lines.", nameof(text));
+            if (runeCount > MaxInputRunes || lineCount > MaxInputLines)
+                throw new ArgumentException($"Enter at most {MaxInputRunes} characters on at most {MaxInputLines} lines.", nameof(text));
             remaining = remaining[consumed..];
         }
         return normalized.Split('\n');
@@ -34,6 +37,7 @@ internal static class TextInput
     internal static void ValidateOutput(int widthInCells, int heightInCells)
     {
         if (widthInCells > MaxOutputWidthInCells || (long)widthInCells * heightInCells > MaxOutputCells)
-            throw new ArgumentException("Text output exceeds 4,096 columns or 32,768 cells. Shorten the text or choose a smaller font.");
+            throw new ArgumentException(FormattableString.Invariant(
+                $"Text output exceeds {MaxOutputWidthInCells:N0} columns or {MaxOutputCells:N0} cells. Shorten the text or choose a smaller font."));
     }
 }

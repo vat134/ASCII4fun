@@ -4,31 +4,41 @@ namespace Ascii4Fun.Figlet;
 
 internal static class FigletSmushing
 {
+    internal const int HorizontalFitting = 64;
+    internal const int HorizontalSmushing = 128;
+    internal const int HorizontalRules = 63;
+    private const int EqualCharacterRule = 1;
+    private const int UnderscoreRule = 2;
+    private const int HierarchyRule = 4;
+    private const int OppositePairRule = 8;
+    private const int BigXRule = 16;
+    private const int HardblankRule = 32;
+
     internal static Rune? Merge(Rune left, Rune right, Figfont font)
     {
-        if ((font.Layout & 128) == 0)
+        if ((font.Layout & HorizontalSmushing) == 0)
             return null;
-        var rules = font.Layout & 63;
+        var rules = font.Layout & HorizontalRules;
         if (rules == 0)
             return left == font.Hardblank ? right : right == font.Hardblank ? left
                 : font.RightToLeft ? left : right;
         if (left == font.Hardblank || right == font.Hardblank)
-            return (rules & 32) != 0 && left == right ? left : null;
-        if ((rules & 1) != 0 && left == right)
+            return (rules & HardblankRule) != 0 && left == right ? left : null;
+        if ((rules & EqualCharacterRule) != 0 && left == right)
             return left;
-        if ((rules & 2) != 0)
+        if ((rules & UnderscoreRule) != 0)
         {
             if (left.Value == '_' && Hierarchy(right) >= 0)
                 return right;
             if (right.Value == '_' && Hierarchy(left) >= 0)
                 return left;
         }
-        if ((rules & 4) != 0 && Hierarchy(left) >= 0 && Hierarchy(right) >= 0 && Hierarchy(left) != Hierarchy(right))
+        if ((rules & HierarchyRule) != 0 && Hierarchy(left) >= 0 && Hierarchy(right) >= 0 && Hierarchy(left) != Hierarchy(right))
             return Hierarchy(left) > Hierarchy(right) ? left : right;
         var pair = left.ToString() + right;
-        if ((rules & 8) != 0 && pair is "[]" or "][" or "{}" or "}{" or "()" or ")(")
+        if ((rules & OppositePairRule) != 0 && pair is "[]" or "][" or "{}" or "}{" or "()" or ")(")
             return new Rune('|');
-        if ((rules & 16) != 0)
+        if ((rules & BigXRule) != 0)
             return pair switch
             {
                 "/\\" => new Rune('|'),

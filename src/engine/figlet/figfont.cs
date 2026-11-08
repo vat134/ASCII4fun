@@ -28,11 +28,11 @@ internal sealed record Figfont(Rune Hardblank, int HeightInCells, int Layout, bo
         var height = ReadField(fields, 1, "height", 1, 32);
         _ = ReadField(fields, 2, "baseline", 1, height);
         _ = ReadField(fields, 3, "maximum length", 1, MaxGlyphWidthInCells + 2);
-        var oldLayout = ReadField(fields, 4, "old layout", -1, 63);
+        var oldLayout = ReadField(fields, 4, "old layout", -1, FigletSmushing.HorizontalRules);
         var comments = ReadField(fields, 5, "comment lines", 0, 256);
         var direction = fields.Length > 6 ? ReadField(fields, 6, "print direction", 0, 1) : 0;
         var layout = fields.Length > 7 ? ReadField(fields, 7, "full layout", 0, 32767)
-            : oldLayout < 0 ? 0 : oldLayout == 0 ? 64 : 128 | oldLayout;
+            : oldLayout < 0 ? 0 : oldLayout == 0 ? FigletSmushing.HorizontalFitting : FigletSmushing.HorizontalSmushing | oldLayout;
         if (fields.Length > 8)
             _ = ReadField(fields, 8, "code tag count", 0, MaxGlyphs - 102);
 
