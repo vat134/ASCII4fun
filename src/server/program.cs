@@ -1,4 +1,5 @@
 using Ascii4Fun.Images;
+using Ascii4Fun.Server.Figlet;
 using Ascii4Fun.Server.Images;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.RateLimiting;
@@ -57,6 +58,7 @@ app.UseRateLimiter();
 app.UseAntiforgery();
 app.MapHealthChecks("/health");
 app.MapImageConversion();
+app.MapTextConversion();
 
 app.Run();
 

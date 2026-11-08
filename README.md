@@ -75,3 +75,34 @@ PNG uses fixed 12 × 24 px cells, bundled OFL fonts and an opaque background (bl
 The existing multipart `/api/images/convert` accepts optional `style=characters` (`braille` selects spatial dots), `sourceColors=false`, `contrast=0`, `brightness=0`, `shadowLift=0`, `sourcePhotoOpacity=0`, `monochromeColor=#FFFFFF` and `backgroundColor=#000000` and returns `{ text, widthInCells, heightInCells, png }`, with base64 PNG. Uploaded media remains transient.
 
 Browser working buffers and result history are bounded; oversized work fails explicitly. First use loads the WASM runtimes and required fonts. See [architecture](docs/architecture.md) for ownership and limits.
+
+## Text through CLI and HTTP
+
+All entry points use `FigletConverter` and the same bundled font catalog. List IDs and render text:
+
+```powershell
+dotnet run --project src/cli -- list-fonts
+dotnet run --project src/cli -- convert-text "Hello" --font standard
+dotnet run --project src/cli -- convert-text "Hello" --font tdf-colorrounded --format png --output hello.png
+```
+
+`convert-text` defaults to `standard` and TXT on stdout. `--output` (`-o`) writes a file and is required for PNG. TXT preserves exact engine text as UTF-8 without a BOM or added newline. Explicit output files are overwritten. Omit `--color` to preserve authored font colors; `--color '#00FFAA'` overrides foregrounds. Repeat `--replace-color '#FFFFFF=#00FFAA'` to replace original foreground/background shades simultaneously. A foreground override and palette replacements cannot be combined; duplicate original shades are rejected.
+
+HTTP endpoints:
+
+- `GET /api/text/fonts` returns font IDs, names, categories, native-color capability and notes.
+- `GET /api/text/fonts/{fontId}/palette` returns whole-font colors as `#RRGGBB` strings; unknown IDs return 404.
+- `POST /api/text/convert` accepts `application/json`:
+
+```json
+{
+  "text": "Hello",
+  "fontId": "standard",
+  "format": "json",
+  "colorReplacements": { "#FFFFFF": "#00FFAA" }
+}
+```
+
+Only `text` is required. `fontId` defaults to `standard`; `format` defaults to `json`, returning `{ text, widthInCells, heightInCells, png }` with base64 PNG. Set `format` to `txt` for exact UTF-8 `text/plain` or `png` for an `image/png` attachment. The JSON `format` field selects the representation; `Accept` does not select it. Optional `foregroundColor` is the HTTP equivalent of CLI `--color`.
+
+Both transports enforce the engine's 256-character/eight-line input and 4,096-column/32,768-cell output bounds. Unsupported glyphs and invalid settings fail explicitly. HTTP errors use Problem Details (400 invalid input, 415 unsupported request content type, 429 busy); conversions and palette scans share the existing one-active-operation/no-queue limit and 30-second timeout. Cancellation reaches conversion and PNG export. Requests use the server's existing bounded body limit, store no files, and conversion responses use `Cache-Control: no-store`. Text JSON requests do not require the image multipart antiforgery token. These are initial local-use contracts; external API stabilization remains planned.
