@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef, type RefObject } from "react";
 import type { AsciiPreviewResult } from "./ascii-preview-result";
 
 export function useRasterPreview(
-  result: AsciiPreviewResult,
+  result: AsciiPreviewResult | null,
   zoom: number,
   viewportRef: RefObject<HTMLDivElement | null>,
   canvasRef: RefObject<HTMLCanvasElement | null>
@@ -10,6 +10,8 @@ export function useRasterPreview(
   const sourceRef = useRef<OffscreenCanvas | null>(null);
 
   useLayoutEffect(() => {
+    // Cache eviction does not invalidate a mounted card's painted presentation.
+    if (!result) return;
     const source = new OffscreenCanvas(
       result.widthInPixels,
       result.heightInPixels
@@ -22,12 +24,19 @@ export function useRasterPreview(
       0,
       0
     );
+    const previous = sourceRef.current;
     sourceRef.current = source;
-    return () => {
-      sourceRef.current = null;
-      source.width = source.height = 1;
-    };
+    if (previous) previous.width = previous.height = 1;
   }, [result]);
+
+  useLayoutEffect(
+    () => () => {
+      const source = sourceRef.current;
+      sourceRef.current = null;
+      if (source) source.width = source.height = 1;
+    },
+    []
+  );
 
   useLayoutEffect(() => {
     const viewport = viewportRef.current;

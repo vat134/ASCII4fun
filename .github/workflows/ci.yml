@@ -27,6 +27,7 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+      - run: pnpm check:http-contracts
       - name: Install Cypress binary
         run: pnpm exec cypress install
       - run: pnpm format

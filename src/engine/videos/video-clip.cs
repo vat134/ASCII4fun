@@ -63,7 +63,8 @@ public sealed class VideoClip : IAsyncDisposable
         ObjectDisposedException.ThrowIf(disposed, this);
         var path = Path.Combine(directory, "prepared.mp4");
         await using var process = new FfmpegProcess(tools.FfmpegPath,
-            ["-v", "error", "-nostdin", "-y", "-protocol_whitelist", "file,pipe", "-format_whitelist", "mov,matroska,webm", "-max_pixels", MaxSourcePixels.ToString(CultureInfo.InvariantCulture), "-i", sourcePath,
+            ["-v", "error", "-nostdin", "-y", "-protocol_whitelist", "file,pipe", "-format_whitelist", "mov,matroska,webm", "-max_pixels", MaxSourcePixels.ToString(CultureInfo.InvariantCulture),
+                "-seek_timestamp", "1", "-ss", Number(Metadata.StartTimeSeconds), "-i", sourcePath,
                 "-map", "0:v:0", "-map", "0:a:0?", "-sn", "-dn", "-vf", $"scale={Metadata.WidthInPixels}:{Metadata.HeightInPixels},fps={Number(Metadata.FramesPerSecond)},pad=ceil(iw/2)*2:ceil(ih/2)*2,setsar=1",
                 "-c:v", "libx264", "-preset", "fast", "-crf", "14", "-pix_fmt", "yuv420p",
                 "-af", "aresample=async=1:first_pts=0,apad", "-c:a", "aac", "-b:a", "192k",

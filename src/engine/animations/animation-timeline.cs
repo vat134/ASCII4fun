@@ -1,8 +1,8 @@
 namespace Ascii4Fun.Animations;
 
-/// <summary>A source-frame reference and its GIF-representable display duration.</summary>
+/// <summary>A source-frame reference and its display duration.</summary>
 /// <param name="SourceFrameIndex">Zero-based source frame.</param>
-/// <param name="FrameDurationMs">Duration in milliseconds, in multiples of 10.</param>
+/// <param name="FrameDurationMs">Duration in milliseconds; GIF timelines use multiples of 10.</param>
 public sealed record AnimationFrameTiming(int SourceFrameIndex, int FrameDurationMs);
 
 /// <summary>Deterministic source-time sampling shared by playback and GIF export.</summary>

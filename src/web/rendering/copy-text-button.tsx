@@ -22,12 +22,17 @@ export function CopyTextButton({ text }: { text: string | null }) {
 
   async function copy() {
     if (text === null) return;
-    setStatus({ text, kind: "copying" });
+    const operation = { text, kind: "copying" as const };
+    setStatus(operation);
     try {
       await navigator.clipboard.writeText(text);
-      setStatus({ text, kind: "copied" });
+      setStatus((current) =>
+        current === operation ? { text, kind: "copied" } : current
+      );
     } catch {
-      setStatus({ text, kind: "error" });
+      setStatus((current) =>
+        current === operation ? { text, kind: "error" } : current
+      );
     }
   }
 

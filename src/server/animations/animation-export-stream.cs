@@ -6,6 +6,7 @@ namespace Ascii4Fun.Server.Animations;
 
 internal static class AnimationExportStream
 {
+    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
     public static Task WriteAsync(Stream output, IFormFile file, AnimationConversionRequest request, CancellationToken cancellationToken) =>
         WriteAsync(output, async (progress, token) =>
         {
@@ -35,15 +36,17 @@ internal static class AnimationExportStream
         }, token);
         try
         {
-            await WriteLineAsync(new { type = "progress", completedFrames = 0 });
+            await WriteLineAsync(new ExportProgress(0));
             await foreach (var count in updates.Reader.ReadAllAsync(token))
-                await WriteLineAsync(new { type = "progress", completedFrames = count });
+                await WriteLineAsync(new ExportProgress(count));
             var bytes = await conversion;
-            await WriteLineAsync(new Dictionary<string, object> { ["type"] = "complete", [format] = bytes });
+            if (format == "gif") await WriteLineAsync(new GifExportComplete(bytes));
+            else if (format == "video") await WriteLineAsync(new VideoExportComplete(bytes));
+            else throw new ArgumentException("Unsupported export format.", nameof(format));
         }
         catch (Exception exception) when (exception is ArgumentException or InvalidDataException)
         {
-            await WriteLineAsync(new { type = "error", message = exception.Message });
+            await WriteLineAsync(new ExportError(exception.Message));
         }
         finally
         {
@@ -55,7 +58,7 @@ internal static class AnimationExportStream
 
         async Task WriteLineAsync<T>(T value)
         {
-            await JsonSerializer.SerializeAsync(output, value, cancellationToken: token);
+            await JsonSerializer.SerializeAsync(output, value, JsonOptions, token);
             await output.WriteAsync("\n"u8.ToArray(), token);
             await output.FlushAsync(token);
         }

@@ -2,6 +2,7 @@ using Ascii4Fun.Images;
 using Ascii4Fun.Rendering;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 
 namespace Ascii4Fun.Server.Images;
 
@@ -20,24 +21,24 @@ internal static class ImageConversionEndpoints
             IAntiforgery antiforgery,
             StillImageConverter converter) =>
         {
-            return Results.Ok(new
-            {
+            return TypedResults.Ok(new ImageConfiguration(
                 CharacterImageOptions.DefaultOutputWidthInCells,
-                MinOutputWidthInCells = Math.Max(MinEditorWidthInCells, CharacterImageOptions.MinOutputWidthInCells),
-                MaxOutputWidthInCells = Math.Min(MaxEditorWidthInCells, CharacterImageOptions.MaxOutputWidthInCells),
+                Math.Max(MinEditorWidthInCells, CharacterImageOptions.MinOutputWidthInCells),
+                Math.Min(MaxEditorWidthInCells, CharacterImageOptions.MaxOutputWidthInCells),
                 CharacterImageOptions.DefaultCharacterRamp,
                 CharacterImageOptions.DefaultCharacterCellAspectRatio,
                 converter.MaxEncodedBytes,
-                MinToneAdjustment = Math.Max(-MaxEditorToneAdjustment, CharacterImageOptions.MinToneAdjustment),
-                MaxToneAdjustment = Math.Min(MaxEditorToneAdjustment, CharacterImageOptions.MaxToneAdjustment),
+                Math.Max(-MaxEditorToneAdjustment, CharacterImageOptions.MinToneAdjustment),
+                Math.Min(MaxEditorToneAdjustment, CharacterImageOptions.MaxToneAdjustment),
                 CharacterImageOptions.DefaultMonochromeColor,
                 CharacterImageOptions.DefaultBackgroundColor,
                 CharacterImageOptions.MaxPercentage,
-                RequestToken = antiforgery.GetAndStoreTokens(context).RequestToken
-            });
-        });
+                antiforgery.GetAndStoreTokens(context).RequestToken!));
+        }).WithName("GetImageOptions");
 
         app.MapPost("/api/images/convert", ConvertAsync)
+            .WithName("ConvertImage")
+            .Produces<ImageConversionResponse>()
             .RequireRateLimiting(PolicyName)
             .WithRequestTimeout(PolicyName);
     }
@@ -69,7 +70,8 @@ internal static class ImageConversionEndpoints
                 detail: $"Choose a non-empty image up to {converter.MaxEncodedBytes} bytes.");
         }
 
-        if (image.ContentType is not ("image/jpeg" or "image/png" or "image/webp" or "application/octet-stream"))
+        if (!MediaTypeHeaderValue.TryParse(image.ContentType, out var mediaType)
+            || mediaType.MediaType.Value?.ToLowerInvariant() is not ("image/jpeg" or "image/png" or "image/webp" or "application/octet-stream"))
         {
             return Results.Problem(
                 statusCode: StatusCodes.Status415UnsupportedMediaType,
@@ -96,7 +98,7 @@ internal static class ImageConversionEndpoints
             await using var input = image.OpenReadStream();
             var result = await converter.ConvertAsync(input, options, cancellationToken);
             var png = await PngExporter.ExportAsync(result, cancellationToken);
-            return Results.Ok(new { result.Text, result.WidthInCells, result.HeightInCells, Png = png });
+            return Results.Ok(new ImageConversionResponse(result.Text, result.WidthInCells, result.HeightInCells, png));
         }
         catch (ArgumentException exception)
         {

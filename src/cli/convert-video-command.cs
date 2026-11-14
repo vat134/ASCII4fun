@@ -23,8 +23,8 @@ internal static class ConvertVideoCommand
         var brightness = new Option<int>("--brightness");
         var shadowLift = new Option<int>("--shadow-lift");
         var photo = new Option<int>("--source-photo-opacity");
-        var mono = new Option<string>("--mono-color") { DefaultValueFactory = _ => "#FFFFFF" };
-        var background = new Option<string>("--background") { DefaultValueFactory = _ => "#000000" };
+        var mono = new Option<string>("--mono-color") { DefaultValueFactory = _ => CharacterImageOptions.DefaultMonochromeColor.ToHex() };
+        var background = new Option<string>("--background") { DefaultValueFactory = _ => CharacterImageOptions.DefaultBackgroundColor.ToHex() };
         var speed = new Option<double>("--speed") { DefaultValueFactory = _ => 1, Description = "Playback/export rate (0.25..4)." };
         var fps = new Option<int?>("--fps") { Description = "Resample to 1..60 FPS, capped at the source average; omitted preserves source timing." };
         var ffmpeg = new Option<string>("--ffmpeg-path") { DefaultValueFactory = _ => "ffmpeg" };
@@ -63,8 +63,8 @@ internal static class ConvertVideoCommand
                         new FrameProgress(), cancellationToken);
                 }
                 finally { Console.Error.WriteLine(); }
-                await using var destination = new FileStream(result.GetRequiredValue(output).FullName, FileMode.CreateNew, FileAccess.Write, FileShare.None);
-                await destination.WriteAsync(bytes, cancellationToken);
+                var destination = new FileStream(result.GetRequiredValue(output).FullName, FileMode.CreateNew, FileAccess.Write, FileShare.None);
+                await NewFileOutput.WriteAsync(destination, bytes, cancellationToken);
                 return 0;
             }
             catch (Exception exception) when (exception is ArgumentException or IOException or UnauthorizedAccessException)

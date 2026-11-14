@@ -1,5 +1,11 @@
 # Third-party notices
 
+## HTTP contract tooling
+
+- Microsoft.AspNetCore.OpenApi 10.0.14 and Microsoft.Extensions.ApiDescription.Server 10.0.14: [MIT](https://github.com/dotnet/aspnetcore/blob/v10.0.14/LICENSE.txt), server schema generation and build tooling.
+- Microsoft.OpenApi 2.12.2: [MIT](https://github.com/microsoft/OpenAPI.NET/blob/main/LICENSE), transitive server OpenAPI model dependency.
+- openapi-typescript 7.13.0: [MIT](https://github.com/openapi-ts/openapi-typescript/blob/main/packages/openapi-typescript/LICENSE), development-only TypeScript declarations. Generated declarations contain no generator runtime.
+
 ## External video tools
 
 Video processing invokes separately installed FFmpeg/ffprobe executables; no executable or wrapper package is included in this repository or its NuGet package. See [FFmpeg licensing](https://ffmpeg.org/legal.html) and the exact installed build's notices. Local verification uses the Gyan FFmpeg 9.0.2 essentials GPLv3 build in ignored development artifacts. Distributors that include a codec build must supply its required notices and corresponding source. The authored video test fixtures use FFmpeg test patterns and generated sine audio, with no third-party footage.

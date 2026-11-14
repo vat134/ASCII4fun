@@ -220,6 +220,18 @@ public sealed class ImageConversionEndpointTests(WebApplicationFactory<Program> 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
+    [Theory]
+    [InlineData("IMAGE/PNG")]
+    [InlineData("image/png; charset=binary")]
+    public async Task AcceptsEquivalentUploadMediaTypes(string contentType)
+    {
+        using var client = application.CreateClient();
+        await GetConfigurationAsync(client);
+        using var body = CreateBody(CreateImage(MagickFormat.Png), contentType);
+        using var response = await client.PostAsync("/api/images/convert", body);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
     private static async Task<JsonElement> GetConfigurationAsync(HttpClient client)
     {
         var configuration = await client.GetFromJsonAsync<JsonElement>("/api/images/options");
@@ -230,7 +242,7 @@ public sealed class ImageConversionEndpointTests(WebApplicationFactory<Program> 
     private static MultipartFormDataContent CreateBody(byte[] image, string contentType, string width = "4", string ramp = "@ ")
     {
         var file = new ByteArrayContent(image);
-        file.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+        file.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);
         return new MultipartFormDataContent
         {
             { file, "image", "source.png" },

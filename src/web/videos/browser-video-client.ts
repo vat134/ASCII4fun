@@ -10,7 +10,7 @@ import type { VideoMetadata } from "./prepare-video";
 export class BrowserVideoClient {
   readonly clock: { current: HTMLAudioElement };
   private readonly decoder = document.createElement("video");
-  private readonly client = new BrowserImageClient();
+  private readonly client: BrowserImageClient;
   private readonly canvas = document.createElement("canvas");
   private readonly context: CanvasRenderingContext2D;
   private readonly ready: Promise<void>;
@@ -32,6 +32,7 @@ export class BrowserVideoClient {
     const context = this.canvas.getContext("2d", { willReadFrequently: true });
     if (!context) throw new Error("Video frame capture is unavailable.");
     this.context = context;
+    this.client = new BrowserImageClient();
     this.ready = this.waitFor("loadeddata", () => {
       this.decoder.src = url;
     });

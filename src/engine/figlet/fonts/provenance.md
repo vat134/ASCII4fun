@@ -184,11 +184,11 @@ Golden checks in `figlet-converter-tests.cs` render `ASCII Text` with [figlet.js
 
 Loic fonts contain more code-tagged characters than their declared `Codetag_Count` of zero, and some rows exceed the declared `Max_Length`. Those two fields are validated as bounded metadata, not trusted allocation or truncation sizes. The parser bounds actual rows and glyph count. This preserves the original assets and matches their reference rendering. Repeated code tags intentionally replace earlier glyphs, as the specification requires.
 
-The parser is internal and accepts at most 1,048,576 UTF-16 code units, 32 rows per glyph, 256 cells per glyph row, 256 comments and 1,024 glyph records including replacements. It supports the 102 required glyph slots and decimal/octal/hexadecimal tags; rows must have consistent widths. Public user-font loading is deferred.
+The parser is internal and accepts at most 1,048,576 UTF-16 code units, 32 rows per glyph, 256 cells per glyph row, 256 comments and 4,096 glyph records including replacements. It supports the 102 required glyph slots and decimal/octal/hexadecimal tags. Selected legacy fonts retain bounded ragged rows, as accepted in decision 0009. Universal-smushing hardblank behavior follows the independently verified figlet.js compatibility target; this is a compatibility choice rather than a claim of literal specification equivalence. Public user-font loading is deferred.
 
 `FigletConverter.Convert` accepts nonempty, well-formed Unicode text with at most 256 scalars and 8 lines after CRLF/CR normalization to LF. Lines stack without vertical fitting or smushing. Output is an `AsciiCanvas` on black, with a selectable foreground color (white by default), padded to a rectangle, without automatic wrapping, at most 4,096 columns and 32,768 cells. Unsupported or empty glyphs produce an explicit `ArgumentException` identifying the scalar; the font's code-zero fallback is deliberately not used. This policy avoids silently losing or replacing user text. Browser raster admission may impose a smaller pixel-side limit.
 
-Vertical layout, `.tlf`, colored font extensions, font uploads, layout overrides, API/CLI text commands and text export controls remain outside this slice.
+Vertical fitting/smushing, general `.tlf`/colored-FIGfont extensions, public font uploads and layout overrides remain deferred. The selected TheDraw outline/block/color records and authored palette replacements are supported through the same canvas. Text HTTP/CLI commands, Copy, exact UTF-8 TXT and PNG export are implemented; their contracts live in README and the project architecture. Historical verification counts below describe their original slices, not the current catalog size.
 
 ## Learning evidence
 

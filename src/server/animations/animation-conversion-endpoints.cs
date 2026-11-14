@@ -3,6 +3,7 @@ using Ascii4Fun.Animations;
 using Ascii4Fun.Images;
 using Ascii4Fun.Server.Images;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 
 namespace Ascii4Fun.Server.Animations;
 
@@ -14,6 +15,7 @@ internal static class AnimationConversionEndpoints
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
     public static void MapAnimationConversion(this WebApplication app) => app.MapPost("/api/animations/convert", ConvertAsync)
+        .WithName("ConvertAnimation")
         .RequireRateLimiting(ImageConversionEndpoints.PolicyName).WithRequestTimeout(TimeoutPolicy);
 
     private static async Task<IResult> ConvertAsync(IFormFile image, [FromForm] string settings, HttpContext context, StillImageConverter converter,
@@ -22,7 +24,8 @@ internal static class AnimationConversionEndpoints
         context.Response.Headers.CacheControl = "no-store";
         if (image.Length <= 0 || image.Length > converter.MaxEncodedBytes)
             return Results.Problem(statusCode: 400, title: "Invalid GIF size", detail: $"Choose a non-empty GIF up to {converter.MaxEncodedBytes:N0} bytes.");
-        if (image.ContentType is not ("image/gif" or "application/octet-stream"))
+        if (!MediaTypeHeaderValue.TryParse(image.ContentType, out var mediaType)
+            || mediaType.MediaType.Value?.ToLowerInvariant() is not ("image/gif" or "application/octet-stream"))
             return Results.Problem(statusCode: 415, title: "Unsupported upload type", detail: "Choose a GIF file.");
         try
         {
@@ -30,7 +33,9 @@ internal static class AnimationConversionEndpoints
                 ?? throw new ArgumentException("Animation settings are required.");
             ArgumentNullException.ThrowIfNull(request.Options);
             ArgumentNullException.ThrowIfNull(request.Playback);
-            if (context.Request.Headers.Accept.Any(value => value?.Contains("application/x-ndjson", StringComparison.Ordinal) == true))
+            if (context.Request.GetTypedHeaders().Accept?.Any(value =>
+                value.MediaType.Equals("application/x-ndjson", StringComparison.OrdinalIgnoreCase)
+                && value.Quality.GetValueOrDefault(1) > 0) == true)
                 return Results.Stream(stream => AnimationExportStream.WriteAsync(stream, image, request, cancellationToken), "application/x-ndjson");
             await using var input = image.OpenReadStream();
             using var animation = await GifAnimation.OpenAsync(input, cancellationToken);

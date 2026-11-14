@@ -20,14 +20,16 @@ internal static class VideoExporter
         var outputFps = playback.FramesPerSecond ?? metadata.FramesPerSecond * playback.Speed;
         var outputDurationSeconds = metadata.DurationMs / 1000 / playback.Speed;
         await using var decoder = new FfmpegProcess(tools.FfmpegPath,
-            ["-v", "error", "-nostdin", "-protocol_whitelist", "file,pipe", "-format_whitelist", "mov,matroska,webm", "-max_pixels", VideoClip.MaxSourcePixels.ToString(System.Globalization.CultureInfo.InvariantCulture), "-i", sourcePath,
+            ["-v", "error", "-nostdin", "-protocol_whitelist", "file,pipe", "-format_whitelist", "mov,matroska,webm", "-max_pixels", VideoClip.MaxSourcePixels.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                "-seek_timestamp", "1", "-ss", VideoClip.Number(metadata.StartTimeSeconds), "-i", sourcePath,
                 "-map", "0:v:0", "-an", "-vf", $"scale={metadata.WidthInPixels}:{metadata.HeightInPixels},setsar=1,fps={VideoClip.Number(metadata.FramesPerSecond)}",
                 "-f", "rawvideo", "-pix_fmt", "rgba", "pipe:1"], token);
         var tempo = playback.Speed < 0.5 ? $"atempo=0.5,atempo={VideoClip.Number(playback.Speed / 0.5)}" : playback.Speed > 2
             ? $"atempo=2,atempo={VideoClip.Number(playback.Speed / 2)}" : $"atempo={VideoClip.Number(playback.Speed)}";
         await using var encoder = new FfmpegProcess(tools.FfmpegPath,
             ["-v", "error", "-nostdin", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", $"{widthInPixels}x{heightInPixels}",
-                "-r", VideoClip.Number(outputFps), "-i", "pipe:0", "-protocol_whitelist", "file,pipe", "-format_whitelist", "mov,matroska,webm", "-max_pixels", VideoClip.MaxSourcePixels.ToString(System.Globalization.CultureInfo.InvariantCulture), "-i", sourcePath,
+                "-r", VideoClip.Number(outputFps), "-i", "pipe:0", "-protocol_whitelist", "file,pipe", "-format_whitelist", "mov,matroska,webm", "-max_pixels", VideoClip.MaxSourcePixels.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                "-seek_timestamp", "1", "-ss", VideoClip.Number(metadata.StartTimeSeconds), "-i", sourcePath,
                 "-map", "0:v:0", "-map", "1:a:0?", "-c:v", "libx264", "-preset", "fast", "-crf", "14", "-pix_fmt", "yuv420p",
                 "-af", $"aresample=async=1:first_pts=0,{tempo},apad", "-c:a", "aac", "-b:a", "192k",
                 "-t", VideoClip.Number(outputDurationSeconds), "-fs", VideoClip.MaxEncodedBytes.ToString(System.Globalization.CultureInfo.InvariantCulture),
@@ -48,8 +50,13 @@ internal static class VideoExporter
                 progress?.Report(index + 1);
             }
             await encoder.Input.DisposeAsync();
-            // Drain any codec rounding tail before joining; source frames remain bounded by metadata.
-            await decoder.Output.CopyToAsync(Stream.Null, token);
+            while (decodedIndex < metadata.FrameCount - 1)
+            {
+                await decoder.Output.ReadExactlyAsync(rgba, token);
+                decodedIndex++;
+            }
+            if (await decoder.Output.ReadAsync(rgba.AsMemory(0, 1), token) != 0)
+                throw new InvalidDataException("The decoded video exceeds its validated frame count.");
             await decoder.CompleteAsync(token);
             await encoder.CompleteAsync(token);
         }

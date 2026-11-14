@@ -30,6 +30,8 @@
     ]
   },
   "scripts": {
+    "generate:http-contracts": "node tools/generate-http-contracts.mjs",
+    "check:http-contracts": "node tools/generate-http-contracts.mjs --check",
     "build:web": "pnpm build:engine && node tools/run-parcel.mjs build src/web/index.html --target web --no-cache && node tools/build-browser-engine.mjs copy",
     "build:engine": "node tools/build-browser-engine.mjs",
     "check": "pnpm format && pnpm lint && pnpm typecheck && pnpm test:tools && pnpm test:web && pnpm build:web",
@@ -83,6 +85,7 @@
     "http-proxy-middleware": "3.0.10",
     "jest": "30.5.2",
     "jest-environment-jsdom": "30.5.2",
+    "openapi-typescript": "7.13.0",
     "parcel": "2.16.4",
     "postcss": "8.5.32",
     "prettier": "3.9.10",

@@ -44,6 +44,7 @@ dotnet workload install wasm-tools
 dotnet restore ascii4fun.slnx
 
 pnpm check
+pnpm check:http-contracts
 dotnet format ascii4fun.slnx --verify-no-changes --no-restore
 dotnet build ascii4fun.slnx --configuration Release --no-restore
 dotnet test ascii4fun.slnx --configuration Release --no-build
@@ -57,6 +58,8 @@ pnpm convert:image dev-assets/input/photo.webp --width 100
 `dev` serves the development UI at `http://127.0.0.1:1234` with live updates and proxies API/runtime assets to ASP.NET Core at port 5100. Image conversion runs locally in a Worker using the shared C# engine. `pnpm start` builds and serves the UI directly from ASP.NET Core at `http://127.0.0.1:5100`.
 
 Development defaults and Zod validation live in `tools/development-environment.cjs`. Copy `.env.example` to `.env.local` for overrides; shell variables take priority. Restart development processes after editing it or changing engine code. The server launcher, Parcel proxy and Cypress share these settings. Direct .NET launches use standard ASP.NET Core configuration instead.
+
+HTTP types come from C# models through generated OpenAPI. After a contract change, run `pnpm generate:http-contracts` and commit both generated files. See [HTTP contract generation](docs/http-api.md) for wire formats, checks and model ownership.
 
 `convert-image` accepts JPEG, PNG, and still WebP. `--ramp` selects the character ramp.
 
@@ -110,7 +113,7 @@ Package consumers use `using var animation = await GifAnimation.OpenAsync(stream
 
 Obtain the multipart antiforgery token from `/api/images/options` and send `X-CSRF-TOKEN`. Default output is an `image/gif` attachment. `Accept: application/x-ndjson` selects newline-delimited events: `{ "type": "progress", "completedFrames": 1 }`, then `{ "type": "complete", "gif": "<base64>" }`; known failures after streaming starts return `{ "type": "error", "message": "..." }`. Before streaming starts, errors use Problem Details (400 invalid settings/size, 415 upload type, 422 unreadable/excessive media, 429 busy). Responses use `Cache-Control: no-store`.
 
-Initial admission: 25 MiB encoded input, 300 source frames, 40 million logical decoded pixels in total, 16,384 px per source side, five minutes after retiming, 3,000 output frames, 128 million exported raster pixels and 64 MiB encoded output. Browser working-buffer admission can reject earlier. Speed ranges 0.25�4 and explicit FPS 1�50. GIF export shares the one-active-conversion/no-queue limiter and has a five-minute request timeout. Cancellation is checked between decode/composition stages and within frame conversion, rasterization and encoding; synchronous native coalescing cannot be interrupted mid-call. These bounds are admission policies, not total RAM guarantees. Video remains future work.
+Initial admission: 25 MiB encoded input, 300 source frames, 40 million logical decoded pixels in total, 16,384 px per source side, five minutes after retiming, 3,000 output frames, 128 million exported raster pixels and 64 MiB encoded output. Browser working-buffer admission can reject earlier. Speed ranges 0.25�4 and explicit FPS 1�50. GIF export shares the one-active-conversion/no-queue limiter and has a five-minute request timeout. Cancellation is checked between decode/composition stages and within frame conversion, rasterization and encoding; synchronous native coalescing cannot be interrupted mid-call. These bounds are admission policies, not total RAM guarantees. Video has separate [setup, limits and contracts](docs/video.md).
 
 ## Text through CLI and HTTP
 
