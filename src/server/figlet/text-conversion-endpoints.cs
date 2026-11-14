@@ -10,15 +10,18 @@ internal static class TextConversionEndpoints
 {
     public static void MapTextConversion(this WebApplication app)
     {
-        app.MapGet("/api/text/fonts", () => Results.Ok(FigletConverter.Fonts));
+        app.MapGet("/api/text/fonts", () => TypedResults.Ok(FigletConverter.Fonts)).WithName("GetTextFonts");
         app.MapGet("/api/text/fonts/{fontId}/palette", (string fontId, CancellationToken cancellationToken) =>
         {
             if (!FigletConverter.Fonts.Any(font => font.Id == fontId))
                 return Results.Problem(statusCode: 404, title: "Unknown text font");
             return Results.Ok(FigletConverter.GetFontPalette(fontId, cancellationToken).Select(color => color.ToHex()));
-        }).RequireRateLimiting(ImageConversionEndpoints.PolicyName)
+        }).WithName("GetTextFontPalette").Produces<IEnumerable<string>>()
+            .ProducesProblem(404).ProducesProblem(429).Produces(504)
+            .RequireRateLimiting(ImageConversionEndpoints.PolicyName)
             .WithRequestTimeout(ImageConversionEndpoints.PolicyName);
         app.MapPost("/api/text/convert", ConvertAsync)
+            .WithName("ConvertText").Produces<ImageConversionResponse>()
             .RequireRateLimiting(ImageConversionEndpoints.PolicyName)
             .WithRequestTimeout(ImageConversionEndpoints.PolicyName);
     }
@@ -46,7 +49,7 @@ internal static class TextConversionEndpoints
             var png = await PngExporter.ExportAsync(canvas, cancellationToken);
             if (request.Format == "png")
                 return Results.File(png, "image/png", "ascii-text.png");
-            return Results.Ok(new { canvas.Text, canvas.WidthInCells, canvas.HeightInCells, Png = png });
+            return Results.Ok(new ImageConversionResponse(canvas.Text, canvas.WidthInCells, canvas.HeightInCells, png));
         }
         catch (ArgumentException exception)
         {

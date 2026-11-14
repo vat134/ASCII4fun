@@ -1,22 +1,10 @@
 import type { AsciiPreviewResult } from "../rendering/ascii-preview-result";
 import type { AnimationFrameTiming } from "../animations/animation-conversion";
+import type { components } from "../api/generated/http-api";
 
-export type ImageConfiguration = {
-  defaultOutputWidthInCells: number;
-  minOutputWidthInCells: number;
-  maxOutputWidthInCells: number;
-  defaultCharacterRamp: string;
-  defaultCharacterCellAspectRatio: number;
-  maxEncodedBytes: number;
-  requestToken: string;
-  minToneAdjustment: number;
-  maxToneAdjustment: number;
-  maxPercentage: number;
-  defaultMonochromeColor: RgbColor;
-  defaultBackgroundColor: RgbColor;
-};
+export type ImageConfiguration = components["schemas"]["ImageConfiguration"];
 
-export type RgbColor = { red: number; green: number; blue: number };
+export type RgbColor = components["schemas"]["RgbColor"];
 
 export type CharacterImageOptions = {
   outputWidthInCells: number;

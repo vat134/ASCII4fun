@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Text;
 using Ascii4Fun.Rendering;
 
@@ -43,7 +44,7 @@ public sealed class CharacterImageOptions
     /// <summary> The requested output width measured in character cells. </summary>
     public int OutputWidthInCells { get; init; } = DefaultOutputWidthInCells;
 
-    /// <summary> The glyph ramp ordered from darkest to lightest. </summary>
+    /// <summary> The well-formed Unicode glyph ramp ordered from darkest to lightest. </summary>
     public string CharacterRamp { get; init; } = DefaultCharacterRamp;
 
     /// <summary> Selects nearest measured glyph coverage instead of equally spaced ramp positions. Defaults to false. </summary>
@@ -101,7 +102,16 @@ public sealed class CharacterImageOptions
             throw new ArgumentException("The character ramp cannot be empty.", nameof(CharacterRamp));
         }
 
-        var ramp = CharacterRamp.EnumerateRunes().ToArray();
+        var glyphs = new List<Rune>();
+        var remaining = CharacterRamp.AsSpan();
+        while (!remaining.IsEmpty)
+        {
+            if (Rune.DecodeFromUtf16(remaining, out var glyph, out var consumed) != OperationStatus.Done)
+                throw new ArgumentException("The character ramp must contain well-formed Unicode.", nameof(CharacterRamp));
+            glyphs.Add(glyph);
+            remaining = remaining[consumed..];
+        }
+        var ramp = glyphs.ToArray();
 
         if (UseMeasuredGlyphDensity && ramp.Distinct().Take(257).Count() > 256)
         {

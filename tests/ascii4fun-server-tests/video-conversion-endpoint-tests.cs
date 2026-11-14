@@ -63,6 +63,31 @@ public sealed class VideoConversionEndpointTests(WebApplicationFactory<Program> 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
+    [Theory]
+    [InlineData("application/x-ndjson;q=0, video/mp4", "video/mp4")]
+    [InlineData("application/x-ndjson-other, video/mp4", "video/mp4")]
+    [InlineData("APPLICATION/X-NDJSON", "application/x-ndjson")]
+    public async Task SelectsStreamOnlyForAnAcceptedNdjsonMediaType(string accept, string expectedContentType)
+    {
+        using var client = await ClientAsync();
+        client.DefaultRequestHeaders.Accept.ParseAdd(accept);
+        using var body = Body(VideoFixture.Bytes(), "{\"options\":{\"outputWidthInCells\":4},\"playback\":{}}");
+        using var response = await client.PostAsync("/api/videos/convert", body);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(expectedContentType, response.Content.Headers.ContentType!.MediaType);
+    }
+
+    [Theory]
+    [InlineData("VIDEO/MP4")]
+    [InlineData("video/mp4; charset=binary")]
+    public async Task AcceptsEquivalentUploadMediaTypes(string contentType)
+    {
+        using var client = await ClientAsync();
+        using var body = Body(VideoFixture.Bytes(), contentType: contentType);
+        using var response = await client.PostAsync("/api/videos/prepare", body);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
     private async Task<HttpClient> ClientAsync()
     {
         var client = application.CreateClient();
@@ -75,7 +100,7 @@ public sealed class VideoConversionEndpointTests(WebApplicationFactory<Program> 
     {
         var body = new MultipartFormDataContent();
         var file = new ByteArrayContent(bytes);
-        file.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+        file.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);
         body.Add(file, "image", "clip.mp4");
         if (settings is not null) body.Add(new StringContent(settings), "settings");
         return body;

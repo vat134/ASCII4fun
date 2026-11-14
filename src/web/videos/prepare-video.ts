@@ -1,11 +1,6 @@
-export type VideoMetadata = {
-  widthInPixels: number;
-  heightInPixels: number;
-  durationMs: number;
-  framesPerSecond: number;
-  hasAudio: boolean;
-  frameCount: number;
-};
+import type { components } from "../api/generated/http-api";
+
+export type VideoMetadata = components["schemas"]["VideoMetadata"];
 
 export function isVideo(file: File) {
   return (
@@ -28,7 +23,7 @@ export async function prepareVideo(
   });
   if (!response.ok) {
     const problem = response.headers.get("content-type")?.includes("json")
-      ? ((await response.json()) as { detail?: string })
+      ? ((await response.json()) as components["schemas"]["ProblemDetails"])
       : null;
     throw new Error(
       problem?.detail ??

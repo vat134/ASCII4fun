@@ -236,6 +236,10 @@ describe("Animated GIF workspace", () => {
       );
       expect(new TextDecoder().decode(bytes.slice(0, 6))).to.eq("GIF89a");
       expect(downloads[1]!.name).to.eq("motion.gif");
+      cy.writeFile(
+        "../../artifacts/review-main/browser-animation.gif",
+        Cypress.Buffer.from(bytes)
+      );
     });
     cy.get('input[aria-labelledby="animation-fps-label"]')
       .focus()
@@ -243,6 +247,15 @@ describe("Animated GIF workspace", () => {
     cy.get("#animation-fps-value").should("have.text", "14.29 FPS · Original");
     cy.get('[aria-label="Playback speed"]').select("1");
     cy.contains("Frame 1 / 3").should("be.visible");
+    cy.contains("button", "Download GIF").click();
+    cy.wrap(downloads, { timeout: 30000 }).should("have.length", 3);
+    cy.then(async () => {
+      const bytes = await (await downloads[2]!.blob).arrayBuffer();
+      cy.writeFile(
+        "../../artifacts/review-main/browser-animation-original.gif",
+        Cypress.Buffer.from(bytes)
+      );
+    });
     cy.contains("button", "Play").click();
     cy.contains("button", "Pause").click();
     cy.get('[aria-label="Remove image"]').click();

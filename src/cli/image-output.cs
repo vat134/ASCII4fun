@@ -59,10 +59,7 @@ internal static class ImageOutput
                 continue;
             }
 
-            await using (outputStream)
-            {
-                await outputStream.WriteAsync(bytes, cancellationToken);
-            }
+            await NewFileOutput.WriteAsync(outputStream, bytes, cancellationToken);
             return new FileInfo(outputPath);
         }
     }

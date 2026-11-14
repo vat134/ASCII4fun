@@ -2,6 +2,7 @@ using Ascii4Fun.Images;
 using Ascii4Fun.Server.Animations;
 using Ascii4Fun.Server.Figlet;
 using Ascii4Fun.Server.Images;
+using Ascii4Fun.Server.Http;
 using Ascii4Fun.Server.Videos;
 using Ascii4Fun.Videos;
 using Microsoft.AspNetCore.Http.Features;
@@ -21,6 +22,13 @@ builder.Services.AddSingleton(converter);
 builder.Services.AddSingleton(new VideoTools(builder.Configuration["Video:FfmpegPath"] ?? "ffmpeg",
     builder.Configuration["Video:FfprobePath"] ?? "ffprobe"));
 builder.Services.AddProblemDetails();
+builder.Services.AddOpenApi(options =>
+{
+    options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_1;
+    options.ShouldInclude = description => description.RelativePath?.StartsWith("api/", StringComparison.Ordinal) == true;
+    options.AddSchemaTransformer(OpenApiContractMetadata.TransformSchemaAsync);
+    options.AddDocumentTransformer(OpenApiContractMetadata.TransformDocumentAsync);
+});
 // Binding failures are client errors in development as well as published builds.
 builder.Services.Configure<RouteHandlerOptions>(options => options.ThrowOnBadRequest = false);
 builder.Services.AddAntiforgery(options => options.HeaderName = ImageConversionEndpoints.AntiforgeryHeaderName);
@@ -64,6 +72,7 @@ app.UseRequestTimeouts();
 app.UseRateLimiter();
 app.UseAntiforgery();
 app.MapHealthChecks("/health");
+if (app.Environment.IsDevelopment()) app.MapOpenApi();
 app.MapImageConversion();
 app.MapTextConversion();
 app.MapAnimationConversion();

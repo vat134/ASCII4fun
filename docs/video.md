@@ -2,9 +2,11 @@
 
 Media accepts MP4/MOV with H.264 or HEVC and WebM with VP8 or VP9. Limits: 60 seconds, 100 MiB encoded, 1,920 pixels per side and 2,073,600 pixels per frame, 60 FPS and 3,600 source frames. Longer clips fail explicitly; they are not trimmed or downscaled automatically. Odd source dimensions are padded to even dimensions for H.264. Source metadata and actual codec decoding are validated independently.
 
+Admission decodes the selected video stream to inspect its frame timestamps and durations; declared container duration, frame count and average FPS are not authoritative. The selected frame span defines duration and average cadence, independently of audio padding or a longer audio track. The probe stops at the first exceeded duration/frame bound and caps metadata records at 512 characters and total output at 1 MiB. This adds decoding work to admission; it is not a wall-clock or total-memory guarantee. Preparation and export seek to the same source video origin for both video and audio. Export requires the normalized decoder to produce exactly the admitted frame count.
+
 ## Setup
 
-Video requires external `ffmpeg` and `ffprobe` executables, with H.264 (`libx264`), HEVC, VP8/VP9 and AAC support. The repository does not bundle them. The implementation is tested locally with FFmpeg 9.0.2, Gyan essentials (GPLv3); install an appropriate build from the [FFmpeg download page](https://ffmpeg.org/download.html) and retain its notices when distributing it. Still images, GIF and Text do not require these tools.
+Video requires external `ffmpeg` and `ffprobe` executables, with H.264 (`libx264`), HEVC, VP8/VP9 and AAC support. The repository does not bundle them. Local verification covers FFmpeg 6.1.1 and 8.0.1 on Linux and 9.0.2, Gyan essentials (GPLv3), on Windows; install an appropriate build from the [FFmpeg download page](https://ffmpeg.org/download.html) and retain its notices when distributing it. Still images, GIF and Text do not require these tools.
 
 By default both tools are resolved from PATH. The .NET server also accepts `Video:FfmpegPath` and `Video:FfprobePath` configuration, including standard environment names `Video__FfmpegPath` / `Video__FfprobePath`. The development launcher loads these from `.env.local`; see `.env.example`. CLI callers can pass `--ffmpeg-path` and `--ffprobe-path`. Package callers pass `VideoTools`.
 
@@ -36,3 +38,5 @@ Errors use Problem Details (400 invalid settings/size, 415 content type, 422 inv
 ## Fixtures and evidence
 
 `tests/ascii4fun-tests/fixtures/video-*` are authored using FFmpeg `testsrc2` and a 440 Hz sine wave, plus silent one-minute/61-second solid-color clips. They contain no external footage. Native/API tests cover supported containers, sound, retiming, errors and cancellation/retry. Chrome tests exercise upload, live playback, keyboard seek/FPS and download. Headless test output is muted through Chrome's `--mute-audio`, without changing application sound or exported audio. Local measurements and learning evidence live in the project delivery plan.
+
+Preparation keeps video normalization and audio alignment in one [complex filtergraph](https://ffmpeg.org/ffmpeg.html#Complex-filtergraphs) when audio exists. With separate `-vf` and `-af` graphs, FFmpeg 8.0.1 hangs on the delayed-audio fixture while using `fps` and `apad`; the same fixture finishes with the combined graph and retains its expected frame count, duration and sound windows. Bounding `apad` alone did not resolve the reproduced hang. Silent clips keep the same video filter without an audio branch. The synchronization regression cancels preparation/export after 30 seconds; Ubuntu CI also collects VSTest hang diagnostics after two minutes, with a five-minute test-step limit.

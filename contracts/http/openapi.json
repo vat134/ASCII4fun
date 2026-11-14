@@ -1,0 +1,1001 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "ASCII4fun HTTP API",
+    "description": "Transient local-first conversion. Generated from C# models and endpoint metadata.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/images/options": {
+      "get": {
+        "tags": ["Ascii4Fun.Server"],
+        "operationId": "GetImageOptions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ImageConfiguration" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/images/convert": {
+      "post": {
+        "tags": ["ImageConversionEndpoints"],
+        "operationId": "ConvertImage",
+        "parameters": [
+          {
+            "name": "X-CSRF-TOKEN",
+            "in": "header",
+            "description": "Use requestToken from GET /api/images/options and retain that response's antiforgery cookie.",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "image",
+                  "outputWidthInCells",
+                  "characterRamp",
+                  "invert"
+                ],
+                "type": "object",
+                "allOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "image": { "$ref": "#/components/schemas/IFormFile" }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "outputWidthInCells": {
+                        "pattern": "^-?(?:0|[1-9]\\d*)$",
+                        "type": ["integer", "string"],
+                        "format": "int32"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "properties": { "characterRamp": { "type": "string" } }
+                  },
+                  {
+                    "type": "object",
+                    "properties": { "invert": { "type": "boolean" } }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "sourceColors": { "type": "boolean", "default": false }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "contrast": {
+                        "pattern": "^-?(?:0|[1-9]\\d*)$",
+                        "type": ["integer", "string"],
+                        "format": "int32",
+                        "default": 0
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "brightness": {
+                        "pattern": "^-?(?:0|[1-9]\\d*)$",
+                        "type": ["integer", "string"],
+                        "format": "int32",
+                        "default": 0
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "properties": { "monochromeColor": { "type": "string" } }
+                  },
+                  {
+                    "type": "object",
+                    "properties": { "backgroundColor": { "type": "string" } }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "shadowLift": {
+                        "pattern": "^-?(?:0|[1-9]\\d*)$",
+                        "type": ["integer", "string"],
+                        "format": "int32",
+                        "default": 0
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "sourcePhotoOpacity": {
+                        "pattern": "^-?(?:0|[1-9]\\d*)$",
+                        "type": ["integer", "string"],
+                        "format": "int32",
+                        "default": 0
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "useMeasuredGlyphDensity": {
+                        "type": "boolean",
+                        "default": false
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImageConversionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "HTTP 400. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "413": {
+            "description": "HTTP 413. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "415": {
+            "description": "HTTP 415. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "422": {
+            "description": "HTTP 422. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "429": {
+            "description": "HTTP 429. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "HTTP 500. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request timeout. The response may have no body."
+          }
+        }
+      }
+    },
+    "/api/text/fonts": {
+      "get": {
+        "tags": ["Ascii4Fun.Server"],
+        "operationId": "GetTextFonts",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/FigletFontInfo" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/text/fonts/{fontId}/palette": {
+      "get": {
+        "tags": ["Ascii4Fun.Server"],
+        "operationId": "GetTextFontPalette",
+        "parameters": [
+          {
+            "name": "fontId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "504": { "description": "Gateway Timeout" }
+        }
+      }
+    },
+    "/api/text/convert": {
+      "post": {
+        "tags": ["TextConversionEndpoints"],
+        "description": "The JSON request's format field selects json (default), txt or png. Accept does not select the format. No response is retained.",
+        "operationId": "ConvertText",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TextConversionRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImageConversionResponse"
+                }
+              },
+              "text/plain": { "schema": { "type": "string" } },
+              "image/png": {
+                "schema": { "type": "string", "format": "binary" }
+              }
+            }
+          },
+          "400": {
+            "description": "HTTP 400. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "413": {
+            "description": "HTTP 413. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "415": {
+            "description": "HTTP 415. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "429": {
+            "description": "HTTP 429. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "HTTP 500. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request timeout. The response may have no body."
+          }
+        }
+      }
+    },
+    "/api/animations/convert": {
+      "post": {
+        "tags": ["AnimationConversionEndpoints"],
+        "description": "Send an acceptable application/x-ndjson Accept entry (q > 0) for newline-delimited event items; otherwise receive binary media. The stream emits progress, then exactly one complete or error event. An error after headers is an event, not a new HTTP status. Disconnect cancels request-owned work. No durable job is created.",
+        "operationId": "ConvertAnimation",
+        "parameters": [
+          {
+            "name": "X-CSRF-TOKEN",
+            "in": "header",
+            "description": "Use requestToken from GET /api/images/options and retain that response's antiforgery cookie.",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": ["image", "settings"],
+                "type": "object",
+                "allOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "image": { "$ref": "#/components/schemas/IFormFile" }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "settings": {
+                        "type": "string",
+                        "description": "JSON-encoded AnimationConversionRequest. Send this form field as a string, not a nested multipart object."
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Binary export or a stream of NDJSON event items; not a JSON array.",
+            "content": {
+              "image/gif": {
+                "schema": { "type": "string", "format": "binary" }
+              },
+              "application/x-ndjson": {
+                "schema": {
+                  "oneOf": [
+                    { "$ref": "#/components/schemas/ExportProgress" },
+                    { "$ref": "#/components/schemas/ExportError" },
+                    { "$ref": "#/components/schemas/GifExportComplete" }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "HTTP 400. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "413": {
+            "description": "HTTP 413. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "415": {
+            "description": "HTTP 415. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "422": {
+            "description": "HTTP 422. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "429": {
+            "description": "HTTP 429. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "HTTP 500. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request timeout. The response may have no body."
+          }
+        }
+      }
+    },
+    "/api/videos/prepare": {
+      "post": {
+        "tags": ["VideoConversionEndpoints"],
+        "operationId": "PrepareVideo",
+        "parameters": [
+          {
+            "name": "X-CSRF-TOKEN",
+            "in": "header",
+            "description": "Use requestToken from GET /api/images/options and retain that response's antiforgery cookie.",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": ["image"],
+                "type": "object",
+                "properties": {
+                  "image": { "$ref": "#/components/schemas/IFormFile" }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Normalized MP4. No source session is retained.",
+            "headers": {
+              "X-Video-Metadata": {
+                "description": "JSON-encoded VideoMetadata (see components.schemas.VideoMetadata).",
+                "required": true,
+                "schema": { "type": "string" }
+              }
+            },
+            "content": {
+              "video/mp4": {
+                "schema": { "type": "string", "format": "binary" }
+              }
+            }
+          },
+          "400": {
+            "description": "HTTP 400. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "413": {
+            "description": "HTTP 413. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "415": {
+            "description": "HTTP 415. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "422": {
+            "description": "HTTP 422. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "429": {
+            "description": "HTTP 429. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "HTTP 500. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request timeout. The response may have no body."
+          }
+        }
+      }
+    },
+    "/api/videos/convert": {
+      "post": {
+        "tags": ["VideoConversionEndpoints"],
+        "description": "Send an acceptable application/x-ndjson Accept entry (q > 0) for newline-delimited event items; otherwise receive binary media. The stream emits progress, then exactly one complete or error event. An error after headers is an event, not a new HTTP status. Disconnect cancels request-owned work. No durable job is created.",
+        "operationId": "ConvertVideo",
+        "parameters": [
+          {
+            "name": "X-CSRF-TOKEN",
+            "in": "header",
+            "description": "Use requestToken from GET /api/images/options and retain that response's antiforgery cookie.",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": ["image", "settings"],
+                "type": "object",
+                "allOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "image": { "$ref": "#/components/schemas/IFormFile" }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "settings": {
+                        "type": "string",
+                        "description": "JSON-encoded AnimationConversionRequest. Send this form field as a string, not a nested multipart object."
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Binary export or a stream of NDJSON event items; not a JSON array.",
+            "content": {
+              "video/mp4": {
+                "schema": { "type": "string", "format": "binary" }
+              },
+              "application/x-ndjson": {
+                "schema": {
+                  "oneOf": [
+                    { "$ref": "#/components/schemas/ExportProgress" },
+                    { "$ref": "#/components/schemas/ExportError" },
+                    { "$ref": "#/components/schemas/VideoExportComplete" }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "HTTP 400. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "413": {
+            "description": "HTTP 413. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "415": {
+            "description": "HTTP 415. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "422": {
+            "description": "HTTP 422. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "429": {
+            "description": "HTTP 429. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "HTTP 500. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request timeout. The response may have no body."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AnimationConversionRequest": {
+        "required": ["options", "playback"],
+        "type": "object",
+        "properties": {
+          "options": {
+            "type": "object",
+            "properties": {
+              "outputWidthInCells": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": ["integer", "string"],
+                "description": "The requested output width measured in character cells.",
+                "format": "int32"
+              },
+              "characterRamp": {
+                "type": "string",
+                "description": "The well-formed Unicode glyph ramp ordered from darkest to lightest."
+              },
+              "useMeasuredGlyphDensity": {
+                "type": "boolean",
+                "description": "Selects nearest measured glyph coverage instead of equally spaced ramp positions. Defaults to false."
+              },
+              "invert": {
+                "type": "boolean",
+                "description": "Reverses light and dark glyph mapping."
+              },
+              "sourceColors": {
+                "type": "boolean",
+                "description": "Uses sampled source colors, composited over white like luminance analysis."
+              },
+              "contrast": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": ["integer", "string"],
+                "description": "Contrast around the midpoint; -100 flattens, 0 preserves, +100 increases contrast.",
+                "format": "int32"
+              },
+              "brightness": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": ["integer", "string"],
+                "description": "Additive brightness in percentage points; 0 preserves the input.",
+                "format": "int32"
+              },
+              "shadowLift": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": ["integer", "string"],
+                "description": "Lifts shadows with an endpoint-preserving power curve before contrast/brightness; 0 disables, 100 uses exponent 1/3.",
+                "format": "int32"
+              },
+              "sourcePhotoOpacity": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": ["integer", "string"],
+                "description": "Opacity of the normalized original photo beneath glyphs, in percent (0..100); 0 retains no photo.",
+                "format": "int32"
+              },
+              "monochromeColor": {
+                "type": "object",
+                "properties": {
+                  "red": {
+                    "pattern": "^-?(?:0|[1-9]\\d*)$",
+                    "type": ["integer", "string"],
+                    "description": "Red channel.",
+                    "format": "uint8"
+                  },
+                  "green": {
+                    "pattern": "^-?(?:0|[1-9]\\d*)$",
+                    "type": ["integer", "string"],
+                    "description": "Green channel.",
+                    "format": "uint8"
+                  },
+                  "blue": {
+                    "pattern": "^-?(?:0|[1-9]\\d*)$",
+                    "type": ["integer", "string"],
+                    "description": "Blue channel.",
+                    "format": "uint8"
+                  }
+                },
+                "description": "An opaque color with 8-bit sRGB channels."
+              },
+              "backgroundColor": {
+                "type": "object",
+                "properties": {
+                  "red": {
+                    "pattern": "^-?(?:0|[1-9]\\d*)$",
+                    "type": ["integer", "string"],
+                    "description": "Red channel.",
+                    "format": "uint8"
+                  },
+                  "green": {
+                    "pattern": "^-?(?:0|[1-9]\\d*)$",
+                    "type": ["integer", "string"],
+                    "description": "Green channel.",
+                    "format": "uint8"
+                  },
+                  "blue": {
+                    "pattern": "^-?(?:0|[1-9]\\d*)$",
+                    "type": ["integer", "string"],
+                    "description": "Blue channel.",
+                    "format": "uint8"
+                  }
+                },
+                "description": "An opaque color with 8-bit sRGB channels."
+              }
+            },
+            "description": "Controls glyph-based conversion of a still image."
+          },
+          "playback": {
+            "type": "object",
+            "properties": {
+              "speed": {
+                "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
+                "type": ["number", "string"],
+                "description": "Playback rate from 0.25 to 4; 2 plays twice as fast.",
+                "format": "double"
+              },
+              "framesPerSecond": {
+                "pattern": "^-?(?:0|[1-9]\\d*)$",
+                "type": ["null", "integer", "string"],
+                "description": "Optional uniform cadence: 1..50 FPS for GIF, 1..60 for video; capped by the source average before speed.",
+                "format": "int32"
+              }
+            },
+            "description": "Shared preview/export timing. Omitted FPS preserves the source frame sequence."
+          }
+        }
+      },
+      "ExportError": {
+        "required": ["message", "type"],
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" },
+          "type": { "enum": ["error"], "type": "string" }
+        }
+      },
+      "ExportProgress": {
+        "required": ["completedFrames", "type"],
+        "type": "object",
+        "properties": {
+          "completedFrames": { "type": "integer", "format": "int32" },
+          "type": { "enum": ["progress"], "type": "string" }
+        }
+      },
+      "FigletFontInfo": {
+        "required": ["id", "name", "category", "hasNativeColors", "note"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The stable identifier passed to AsciiCanvas FigletConverter.Convert(string text, string fontId, RgbColor? foregroundColor = null, IReadOnlyDictionary&lt;RgbColor, RgbColor&gt;? colorReplacements = null, CancellationToken cancellationToken = default(CancellationToken))."
+          },
+          "name": {
+            "type": "string",
+            "description": "The font's display name."
+          },
+          "category": {
+            "type": "string",
+            "description": "The display category for font browsing and filtering."
+          },
+          "hasNativeColors": {
+            "type": "boolean",
+            "description": "Whether the default artwork carries authored foreground and background colors.",
+            "default": false
+          },
+          "note": {
+            "type": ["null", "string"],
+            "description": "Font-specific coverage or display guidance."
+          }
+        },
+        "description": "A bundled FIGfont available to the shared text converter."
+      },
+      "GifExportComplete": {
+        "required": ["gif", "type"],
+        "type": "object",
+        "properties": {
+          "gif": { "type": "string", "format": "byte" },
+          "type": { "enum": ["complete"], "type": "string" }
+        }
+      },
+      "IFormFile": { "type": "string", "format": "binary" },
+      "ImageConfiguration": {
+        "required": [
+          "defaultOutputWidthInCells",
+          "minOutputWidthInCells",
+          "maxOutputWidthInCells",
+          "defaultCharacterRamp",
+          "defaultCharacterCellAspectRatio",
+          "maxEncodedBytes",
+          "minToneAdjustment",
+          "maxToneAdjustment",
+          "defaultMonochromeColor",
+          "defaultBackgroundColor",
+          "maxPercentage",
+          "requestToken"
+        ],
+        "type": "object",
+        "properties": {
+          "defaultOutputWidthInCells": { "type": "integer", "format": "int32" },
+          "minOutputWidthInCells": { "type": "integer", "format": "int32" },
+          "maxOutputWidthInCells": { "type": "integer", "format": "int32" },
+          "defaultCharacterRamp": { "type": "string" },
+          "defaultCharacterCellAspectRatio": {
+            "type": "number",
+            "format": "double"
+          },
+          "maxEncodedBytes": { "type": "integer", "format": "int64" },
+          "minToneAdjustment": { "type": "integer", "format": "int32" },
+          "maxToneAdjustment": { "type": "integer", "format": "int32" },
+          "defaultMonochromeColor": { "$ref": "#/components/schemas/RgbColor" },
+          "defaultBackgroundColor": { "$ref": "#/components/schemas/RgbColor" },
+          "maxPercentage": { "type": "integer", "format": "int32" },
+          "requestToken": { "type": "string" }
+        }
+      },
+      "ImageConversionResponse": {
+        "required": ["text", "widthInCells", "heightInCells", "png"],
+        "type": "object",
+        "properties": {
+          "text": { "type": "string" },
+          "widthInCells": { "type": "integer", "format": "int32" },
+          "heightInCells": { "type": "integer", "format": "int32" },
+          "png": { "type": "string", "format": "byte" }
+        }
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": { "type": ["null", "string"] },
+          "title": { "type": ["null", "string"] },
+          "status": { "type": ["null", "integer"], "format": "int32" },
+          "detail": { "type": ["null", "string"] },
+          "instance": { "type": ["null", "string"] }
+        }
+      },
+      "RgbColor": {
+        "required": ["red", "green", "blue"],
+        "type": "object",
+        "properties": {
+          "red": {
+            "type": "integer",
+            "description": "Red channel.",
+            "format": "uint8"
+          },
+          "green": {
+            "type": "integer",
+            "description": "Green channel.",
+            "format": "uint8"
+          },
+          "blue": {
+            "type": "integer",
+            "description": "Blue channel.",
+            "format": "uint8"
+          }
+        },
+        "description": "An opaque color with 8-bit sRGB channels."
+      },
+      "TextConversionRequest": {
+        "required": ["text"],
+        "type": "object",
+        "properties": {
+          "text": { "type": ["null", "string"] },
+          "fontId": { "type": "string", "default": "standard" },
+          "format": { "type": "string", "default": "json" },
+          "foregroundColor": { "type": ["null", "string"] },
+          "colorReplacements": {
+            "type": ["null", "object"],
+            "additionalProperties": { "type": "string" }
+          }
+        }
+      },
+      "VideoExportComplete": {
+        "required": ["video", "type"],
+        "type": "object",
+        "properties": {
+          "video": { "type": "string", "format": "byte" },
+          "type": { "enum": ["complete"], "type": "string" }
+        }
+      },
+      "VideoMetadata": {
+        "required": [
+          "widthInPixels",
+          "heightInPixels",
+          "durationMs",
+          "framesPerSecond",
+          "hasAudio",
+          "frameCount"
+        ],
+        "type": "object",
+        "properties": {
+          "widthInPixels": {
+            "type": "integer",
+            "description": "Frame width after orientation and sample-aspect normalization.",
+            "format": "int32"
+          },
+          "heightInPixels": {
+            "type": "integer",
+            "description": "Frame height after orientation and sample-aspect normalization.",
+            "format": "int32"
+          },
+          "durationMs": {
+            "type": "number",
+            "description": "Source duration in milliseconds.",
+            "format": "double"
+          },
+          "framesPerSecond": {
+            "type": "number",
+            "description": "Average source frame rate.",
+            "format": "double"
+          },
+          "hasAudio": {
+            "type": "boolean",
+            "description": "Whether a source audio track exists."
+          },
+          "frameCount": {
+            "type": "integer",
+            "description": "Decoded source frame count.",
+            "format": "int32"
+          }
+        },
+        "description": "Validated source video information, before playback retiming."
+      }
+    }
+  },
+  "tags": [
+    { "name": "Ascii4Fun.Server" },
+    { "name": "ImageConversionEndpoints" },
+    { "name": "TextConversionEndpoints" },
+    { "name": "AnimationConversionEndpoints" },
+    { "name": "VideoConversionEndpoints" }
+  ]
+}

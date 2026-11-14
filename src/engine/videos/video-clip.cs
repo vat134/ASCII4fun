@@ -62,11 +62,17 @@ public sealed class VideoClip : IAsyncDisposable
     {
         ObjectDisposedException.ThrowIf(disposed, this);
         var path = Path.Combine(directory, "prepared.mp4");
+        var videoFilter = $"scale={Metadata.WidthInPixels}:{Metadata.HeightInPixels},fps={Number(Metadata.FramesPerSecond)},pad=ceil(iw/2)*2:ceil(ih/2)*2,setsar=1";
+        // FFmpeg 8.0 can deadlock separate video/audio graphs when delayed audio needs padding.
+        string[] filters = Metadata.HasAudio
+            ? ["-filter_complex", $"[0:v:0]{videoFilter}[video];[0:a:0]aresample=async=1:first_pts=0,apad[audio]", "-map", "[video]", "-map", "[audio]"]
+            : ["-vf", videoFilter, "-map", "0:v:0"];
         await using var process = new FfmpegProcess(tools.FfmpegPath,
-            ["-v", "error", "-nostdin", "-y", "-protocol_whitelist", "file,pipe", "-format_whitelist", "mov,matroska,webm", "-max_pixels", MaxSourcePixels.ToString(CultureInfo.InvariantCulture), "-i", sourcePath,
-                "-map", "0:v:0", "-map", "0:a:0?", "-sn", "-dn", "-vf", $"scale={Metadata.WidthInPixels}:{Metadata.HeightInPixels},fps={Number(Metadata.FramesPerSecond)},pad=ceil(iw/2)*2:ceil(ih/2)*2,setsar=1",
+            ["-v", "error", "-nostdin", "-y", "-protocol_whitelist", "file,pipe", "-format_whitelist", "mov,matroska,webm", "-max_pixels", MaxSourcePixels.ToString(CultureInfo.InvariantCulture),
+                "-seek_timestamp", "1", "-ss", Number(Metadata.StartTimeSeconds), "-i", sourcePath,
+                .. filters, "-sn", "-dn",
                 "-c:v", "libx264", "-preset", "fast", "-crf", "14", "-pix_fmt", "yuv420p",
-                "-af", "aresample=async=1:first_pts=0,apad", "-c:a", "aac", "-b:a", "192k",
+                "-c:a", "aac", "-b:a", "192k",
                 "-t", Number(Metadata.DurationMs / 1000), "-fs", MaxEncodedBytes.ToString(CultureInfo.InvariantCulture),
                 "-map_metadata", "-1", "-movflags", "+faststart", path], cancellationToken);
         await process.CompleteAsync(cancellationToken);

@@ -189,8 +189,23 @@ test("a missing glyph error can recover with a new edit and disposal suppresses 
     status: "ready",
     result: mockArtwork
   });
+  let complete!: (value: AsciiPreviewResult) => void;
+  mockConvert.mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        complete = resolve;
+      })
+  );
+  session.request("Pending", "neon");
+  await tick();
+  session.request("Queued", "neon");
   session.dispose();
   expect(mockDispose).toHaveBeenCalledTimes(1);
+  const publications = onState.mock.calls.length;
+  complete({ ...mockArtwork, text: "Late" });
+  await tick();
+  expect(onState).toHaveBeenCalledTimes(publications);
+  expect(mockConvert).toHaveBeenCalledTimes(3);
 });
 
 test("loads the selected whole-font palette even for empty text, once per session", async () => {

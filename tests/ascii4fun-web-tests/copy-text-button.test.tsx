@@ -29,3 +29,44 @@ test("shows confirmation for 1.5 seconds after the latest successful copy", asyn
     jest.useRealTimers();
   }
 });
+
+test.each([false, true])(
+  "ignores an obsolete copy completion (failure: %s)",
+  async (fails) => {
+    let resolveFirst!: () => void;
+    let rejectFirst!: (error: Error) => void;
+    let resolveSecond!: () => void;
+    const writeText = jest
+      .fn<(text: string) => Promise<void>>()
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve, reject) => {
+            resolveFirst = resolve;
+            rejectFirst = reject;
+          })
+      )
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            resolveSecond = resolve;
+          })
+      );
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText }
+    });
+    const view = render(<CopyTextButton text="A" />);
+    const button = screen.getByRole("button", { name: "Copy text" });
+    fireEvent.click(button);
+    view.rerender(<CopyTextButton text="B" />);
+    fireEvent.click(button);
+    await act(async () => resolveSecond());
+    expect(button).toHaveTextContent("Copied");
+    await act(async () => {
+      if (fails) rejectFirst(new Error("Clipboard blocked"));
+      else resolveFirst();
+    });
+    expect(button).toHaveTextContent("Copied");
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  }
+);

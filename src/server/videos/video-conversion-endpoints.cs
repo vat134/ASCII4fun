@@ -4,6 +4,7 @@ using Ascii4Fun.Server.Animations;
 using Ascii4Fun.Server.Images;
 using Ascii4Fun.Videos;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 
 namespace Ascii4Fun.Server.Videos;
 
@@ -15,8 +16,10 @@ internal static class VideoConversionEndpoints
     public static void MapVideoConversion(this WebApplication app)
     {
         app.MapPost("/api/videos/prepare", PrepareAsync)
+            .WithName("PrepareVideo")
             .RequireRateLimiting(ImageConversionEndpoints.PolicyName).WithRequestTimeout(TimeoutPolicy);
         app.MapPost("/api/videos/convert", ConvertAsync)
+            .WithName("ConvertVideo")
             .RequireRateLimiting(ImageConversionEndpoints.PolicyName).WithRequestTimeout(TimeoutPolicy);
     }
 
@@ -58,7 +61,9 @@ internal static class VideoConversionEndpoints
                 await using var clip = await VideoClip.OpenAsync(input, tools, cancellationToken);
                 return await clip.ExportAsync(request.Options, request.Playback, progress, cancellationToken);
             }
-            if (context.Request.Headers.Accept.Any(value => value?.Contains("application/x-ndjson", StringComparison.Ordinal) == true))
+            if (context.Request.GetTypedHeaders().Accept?.Any(value =>
+                value.MediaType.Equals("application/x-ndjson", StringComparison.OrdinalIgnoreCase)
+                && value.Quality.GetValueOrDefault(1) > 0) == true)
                 return Results.Stream(stream => AnimationExportStream.WriteAsync(stream, ExportAsync, "video", token), "application/x-ndjson");
             var bytes = await ExportAsync(new NoProgress(), token);
             return Results.File(bytes, "video/mp4", "ascii-video.mp4");
@@ -77,7 +82,8 @@ internal static class VideoConversionEndpoints
     {
         if (image.Length <= 0 || image.Length > VideoClip.MaxEncodedBytes)
             return Results.Problem(statusCode: 400, title: "Invalid video size", detail: "Choose a non-empty video up to 100 MiB.");
-        if (image.ContentType is not ("video/mp4" or "video/webm" or "video/quicktime" or "application/octet-stream"))
+        if (!MediaTypeHeaderValue.TryParse(image.ContentType, out var mediaType)
+            || mediaType.MediaType.Value?.ToLowerInvariant() is not ("video/mp4" or "video/webm" or "video/quicktime" or "application/octet-stream"))
             return Results.Problem(statusCode: 415, title: "Unsupported upload type", detail: "Choose MP4, WebM or MOV video.");
         return null;
     }

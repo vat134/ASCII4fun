@@ -96,10 +96,39 @@ public sealed class AnimationConversionEndpointTests(WebApplicationFactory<Progr
         Assert.Equal(status, (int)response.StatusCode);
     }
 
+    [Theory]
+    [InlineData("application/x-ndjson;q=0, image/gif", "image/gif")]
+    [InlineData("application/x-ndjson-other, image/gif", "image/gif")]
+    [InlineData("APPLICATION/X-NDJSON", "application/x-ndjson")]
+    public async Task SelectsStreamOnlyForAnAcceptedNdjsonMediaType(string accept, string expectedContentType)
+    {
+        using var client = application.CreateClient();
+        var config = await client.GetFromJsonAsync<JsonElement>("/api/images/options");
+        client.DefaultRequestHeaders.Add("X-CSRF-TOKEN", config.GetProperty("requestToken").GetString());
+        client.DefaultRequestHeaders.Accept.ParseAdd(accept);
+        using var body = Body(Fixture(), "{\"options\":{\"outputWidthInCells\":4},\"playback\":{}}");
+        using var response = await client.PostAsync("/api/animations/convert", body);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(expectedContentType, response.Content.Headers.ContentType!.MediaType);
+    }
+
+    [Theory]
+    [InlineData("IMAGE/GIF")]
+    [InlineData("image/gif; charset=binary")]
+    public async Task AcceptsEquivalentUploadMediaTypes(string contentType)
+    {
+        using var client = application.CreateClient();
+        var config = await client.GetFromJsonAsync<JsonElement>("/api/images/options");
+        client.DefaultRequestHeaders.Add("X-CSRF-TOKEN", config.GetProperty("requestToken").GetString());
+        using var body = Body(Fixture(), "{\"options\":{\"outputWidthInCells\":4},\"playback\":{}}", contentType);
+        using var response = await client.PostAsync("/api/animations/convert", body);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
     private static MultipartFormDataContent Body(byte[] bytes, string settings, string contentType = "image/gif")
     {
         var file = new ByteArrayContent(bytes);
-        file.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+        file.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);
         return new MultipartFormDataContent { { file, "image", "fixture.gif" }, { new StringContent(settings), "settings" } };
     }
 

@@ -124,6 +124,7 @@ test("keys every option canonically including tone and composition colors", asyn
     { ...defaults, invert: false },
     { ...defaults, sourceColors: false },
     { ...defaults, characterRamp: "# " },
+    { ...defaults, useMeasuredGlyphDensity: true },
     { ...defaults, outputWidthInCells: 90 },
     { ...defaults, contrast: 10 },
     { ...defaults, brightness: 10 },

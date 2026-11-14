@@ -7,21 +7,22 @@ Web -> Worker -> shared C# pipeline -> ImageMagick WASM adapter
 API / CLI / NuGet -> .NET engine ---> Magick.NET adapter
 ```
 
-| Owner                     | Responsibility                                                          |
-| ------------------------- | ----------------------------------------------------------------------- |
-| `src/engine/images`       | Options, luminance, tone, immutable glyph/color cells                   |
-| `src/engine/animations`   | GIF source lifetime, shared timing, sequence tone and export            |
-| `src/engine/videos`       | FFmpeg process lifetime, video timing, preparation and MP4/audio export |
-| `src/engine/figlet`       | FIGfont parsing, layout, font catalog and glyph canvases                |
-| `src/engine/media`        | Input policy, aspect-correct grid and native decoding                   |
-| `src/engine/rendering`    | Cell/font rules, shared RGB compositor and native PNG export            |
-| `src/engine/browser`      | .NET WASM host linking the authoritative engine source files            |
-| `src/web/browser-engine`  | WASM runtime and shared font adapter                                    |
-| `src/web/images/worker`   | Browser codecs, normalized source lifetime and sampling                 |
-| `src/web/images`          | Media controls, scheduling and bounded result cache                     |
-| `src/web/rendering`       | Shared preview, zoom, copy and raster/text downloads                    |
-| `src/cli/image-output.cs` | CLI file/stdout output and collision-safe generated filenames           |
-| `src/server`, `src/cli`   | HTTP and file-system boundaries                                         |
+| Owner                        | Responsibility                                                          |
+| ---------------------------- | ----------------------------------------------------------------------- |
+| `src/engine/images`          | Options, luminance, tone, immutable glyph/color cells                   |
+| `src/engine/animations`      | GIF source lifetime, shared timing, sequence tone and export            |
+| `src/engine/videos`          | FFmpeg process lifetime, video timing, preparation and MP4/audio export |
+| `src/engine/figlet`          | FIGfont parsing, layout, font catalog and glyph canvases                |
+| `src/engine/media`           | Input policy, aspect-correct grid and native decoding                   |
+| `src/engine/rendering`       | Cell/font rules, shared RGB compositor and native PNG export            |
+| `src/engine/browser`         | .NET WASM host linking the authoritative engine source files            |
+| `src/web/browser-engine`     | WASM runtime and shared font adapter                                    |
+| `src/web/images/worker`      | Browser codecs, normalized source lifetime and sampling                 |
+| `src/web/images`             | Media controls, scheduling and bounded result cache                     |
+| `src/web/rendering`          | Shared preview, zoom, copy and raster/text downloads                    |
+| `src/cli/image-output.cs`    | CLI file/stdout output and collision-safe generated filenames           |
+| `src/cli/new-file-output.cs` | Disposal and failure cleanup for newly created output files             |
+| `src/server`, `src/cli`      | HTTP and file-system boundaries                                         |
 
 The flow is decode/normalize -> sample -> analyze -> tone -> glyph/color mapping -> raster/export. Image/GIF adapters use ImageMagick; video containers and audio use external FFmpeg/ffprobe. TypeScript does not implement ASCII mapping. Both hosts use the same ICC profile bytes, bundled fonts, 12 × 24 px geometry and C# raster compositor.
 
@@ -47,7 +48,11 @@ Tests cover native/browser pixel equality, Unicode, ICC/EXIF/alpha, scheduling, 
 
 Text uses the same canvas/export path. The shared font catalog includes FIGfont and TheDraw readers with authored cell backgrounds. The C# engine extracts whole-font palettes and applies individual color replacements for matching preview and PNG. Monochrome fonts keep Text color. React Virtuoso 4.18.20 virtualizes the responsive gallery: only the viewport and one card-height buffer are mounted. Thumbnails for mounted cards are loaded behind active text edits and retain at most 32 rasters of 384 × 160 px (7.5 MiB of RGBA payload, excluding display canvases/runtime). See the font catalog audit for compatibility and unresolved redistribution terms.
 
+A mounted font card owns its painted bitmap until replacement or unmount. Cache eviction does not trigger another request, even when a large viewport mounts more than 32 cards. A remounted card requests a missing cached result. Display bitmaps are additional to the bounded reusable result cache.
+
 Text HTTP routes live in src/server/figlet; CLI commands list-fonts and convert-text call the same FigletConverter used by the browser. Transport color strings become engine RGB values at ingress. TXT preserves exact canvas text; PNG uses PngExporter. Text HTTP and image conversion share the existing bounded concurrency and timeout policies. See README for request fields and output formats.
+
+C# HTTP models and endpoint metadata generate the OpenAPI snapshot and Web HTTP declarations. CI rejects stale artifacts; UI state and WASM interop remain separate contracts. The engine does not reference OpenAPI. See [HTTP contract generation](http-api.md).
 
 GIF sources are composed by the ImageMagick collection adapters before sampling. Both hosts apply the existing ICC policy and compute one sampled luminance range across the sequence per grid. Frames then use the same CharacterImagePipeline and CanvasRasterizer as still images. The C# AnimationTimeline owns normalized delays, the source-average FPS ceiling, speed, FPS resampling and centisecond rounding; The FPS slider maps its upper stop to original irregular source timing and lower stops to integer FPS. React schedules by elapsed time and drops overdue presentation frames without changing the exported timeline. Pausing/seeking changes presentation, not conversion semantics. Media clocks stop while its workspace is hidden.
 

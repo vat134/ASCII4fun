@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { CharacterImageOptions } from "../images/image-conversion";
 import type { AnimationPlaybackOptions } from "./animation-conversion";
 import { readAnimationExport } from "./read-animation-export";
+import type { components } from "../api/generated/http-api";
 
 export function useAnimationDownload(
   file: File | undefined,
@@ -26,7 +27,11 @@ export function useAnimationDownload(
     try {
       const body = new FormData();
       body.set("image", file);
-      body.set("settings", JSON.stringify({ options, playback }));
+      const settings = {
+        options,
+        playback
+      } satisfies components["schemas"]["AnimationConversionRequest"];
+      body.set("settings", JSON.stringify(settings));
       const response = await fetch(
         format === "gif" ? "/api/animations/convert" : "/api/videos/convert",
         {

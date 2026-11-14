@@ -9,9 +9,11 @@ namespace Ascii4Fun.Videos;
 /// <param name="DurationMs">Source duration in milliseconds.</param>
 /// <param name="FramesPerSecond">Average source frame rate.</param>
 /// <param name="HasAudio">Whether a source audio track exists.</param>
-/// <param name="FrameCount">Source frames, or the bounded estimated count before normalization.</param>
+/// <param name="FrameCount">Decoded source frame count.</param>
 public sealed record VideoMetadata(int WidthInPixels, int HeightInPixels, double DurationMs, double FramesPerSecond, bool HasAudio, int FrameCount)
 {
+    internal double StartTimeSeconds { get; init; }
+
     internal static async Task<VideoMetadata> ReadAsync(string path, VideoTools tools, CancellationToken token)
     {
         await using var probe = new FfmpegProcess(tools.FfprobePath,
@@ -53,39 +55,18 @@ public sealed record VideoMetadata(int WidthInPixels, int HeightInPixels, double
                     if (Math.Abs(degrees % 180) == 90) (width, height) = (height, width);
                 }
             }
-            var durationMs = ReadDurationSeconds(video, format) * 1000;
-            var ratio = video.GetProperty("avg_frame_rate").GetString()!.Split('/');
-            var fps = double.Parse(ratio[0], CultureInfo.InvariantCulture) / double.Parse(ratio[1], CultureInfo.InvariantCulture);
-            if (!double.IsFinite(durationMs) || durationMs is <= 0 or > 60000)
-                throw new InvalidDataException("Choose a video no longer than 60 seconds. Longer clips are not trimmed automatically.");
             if (width < 1 || height < 1 || width > 1920 || height > 1920 || (long)width * height > VideoClip.MaxSourcePixels)
                 throw new InvalidDataException("Video supports up to 1920 × 1080 pixels, including portrait orientation.");
-            var count = video.TryGetProperty("nb_frames", out var frameCount)
-                ? int.Parse(frameCount.GetString()!, CultureInfo.InvariantCulture)
-                : double.IsFinite(fps) && fps > 0 ? checked((int)Math.Ceiling(durationMs * fps / 1000 - 0.000001))
-                : throw new InvalidDataException("The source video frame rate is unknown.");
-            if (count is < 1 or > 3600) throw new InvalidDataException("Video supports up to 3,600 source frames.");
-            fps = count * 1000d / durationMs;
-            if (fps > 60 + 0.000001) throw new InvalidDataException("Video supports up to 60 source FPS.");
-            return new(width, height, durationMs, fps, streams.Any(stream => stream.GetProperty("codec_type").GetString() == "audio"), count);
+            var timing = await VideoFrameProbe.ReadAsync(path, video.GetProperty("time_base").GetString()!, tools, token);
+            return new(width, height, timing.DurationSeconds * 1000, timing.FramesPerSecond,
+                streams.Any(stream => stream.GetProperty("codec_type").GetString() == "audio"), timing.FrameCount)
+            {
+                StartTimeSeconds = timing.StartTimeSeconds
+            };
         }
         catch (Exception exception) when (exception is JsonException or KeyNotFoundException or FormatException or InvalidOperationException or IndexOutOfRangeException or OverflowException)
         {
             throw new InvalidDataException("The video metadata is incomplete or invalid.", exception);
         }
-    }
-
-    private static double ReadDurationSeconds(JsonElement video, JsonElement format)
-    {
-        if (video.TryGetProperty("duration", out var duration))
-            return double.Parse(duration.GetString()!, CultureInfo.InvariantCulture);
-        if (video.TryGetProperty("tags", out var tags) && tags.TryGetProperty("DURATION", out var tagged))
-        {
-            var parts = tagged.GetString()!.Split(':');
-            if (parts.Length != 3) throw new InvalidDataException("Invalid video duration.");
-            return double.Parse(parts[0], CultureInfo.InvariantCulture) * 3600
-                + double.Parse(parts[1], CultureInfo.InvariantCulture) * 60 + double.Parse(parts[2], CultureInfo.InvariantCulture);
-        }
-        return double.Parse(format.GetProperty("duration").GetString()!, CultureInfo.InvariantCulture);
     }
 }

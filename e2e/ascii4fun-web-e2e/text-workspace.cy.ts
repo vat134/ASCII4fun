@@ -180,9 +180,10 @@ describe("FIGlet text workspace", () => {
           )
         )
     );
+    cy.get("@copyText").invoke("resetHistory");
     cy.get('[aria-label="Text preview"] [aria-label="Copy text"]').click();
     cy.get<string>("@glyphs").then((glyphs) =>
-      cy.get("@copyText").should("have.been.calledWithExactly", glyphs)
+      cy.get("@copyText").should("have.been.calledOnceWithExactly", glyphs)
     );
     cy.contains('[role="tab"]:visible', "Media").click();
     textTab();

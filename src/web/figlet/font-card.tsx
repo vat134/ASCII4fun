@@ -1,5 +1,4 @@
-import { useEffect, useRef } from "react";
-import type { AsciiPreviewResult } from "../rendering/ascii-preview-result";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/base/button";
 import { CheckIcon } from "../ui/icons";
 import { useRasterPreview } from "../rendering/use-raster-preview";
@@ -16,9 +15,6 @@ export function FontCard({
   onChoose: () => void;
   onPreview: (id: string) => void;
 }) {
-  useEffect(() => {
-    if (!font.preview && !font.previewError) onPreview(font.id);
-  }, [font.id, font.preview, font.previewError, onPreview]);
   return (
     <Button
       variant="outline"
@@ -30,16 +26,7 @@ export function FontCard({
         className="flex min-h-0 flex-1 items-center justify-center overflow-hidden"
         aria-hidden="true"
       >
-        {font.preview ? (
-          <CardRaster result={font.preview} />
-        ) : (
-          <span
-            title={font.previewError}
-            className="text-xs text-muted-foreground"
-          >
-            {font.previewError ? "Preview unavailable" : "Loading preview"}
-          </span>
-        )}
+        <CardRaster key={font.id} font={font} onPreview={onPreview} />
       </div>
       <span className="flex items-center justify-between gap-2 text-left text-xs">
         {font.name}
@@ -49,21 +36,35 @@ export function FontCard({
   );
 }
 
-function CardRaster({ result }: { result: AsciiPreviewResult }) {
+function CardRaster({
+  font,
+  onPreview
+}: {
+  font: TextFont;
+  onPreview: (id: string) => void;
+}) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  useRasterPreview(result, 100, viewportRef, canvasRef);
+  const [hasRaster, setHasRaster] = useState(false);
+  if (font.preview && !hasRaster) setHasRaster(true);
+  useRasterPreview(font.preview, 100, viewportRef, canvasRef);
+  useEffect(() => {
+    if (!hasRaster && !font.preview && !font.previewError) onPreview(font.id);
+  }, [hasRaster, font.id, font.preview, font.previewError, onPreview]);
   return (
     <div
       ref={viewportRef}
       className="flex h-full w-full items-center justify-center overflow-hidden"
     >
-      <canvas
-        ref={canvasRef}
-        width={result.widthInPixels}
-        height={result.heightInPixels}
-        className="shrink-0"
-      />
+      <canvas ref={canvasRef} hidden={!hasRaster} className="shrink-0" />
+      {!hasRaster && (
+        <span
+          title={font.previewError}
+          className="text-xs text-muted-foreground"
+        >
+          {font.previewError ? "Preview unavailable" : "Loading preview"}
+        </span>
+      )}
     </div>
   );
 }

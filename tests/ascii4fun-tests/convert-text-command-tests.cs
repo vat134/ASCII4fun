@@ -71,8 +71,18 @@ public sealed class ConvertTextCommandTests
         var output = process.StandardOutput.ReadToEndAsync();
         var error = process.StandardError.ReadToEndAsync();
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-        await process.WaitForExitAsync(timeout.Token);
-        Assert.Equal(string.Empty, await error);
-        return (process.ExitCode, await output);
+        try
+        {
+            await process.WaitForExitAsync(timeout.Token);
+            Assert.Equal(string.Empty, await error);
+            return (process.ExitCode, await output);
+        }
+        finally
+        {
+            try { if (!process.HasExited) process.Kill(entireProcessTree: true); }
+            catch (InvalidOperationException) { /* The owned process exited between the check and kill. */ }
+            await process.WaitForExitAsync();
+            await Task.WhenAll(output, error);
+        }
     }
 }
