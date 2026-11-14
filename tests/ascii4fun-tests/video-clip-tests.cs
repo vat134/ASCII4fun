@@ -96,8 +96,10 @@ public sealed class VideoClipTests
     [InlineData("video-shared-origin", true, true, false)]
     public async Task PreparationAndExportKeepTheWholeVideoAndAlignSoundToItsOrigin(string name, bool earlySound, bool lateSound, bool prepare)
     {
+        using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(30));
         await using var clip = await VideoClip.OpenAsync(new MemoryStream(VideoFixture.Bytes(name: name)));
-        var bytes = prepare ? await clip.PrepareAsync() : await clip.ExportAsync(new CharacterImageOptions { OutputWidthInCells = 8 });
+        var bytes = prepare ? await clip.PrepareAsync(cancellation.Token)
+            : await clip.ExportAsync(new CharacterImageOptions { OutputWidthInCells = 8 }, cancellationToken: cancellation.Token);
         await using var output = await VideoClip.OpenAsync(new MemoryStream(bytes));
         Assert.Equal(2000, output.Metadata.DurationMs);
         Assert.Equal(20, output.Metadata.FrameCount);
