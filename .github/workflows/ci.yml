@@ -43,7 +43,21 @@ jobs:
       - run: dotnet format ascii4fun.slnx --verify-no-changes --no-restore
       - run: dotnet format src/engine/browser/ascii4fun-browser.csproj --verify-no-changes --no-restore
       - run: dotnet build ascii4fun.slnx --configuration Release --no-restore
-      - run: dotnet test ascii4fun.slnx --configuration Release --no-build
+      - name: Run .NET tests
+        timeout-minutes: 5
+        run: >-
+          dotnet test ascii4fun.slnx --configuration Release --no-build
+          --logger "console;verbosity=normal" --logger trx
+          --blame-hang-timeout 2m --blame-hang-dump-type mini
+          --results-directory artifacts/test-results
+      - name: Upload .NET test diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: dotnet-test-diagnostics
+          path: artifacts/test-results
+          if-no-files-found: ignore
+          retention-days: 3
       - run: node tools/test-package.mjs
       - run: pnpm test:e2e
 
