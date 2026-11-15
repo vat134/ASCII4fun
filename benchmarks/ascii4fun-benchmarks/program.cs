@@ -4,8 +4,7 @@ using Ascii4Fun.Images;
 using Ascii4Fun.Rendering;
 
 var photoStyle = args.Contains("--photo-style", StringComparer.Ordinal);
-var removeBackground = args.Contains("--remove-background", StringComparer.Ordinal);
-var paths = args.Where(arg => arg is not ("--photo-style" or "--remove-background")).ToArray();
+var paths = args.Where(arg => arg != "--photo-style").ToArray();
 if (paths.Length == 0)
 {
     Console.Error.WriteLine("Provide one or more still-image paths. Run in Release without other benchmarks.");
@@ -28,7 +27,6 @@ foreach (var path in paths)
                 Invert = true,
                 SourceColors = true,
                 UsePhotoStyle = photoStyle,
-                RemoveBackground = removeBackground,
                 ShadowLift = shadowLift,
                 SourcePhotoOpacity = photoOpacity
             };
@@ -58,7 +56,6 @@ foreach (var path in paths)
                 shadowLift,
                 photoOpacity,
                 photoStyle,
-                removeBackground,
                 samples,
                 warmups,
                 conversionMs = Summarize(conversion),
