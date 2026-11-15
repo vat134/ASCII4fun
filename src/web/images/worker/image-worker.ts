@@ -28,14 +28,21 @@ export async function renderImageRequest(
       data.options.outputWidthInCells,
       sampled.height
     );
-  if (data.options.useMeasuredGlyphDensity)
-    await loadFonts(engine.FontNames(data.options.characterRamp));
+  if (data.options.usePhotoStyle || data.options.useMeasuredGlyphDensity)
+    await loadFonts(
+      engine.FontNames(
+        data.options.usePhotoStyle
+          ? engine.PhotoCharacters()
+          : data.options.characterRamp
+      )
+    );
   const result = JSON.parse(
     engine.Convert(
       sampled.rgba,
       data.options.outputWidthInCells,
       sampled.height,
-      JSON.stringify(data.options)
+      JSON.stringify(data.options),
+      sampled.photoRgba
     )
   ) as AsciiCanvasProjection;
   await loadFonts(engine.FontNames(result.text));

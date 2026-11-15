@@ -3,7 +3,10 @@ using System.Text.Json;
 using Ascii4Fun.Images;
 using Ascii4Fun.Rendering;
 
-if (args.Length == 0)
+var photoStyle = args.Contains("--photo-style", StringComparer.Ordinal);
+var removeBackground = args.Contains("--remove-background", StringComparer.Ordinal);
+var paths = args.Where(arg => arg is not ("--photo-style" or "--remove-background")).ToArray();
+if (paths.Length == 0)
 {
     Console.Error.WriteLine("Provide one or more still-image paths. Run in Release without other benchmarks.");
     return 1;
@@ -12,7 +15,7 @@ if (args.Length == 0)
 const int samples = 10;
 const int warmups = 2;
 var converter = new StillImageConverter();
-foreach (var path in args)
+foreach (var path in paths)
 {
     var encoded = await File.ReadAllBytesAsync(path);
     foreach (var columns in new[] { 80, 160, 180 })
@@ -24,6 +27,8 @@ foreach (var path in args)
                 OutputWidthInCells = columns,
                 Invert = true,
                 SourceColors = true,
+                UsePhotoStyle = photoStyle,
+                RemoveBackground = removeBackground,
                 ShadowLift = shadowLift,
                 SourcePhotoOpacity = photoOpacity
             };
@@ -52,6 +57,8 @@ foreach (var path in args)
                 columns,
                 shadowLift,
                 photoOpacity,
+                photoStyle,
+                removeBackground,
                 samples,
                 warmups,
                 conversionMs = Summarize(conversion),

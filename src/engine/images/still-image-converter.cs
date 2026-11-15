@@ -47,8 +47,10 @@ public sealed class StillImageConverter
             CharacterCellGeometry.AspectRatio,
             limits,
             includeSourcePhoto: options.SourcePhotoOpacity > 0,
+            includePhotoSamples: options.UsePhotoStyle,
             cancellationToken);
         return CharacterImagePipeline.Convert(prepared.Grid, options, prepared.SourcePhotoRgba,
-            cancellationToken: cancellationToken, renderGlyph: MagickGlyphRenderer.Render);
+            cancellationToken: cancellationToken, renderGlyph: MagickGlyphRenderer.Render, photoSamples: prepared.PhotoSamples,
+            photoGlyphs: options.UsePhotoStyle ? MagickGlyphRenderer.PhotoGlyphs : null);
     }
 }

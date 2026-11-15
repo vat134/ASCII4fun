@@ -54,6 +54,31 @@ const upload = () =>
   fireEvent.change(screen.getByLabelText("Upload image"), {
     target: { files: [new File(["image"], "source.png")] }
   });
+
+test("Photo is opt-in and resets to Classic", async () => {
+  render(
+    <ImageWorkspace configuration={configuration} onTextMode={jest.fn()} />
+  );
+  await act(async () => upload());
+  expect(
+    screen.getByRole("switch", { name: "Photo processing" })
+  ).not.toBeChecked();
+  expect(
+    screen.queryByRole("switch", { name: "Remove background" })
+  ).toBeNull();
+  await act(async () =>
+    fireEvent.click(screen.getByRole("switch", { name: "Photo processing" }))
+  );
+  expect(mockConvert.mock.lastCall![0]).toMatchObject({ usePhotoStyle: true });
+  expect(screen.queryByLabelText("Character set")).toBeNull();
+  await act(async () =>
+    fireEvent.click(screen.getByRole("button", { name: "Reset to default" }))
+  );
+  expect(
+    screen.getByRole("switch", { name: "Photo processing" })
+  ).not.toBeChecked();
+  expect(screen.getByLabelText("Character set")).toBeInTheDocument();
+});
 beforeEach(() => {
   mockConvert.mockReset().mockResolvedValue(artwork);
   mockDispose.mockClear();

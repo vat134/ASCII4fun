@@ -58,7 +58,8 @@ internal static class ImageConversionEndpoints
         [FromForm] string? backgroundColor = null,
         [FromForm] int shadowLift = 0,
         [FromForm] int sourcePhotoOpacity = 0,
-        [FromForm] bool useMeasuredGlyphDensity = false)
+        [FromForm] bool useMeasuredGlyphDensity = false,
+        [FromForm] bool usePhotoStyle = false)
     {
         context.Response.Headers.CacheControl = "no-store";
 
@@ -92,6 +93,7 @@ internal static class ImageConversionEndpoints
                 ShadowLift = shadowLift,
                 SourcePhotoOpacity = sourcePhotoOpacity,
                 UseMeasuredGlyphDensity = useMeasuredGlyphDensity,
+                UsePhotoStyle = usePhotoStyle,
                 MonochromeColor = monochromeColor is null ? CharacterImageOptions.DefaultMonochromeColor : RgbColor.ParseHex(monochromeColor),
                 BackgroundColor = backgroundColor is null ? CharacterImageOptions.DefaultBackgroundColor : RgbColor.ParseHex(backgroundColor)
             };

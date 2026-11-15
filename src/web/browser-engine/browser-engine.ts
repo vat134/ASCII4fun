@@ -8,6 +8,11 @@ export type BrowserEngine = {
   SrgbProfile(): Uint8Array;
   CmykProfile(): Uint8Array;
   Geometry(): [number, number];
+  PhotoSampleSize(
+    widthInCells: number,
+    heightInCells: number
+  ): [number, number];
+  PhotoCharacters(): string;
   PhotoByteLength(widthInCells: number, heightInCells: number): number;
   SetSourcePhoto(
     rgba: Uint8Array,
@@ -37,7 +42,8 @@ export type BrowserEngine = {
     rgba: Uint8Array,
     width: number,
     height: number,
-    options: string
+    options: string,
+    photoRgba: Uint8Array
   ): string;
   Rasterize(): Uint8Array;
   TextFonts(): string;

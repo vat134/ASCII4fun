@@ -10,6 +10,7 @@ export type CharacterImageOptions = {
   outputWidthInCells: number;
   characterRamp: string;
   useMeasuredGlyphDensity: boolean;
+  usePhotoStyle: boolean;
   invert: boolean;
   sourceColors: boolean;
   contrast: number;
@@ -36,6 +37,7 @@ export function createDefaultImageOptions(
     outputWidthInCells: configuration.defaultOutputWidthInCells,
     characterRamp: configuration.defaultCharacterRamp,
     useMeasuredGlyphDensity: true,
+    usePhotoStyle: false,
     invert: true,
     sourceColors: true,
     contrast: 0,

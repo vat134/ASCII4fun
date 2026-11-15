@@ -1,4 +1,5 @@
 using System.Text;
+using Ascii4Fun.Images;
 using ImageMagick;
 using ImageMagick.Drawing;
 
@@ -6,6 +7,9 @@ namespace Ascii4Fun.Rendering;
 
 internal static class MagickGlyphRenderer
 {
+    // Bundled font/metrics and the Photo alphabet are immutable. Calibration is not frame work.
+    private static readonly Lazy<PhotoGlyphMap> photoGlyphs = new(() => PhotoGlyphMap.Create(Render, default));
+    public static PhotoGlyphMap PhotoGlyphs => photoGlyphs.Value;
     public static byte[] Render(Rune glyph)
     {
         var settings = GlyphRenderSettings.For(glyph);

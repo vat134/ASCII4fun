@@ -52,6 +52,10 @@ public sealed class CharacterImageOptions
     /// Supports up to 256 distinct glyphs. Equal-density sets select the first glyph; external text fonts can differ.</remarks>
     public bool UseMeasuredGlyphDensity { get; init; }
 
+    /// <summary>Uses local tone and spatial matching with a fixed printable-ASCII photo alphabet. Classic remains the default.</summary>
+    /// <remarks>Photo owns its measured tone/stroke alphabet; CharacterRamp and UseMeasuredGlyphDensity apply to Classic.</remarks>
+    public bool UsePhotoStyle { get; init; }
+
     /// <summary> Reverses light and dark glyph mapping. </summary>
     public bool Invert { get; init; }
 
@@ -96,6 +100,8 @@ public sealed class CharacterImageOptions
                 $"Output width must be between {MinimumOutputWidthInCells} and {MaximumOutputWidthInCells} cells.");
         }
 
+
+        if (UsePhotoStyle) return PhotoGlyphMap.ToneCharacters.EnumerateRunes().ToArray();
 
         if (string.IsNullOrEmpty(CharacterRamp))
         {

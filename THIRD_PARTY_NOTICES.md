@@ -56,6 +56,10 @@ UI fonts are self-hosted through pinned Fontsource packages. Complete UI font an
 - Magick.NET.Core 15.0.0: built-in sRGB and CMYK profile bytes shared with native conversion. Its package copyright ships as `magick-core-notices.txt` in the same directory.
 - .NET browser runtime 10.0.14: MIT and upstream third-party notices, copied from the installed `Microsoft.NETCore.App.Runtime.Mono.browser-wasm` runtime pack into `src/engine/browser/notices/`. Refresh these files when updating the runtime; both ship with the browser assets.
 
+## Photo processing references
+
+Photo's spatial circle geometry and structure-gated tone/direction matching are adapted from [Typist](https://github.com/winchxyz/typist/tree/f128e782e33de2dcb013eb572a02e236851cc662), Copyright (c) 2026 winch, MIT, and informed by [Alex Harri's rendering article](https://alexharri.com/blog/ascii-rendering). The C# implementation measures the project's own bundled fonts; Typist's font vectors and sample assets are not bundled. The complete MIT notice ships in `src/engine/notices/typist-license.txt`, NuGet content and browser runtime notices.
+
 ## FIGlet fonts
 
 The local text catalog contains 122 FIGfont/AOL assets and 105 TheDraw default variants (227 total). Original headers, collection notices and hashes are recorded in [font notices](src/engine/figlet/fonts/font-licenses.txt), [provenance](src/engine/figlet/fonts/provenance.md) and the [selection audit](src/engine/figlet/fonts/catalog-audit.md). The figlet.js collection declares MIT; individual fonts retain their own author notices and terms, including WTFPL-2.0 where stated. Missing individual terms, especially legacy TheDraw/AOL data, remain unresolved; this local compatibility catalog is not a cleared distribution release. No external FIGlet/TheDraw renderer code is used by the product.

@@ -53,15 +53,23 @@ public sealed class GifAnimation : IDisposable
             }
             toneRange = (options.OutputWidthInCells, new LuminanceRange(minimum, maximum));
         }
-        var grid = Sample(frames[frameIndex], options.OutputWidthInCells, height, cancellationToken);
+        var source = frames[frameIndex];
+        var grid = Sample(source, options.OutputWidthInCells, height, cancellationToken);
+        RgbaGrid? photoSamples = null;
+        if (options.UsePhotoStyle)
+        {
+            var size = PhotoSampleGeometry.Size(options.OutputWidthInCells, height);
+            photoSamples = Sample(source, size.Width, size.Height, cancellationToken);
+        }
         byte[]? photo = null;
         if (options.SourcePhotoOpacity > 0)
         {
             SourcePhotoGeometry.ByteLength(options.OutputWidthInCells, height);
-            photo = SamplePixels(frames[frameIndex], options.OutputWidthInCells * CharacterCellGeometry.WidthInPixels, height * CharacterCellGeometry.HeightInPixels, cancellationToken);
+            photo = SamplePixels(source, options.OutputWidthInCells * CharacterCellGeometry.WidthInPixels, height * CharacterCellGeometry.HeightInPixels, cancellationToken);
         }
         return CharacterImagePipeline.Convert(grid, options, photo, toneRange.Value.Range,
-            renderGlyph: MagickGlyphRenderer.Render, cancellationToken: cancellationToken);
+            renderGlyph: MagickGlyphRenderer.Render, cancellationToken: cancellationToken, photoSamples: photoSamples,
+            photoGlyphs: options.UsePhotoStyle ? MagickGlyphRenderer.PhotoGlyphs : null);
     }
 
     /// <summary>Exports the same canvases with shared playback timing; progress counts rendered output frames.</summary>

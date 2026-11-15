@@ -13,6 +13,30 @@ public sealed class ImageConversionEndpointTests(WebApplicationFactory<Program> 
     : IClassFixture<WebApplicationFactory<Program>>
 {
     [Fact]
+    public async Task PhotoProcessingMatchesThePackage()
+    {
+        using var client = application.CreateClient();
+        await GetConfigurationAsync(client);
+        var encoded = CreateImage(MagickFormat.Png);
+        var expected = await new StillImageConverter().ConvertAsync(new MemoryStream(encoded), new CharacterImageOptions
+        {
+            OutputWidthInCells = 4,
+            Invert = true,
+            CharacterRamp = "@ ",
+            UsePhotoStyle = true,
+            SourcePhotoOpacity = 35
+        });
+        using var body = CreateBody(encoded, "image/png");
+        body.Add(new StringContent("true"), "usePhotoStyle");
+        body.Add(new StringContent("35"), "sourcePhotoOpacity");
+        using var response = await client.PostAsync("/api/images/convert", body);
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(expected.Text, result.GetProperty("text").GetString());
+        Assert.Equal(await PngExporter.ExportAsync(expected), result.GetProperty("png").GetBytesFromBase64());
+    }
+
+    [Fact]
     public async Task MeasuredDensityReturnsTheSameTextAndPngAsThePackage()
     {
         using var client = application.CreateClient();

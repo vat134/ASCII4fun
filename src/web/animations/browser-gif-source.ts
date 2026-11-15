@@ -84,7 +84,7 @@ export class BrowserGifSource {
       Math.max(widthInPixels, heightInPixels) > maxRasterDimensionInPixels ||
       frames[0]!.width * frames[0]!.height * frames.length * 32 +
         widthInPixels * heightInPixels * 27 +
-        columns * height * 64 >
+        columns * height * (options.usePhotoStyle ? 2048 : 64) >
         768 * 1024 * 1024
     )
       throw new Error(
@@ -105,11 +105,18 @@ export class BrowserGifSource {
       this.rangeWidthInCells = columns;
     }
     const frame = frames[frameIndex]!;
+    const image = frame;
+    const photoSize = options.usePhotoStyle
+      ? this.engine.PhotoSampleSize(columns, height)
+      : null;
     return {
-      rgba: sampleRgbaImage(frame, columns, height),
+      rgba: sampleRgbaImage(image, columns, height),
+      photoRgba: photoSize
+        ? sampleRgbaImage(image, ...photoSize)
+        : new Uint8Array(),
       sourcePhotoRgba:
         options.sourcePhotoOpacity > 0
-          ? sampleRgbaImage(frame, widthInPixels, heightInPixels)
+          ? sampleRgbaImage(image, widthInPixels, heightInPixels)
           : new Uint8Array(),
       height,
       widthInPixels,
