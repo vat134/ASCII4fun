@@ -1,3 +1,4 @@
+import type { WorkspaceMode } from "../workspace/ascii-type";
 import { useArtworkDownload } from "../rendering/use-artwork-download";
 import { useState } from "react";
 import { previewZoom } from "../rendering/preview-zoom";
@@ -9,10 +10,10 @@ import { TextSettings } from "./text-settings";
 
 export function TextWorkspace({
   active,
-  onMediaMode
+  onModeChange
 }: {
   active: boolean;
-  onMediaMode: () => void;
+  onModeChange: (mode: WorkspaceMode) => void;
 }) {
   const {
     text,
@@ -40,7 +41,7 @@ export function TextWorkspace({
         aria-label="Text source"
         className="shrink-0 lg:w-48 xl:w-52 2xl:w-56"
       >
-        <AsciiType mode="text" onChange={onMediaMode}>
+        <AsciiType mode="text" onChange={onModeChange}>
           <label
             htmlFor="figlet-text"
             className="block font-mono text-xs text-muted-foreground uppercase"

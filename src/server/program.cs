@@ -1,4 +1,6 @@
 using Ascii4Fun.Images;
+using Ascii4Fun.Compact;
+using Ascii4Fun.Server.Compact;
 using Ascii4Fun.Server.Animations;
 using Ascii4Fun.Server.Figlet;
 using Ascii4Fun.Server.Images;
@@ -19,6 +21,7 @@ var maxRequestBytes = VideoClip.MaxEncodedBytes + multipartOverheadInBytes;
 
 builder.Services.AddHealthChecks();
 builder.Services.AddSingleton(converter);
+builder.Services.AddSingleton<CompactArtConverter>();
 builder.Services.AddSingleton(new VideoTools(builder.Configuration["Video:FfmpegPath"] ?? "ffmpeg",
     builder.Configuration["Video:FfprobePath"] ?? "ffprobe"));
 builder.Services.AddProblemDetails();
@@ -74,6 +77,7 @@ app.UseAntiforgery();
 app.MapHealthChecks("/health");
 if (app.Environment.IsDevelopment()) app.MapOpenApi();
 app.MapImageConversion();
+app.MapCompactConversion();
 app.MapTextConversion();
 app.MapAnimationConversion();
 app.MapVideoConversion();

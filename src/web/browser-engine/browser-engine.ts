@@ -4,6 +4,13 @@ import type { AnimationPlaybackOptions } from "../animations/animation-conversio
 export const browserEngineTimeoutMs = 30_000;
 
 export type BrowserEngine = {
+  CompactLayout(width: number, height: number, optionsJson: string): string;
+  ConvertCompact(
+    rgba: Uint8Array,
+    sourceWidth: number,
+    sourceHeight: number,
+    optionsJson: string
+  ): string;
   Limits(): [number, number, number];
   SrgbProfile(): Uint8Array;
   CmykProfile(): Uint8Array;
@@ -21,6 +28,7 @@ export type BrowserEngine = {
   ): void;
   FontNames(ramp: string): string[];
   ValidateSource(bytes: Uint8Array): void;
+  ValidateCompactSource(bytes: Uint8Array): void;
   IsGif(bytes: Uint8Array): boolean;
   ValidateAnimationSource(width: number, height: number, count: number): void;
   AnalyzeAnimationFrame(

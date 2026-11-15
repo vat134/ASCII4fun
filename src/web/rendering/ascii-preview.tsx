@@ -5,12 +5,17 @@ import { useRasterPreview } from "./use-raster-preview";
 type AsciiPreviewProps = {
   result: AsciiPreviewResult;
   zoom: number;
+  maximumBaseScale?: number;
 };
 
-export function AsciiPreview({ result, zoom }: AsciiPreviewProps) {
+export function AsciiPreview({
+  result,
+  zoom,
+  maximumBaseScale
+}: AsciiPreviewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
-  useRasterPreview(result, zoom, viewportRef, canvasRef);
+  useRasterPreview(result, zoom, viewportRef, canvasRef, maximumBaseScale);
   const drag = useRef<{
     pointerId: number;
     x: number;

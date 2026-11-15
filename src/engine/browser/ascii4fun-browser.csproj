@@ -14,6 +14,7 @@
     <Content Include="../notices/*" Link="notices/%(Filename)%(Extension)" CopyToPublishDirectory="PreserveNewest" />
     <PackageReference Include="Magick.NET.Core" GeneratePathProperty="true" />
     <Compile Include="../images/*.cs" Exclude="../images/still-image-converter.cs" LinkBase="images" />
+    <Compile Include="../compact/*.cs" Exclude="../compact/compact-art-converter.cs" LinkBase="compact" />
     <Compile Include="../animations/animation-*.cs" LinkBase="animations" />
     <Compile Include="../videos/video-timeline.cs" LinkBase="videos" />
     <Compile Include="../figlet/*.cs" LinkBase="figlet" />

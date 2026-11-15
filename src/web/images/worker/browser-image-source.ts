@@ -1,4 +1,6 @@
 import type { CharacterImageOptions } from "../image-conversion";
+import type { CompactArtOptions } from "../../compact/compact-types";
+import { readCompactSource } from "../../compact/read-compact-source";
 import {
   ImageMagick,
   MagickImageCollection,
@@ -53,6 +55,17 @@ export class BrowserImageSource {
       });
       lifetime.catch(reject);
     });
+  }
+
+  compact(options: CompactArtOptions) {
+    if (!this.image) throw new Error("Load a photo before creating mini art.");
+    // Compact geometry is bounded by the C# engine before allocating sample or raster buffers.
+    const sampled = readCompactSource(this.image, this.engine, options);
+    this.checkBudget(
+      sampled.layout.columns * sampled.layout.rows * 288,
+      sampled.layout.columns * sampled.layout.rows
+    );
+    return sampled;
   }
 
   sample(options: CharacterImageOptions) {

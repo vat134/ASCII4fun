@@ -30,6 +30,14 @@ internal static class OpenApiContractMetadata
             schema.Required ??= new HashSet<string>();
             schema.Required.UnionWith(schema.Properties.Keys);
         }
+        if (context.ParameterDescription is null && schema.Properties is not null
+            && (type == typeof(Compact.CompactConfiguration) || type == typeof(Compact.CompactConversionResponse)
+                || type == typeof(Ascii4Fun.Compact.CompactDestination) || type == typeof(Ascii4Fun.Compact.CompactArtPayload)
+                || type == typeof(Ascii4Fun.Compact.CompactArtLayout)))
+        {
+            schema.Required ??= new HashSet<string>();
+            schema.Required.UnionWith(schema.Properties.Keys);
+        }
         if (context.JsonPropertyInfo is not null) return Task.CompletedTask;
         var tag = type == typeof(ExportProgress) ? ExportProgress.EventType
             : type == typeof(ExportError) ? ExportError.EventType
@@ -52,6 +60,8 @@ internal static class OpenApiContractMetadata
         // These models cross HTTP inside a string/header or as individual NDJSON lines, not ordinary JSON bodies.
         var input = new ApiParameterDescription { Source = BindingSource.Body };
         document.AddComponent(nameof(AnimationConversionRequest), await context.GetOrCreateSchemaAsync(typeof(AnimationConversionRequest), input, token));
+        document.AddComponent(nameof(Ascii4Fun.Compact.CompactArtOptions), await context.GetOrCreateSchemaAsync(typeof(Ascii4Fun.Compact.CompactArtOptions), input, token));
+        document.AddComponent(nameof(Ascii4Fun.Compact.CompactArtLayout), await context.GetOrCreateSchemaAsync(typeof(Ascii4Fun.Compact.CompactArtLayout), cancellationToken: token));
         foreach (var type in new[] { typeof(VideoMetadata), typeof(ExportProgress), typeof(ExportError), typeof(GifExportComplete), typeof(VideoExportComplete), typeof(ProblemDetails) })
             document.AddComponent(type.Name, await context.GetOrCreateSchemaAsync(type, cancellationToken: token));
 
@@ -80,7 +90,9 @@ internal static class OpenApiContractMetadata
                     });
                     foreach (var field in FormFields(multipart.Schema!))
                         if (field.Key == "settings" && field.Value is OpenApiSchema schema)
-                            schema.Description = "JSON-encoded AnimationConversionRequest. Send this form field as a string, not a nested multipart object.";
+                            schema.Description = path == "/api/compact/convert"
+                                ? "JSON-encoded CompactArtOptions. Send this form field as a string, not a nested multipart object."
+                                : "JSON-encoded AnimationConversionRequest. Send this form field as a string, not a nested multipart object.";
                 }
             }
         }

@@ -5,6 +5,9 @@ import { renderTextRequest } from "../figlet/worker/text-worker";
 import { renderImageRequest } from "../images/worker/image-worker";
 import { BrowserMediaSource } from "../images/worker/browser-media-source";
 import { renderVideoFrame } from "../videos/video-frame-worker";
+import type { CompactRequest } from "../compact/compact-types";
+import { renderCompactRequest } from "../compact/compact-worker";
+import { BrowserImageSource } from "../images/worker/browser-image-source";
 
 const ready = loadBrowserEngine()
   .catch((cause: unknown) => {
@@ -13,14 +16,24 @@ const ready = loadBrowserEngine()
       { cause }
     );
   })
-  .then((engine) => ({ engine, source: new BrowserMediaSource(engine) }));
+  .then((engine) => ({
+    engine,
+    source: new BrowserMediaSource(engine),
+    compact: new BrowserImageSource(engine)
+  }));
 // One entry point keeps the shared runtime intact in production worker bundles.
 // Leave onmessage unset: .NET uses it to identify standalone workers.
 self.addEventListener(
   "message",
-  async ({ data }: MessageEvent<WorkerRequest | TextRequest>) => {
+  async ({
+    data
+  }: MessageEvent<WorkerRequest | TextRequest | CompactRequest>) => {
     try {
-      const { engine, source } = await ready;
+      const { engine, source, compact } = await ready;
+      if (data.type === "load-compact" || data.type === "convert-compact") {
+        await renderCompactRequest(engine, compact, data);
+        return;
+      }
       if (data.type === "video-frame") {
         await renderVideoFrame(engine, data);
         return;

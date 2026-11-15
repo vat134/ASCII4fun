@@ -57,7 +57,7 @@ const upload = () =>
 
 test("Photo is opt-in and resets to Classic", async () => {
   render(
-    <ImageWorkspace configuration={configuration} onTextMode={jest.fn()} />
+    <ImageWorkspace configuration={configuration} onModeChange={jest.fn()} />
   );
   await act(async () => upload());
   expect(
@@ -116,7 +116,7 @@ afterEach(() => {
 
 test("exposes neutral tone, Original mode, white Mono and black background defaults", () => {
   render(
-    <ImageWorkspace configuration={configuration} onTextMode={jest.fn()} />
+    <ImageWorkspace configuration={configuration} onModeChange={jest.fn()} />
   );
   expect(screen.getByRole("button", { name: "Original" })).toHaveAttribute(
     "aria-pressed",
@@ -150,7 +150,7 @@ test("renders current pixels, blocks pending exports and keeps zoom local", asyn
     downloads.push(this.download);
   });
   render(
-    <ImageWorkspace configuration={configuration} onTextMode={jest.fn()} />
+    <ImageWorkspace configuration={configuration} onModeChange={jest.fn()} />
   );
   await act(async () => upload());
   const copy = screen.getByRole("button", { name: "Copy text" });
@@ -229,7 +229,7 @@ test("Retry restarts the source worker and Clear preserves settings through Stri
   mockConvert.mockRejectedValueOnce(new Error("Unreadable image"));
   render(
     <StrictMode>
-      <ImageWorkspace configuration={configuration} onTextMode={jest.fn()} />
+      <ImageWorkspace configuration={configuration} onModeChange={jest.fn()} />
     </StrictMode>
   );
   fireEvent.click(screen.getByRole("button", { name: "Mono" }));
@@ -251,7 +251,7 @@ test("Retry restarts the source worker and Clear preserves settings through Stri
 
 test("density is enabled by default and reset restores it after disabling", async () => {
   render(
-    <ImageWorkspace configuration={configuration} onTextMode={jest.fn()} />
+    <ImageWorkspace configuration={configuration} onModeChange={jest.fn()} />
   );
   const toggle = screen.getByRole("switch", { name: "Measured glyph density" });
   expect(toggle).toHaveAttribute("aria-checked", "true");
@@ -271,7 +271,7 @@ test("density is enabled by default and reset restores it after disabling", asyn
 
 test("color controls update shared options and retain them when clearing an error", async () => {
   render(
-    <ImageWorkspace configuration={configuration} onTextMode={jest.fn()} />
+    <ImageWorkspace configuration={configuration} onModeChange={jest.fn()} />
   );
   fireEvent.click(screen.getByRole("button", { name: "Mono" }));
   fireEvent.change(screen.getByLabelText("Mono color"), {
@@ -297,7 +297,7 @@ test("color controls update shared options and retain them when clearing an erro
 test("reports PNG encoding failure and keeps the current result available for retry", async () => {
   mockExport.mockRejectedValueOnce(new Error("PNG encoding failed"));
   render(
-    <ImageWorkspace configuration={configuration} onTextMode={jest.fn()} />
+    <ImageWorkspace configuration={configuration} onModeChange={jest.fn()} />
   );
   await act(async () => upload());
   await act(async () =>

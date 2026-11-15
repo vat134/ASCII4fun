@@ -4,6 +4,7 @@ using Ascii4Fun.Animations;
 using Ascii4Fun.Images;
 using Ascii4Fun.Rendering;
 using Ascii4Fun.Videos;
+using Ascii4Fun.Compact;
 
 // Owned black/white fixture; the consumer has no project reference or direct media dependency.
 var encoded = Convert.FromBase64String(
@@ -55,6 +56,15 @@ using (var input = new MemoryStream(encoded))
         throw new InvalidDataException("The published consumer is missing Photo attribution.");
 }
 
+using (var input = new MemoryStream(encoded))
+{
+    var compact = await new CompactArtConverter().ConvertAsync(input);
+    if (compact.Canvas.WidthInCells != 25 || compact.Canvas.HeightInCells != 13
+        || compact.Payload.Count != 987 || !compact.Payload.Fits
+        || (await PngExporter.ExportAsync(compact.Canvas)).Length < 24)
+        throw new InvalidDataException("Packaged compact Braille lost its grid, destination budget or PNG.");
+}
+
 foreach (var font in FigletConverter.Fonts)
 {
     var canvas = FigletConverter.Convert("ASCII Text", font.Id);
@@ -94,4 +104,4 @@ if (videoTimeline.Count != 15 || videoTimeline.Sum(frame => frame.FrameDurationM
     || videoTimeline[^1].SourceFrameIndex != 56 || VideoClip.MaxEncodedBytes != 100 * 1024 * 1024)
     throw new InvalidDataException("Packaged video timing or media admission changed.");
 
-Console.WriteLine("Published NuGet consumer: image, text, animated GIF exports and video timing passed.");
+Console.WriteLine("Published NuGet consumer: image, compact Braille, text, animated GIF exports and video timing passed.");

@@ -1,5 +1,7 @@
 # ASCII4fun
 
+Mini art is a separate workspace for compact spatial Braille from photos. Choose Steam (Comment, Summary or Info box), Telegram, Twitch or File, with compact previews, visible style thumbnails, automatic sizing and Copy/TXT/PNG. See [Mini art](docs/compact-art.md) for controls and CLI/API/package access. Destination spacing remains an estimate until checked after pasting.
+
 Local-first toolkit for converting images, animations, and text into ASCII and cell-based art.
 
 Status: JPEG, PNG and still WebP to character art, with TXT/PNG export. Animated GIF input supports playback, seeking, live controls, GIF download and current-frame Copy/TXT/PNG in Media. The Text workspace uses the shared engine for FIGlet/TheDraw and TXT/PNG export.

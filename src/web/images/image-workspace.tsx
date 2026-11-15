@@ -1,3 +1,4 @@
+import type { WorkspaceMode } from "../workspace/ascii-type";
 import { useRef, useState } from "react";
 import {
   createDefaultImageOptions,
@@ -14,11 +15,11 @@ import { ImageExport } from "./image-export";
 
 export function ImageWorkspace({
   configuration,
-  onTextMode,
+  onModeChange,
   active = true
 }: {
   configuration: ImageConfiguration;
-  onTextMode: () => void;
+  onModeChange: (mode: WorkspaceMode) => void;
   active?: boolean;
 }) {
   const {
@@ -57,7 +58,7 @@ export function ImageWorkspace({
       />
 
       <ImageSource
-        onTextMode={onTextMode}
+        onModeChange={onModeChange}
         selection={selection}
         onBrowse={() => inputRef.current?.click()}
       />

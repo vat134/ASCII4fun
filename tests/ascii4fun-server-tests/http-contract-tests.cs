@@ -17,7 +17,7 @@ public sealed class HttpContractTests(WebApplicationFactory<Program> application
         var document = await response.Content.ReadFromJsonAsync<JsonElement>();
         Assert.StartsWith("3.1.", document.GetProperty("openapi").GetString());
         var paths = document.GetProperty("paths");
-        Assert.Equal(8, paths.EnumerateObject().Count());
+        Assert.Equal(10, paths.EnumerateObject().Count());
         var schemas = document.GetProperty("components").GetProperty("schemas");
         Assert.Equal("byte", schemas.GetProperty("ImageConversionResponse").GetProperty("properties").GetProperty("png").GetProperty("format").GetString());
         Assert.Equal("integer", schemas.GetProperty("ImageConfiguration").GetProperty("properties").GetProperty("defaultOutputWidthInCells").GetProperty("type").GetString());
@@ -44,6 +44,13 @@ public sealed class HttpContractTests(WebApplicationFactory<Program> application
         Assert.True(paletteResponses.TryGetProperty("429", out _));
         Assert.True(paletteResponses.TryGetProperty("504", out _));
         Assert.DoesNotContain("fontId", schemas.GetProperty("TextConversionRequest").GetProperty("required").EnumerateArray().Select(value => value.GetString()));
+        Assert.True(paths.TryGetProperty("/api/compact/options", out _));
+        var compact = paths.GetProperty("/api/compact/convert").GetProperty("post");
+        Assert.True(compact.GetProperty("requestBody").GetProperty("content").TryGetProperty("multipart/form-data", out _));
+        Assert.Contains("CompactArtOptions", compact.GetProperty("requestBody").GetProperty("content").GetProperty("multipart/form-data")
+            .GetProperty("schema").GetProperty("allOf").EnumerateArray().Select(part => part.GetProperty("properties"))
+            .Single(part => part.TryGetProperty("settings", out _)).GetProperty("settings").GetProperty("description").GetString());
+        Assert.Equal("integer", schemas.GetProperty("CompactArtLayout").GetProperty("properties").GetProperty("columns").GetProperty("type").GetString());
 
         using var options = await client.GetAsync("/api/images/options");
         var configuration = await options.Content.ReadFromJsonAsync<JsonElement>();
