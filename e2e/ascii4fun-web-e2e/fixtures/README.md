@@ -9,3 +9,7 @@ Project-authored RGB gradients and synthetic bounds fixtures. Small decoding fix
 `square-gradient.png` is a 912 × 912 gradient for dense preview downscaling. `tall.png` is 100 × 10,000 and exercises the browser raster-side limit at 16 columns.
 
 `large-portrait.jpg` (1882 × 3344) and `twelve-megapixel.jpg` (3072 × 4096) are project-authored Pillow gradients for working-buffer and photo-resize regressions. The synthetic `over-budget.png` is 6000 × 5000, exceeding the 768 MiB admission ceiling before decode.
+
+# Photo processing diagnostic
+
+`shape-lines.png` is a project-authored 512 x 512 circle/square/diagonal/axis diagnostic, copied unchanged from the visual baseline. It contains no external asset and is distributed under the repository license. It exercises spatial glyph matching in native/browser pixel comparisons.

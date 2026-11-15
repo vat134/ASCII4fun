@@ -5,6 +5,7 @@ export function imageOptionsKey(options: CharacterImageOptions): string {
     outputWidthInCells: options.outputWidthInCells,
     characterRamp: options.characterRamp,
     useMeasuredGlyphDensity: options.useMeasuredGlyphDensity,
+    usePhotoStyle: options.usePhotoStyle,
     invert: options.invert,
     sourceColors: options.sourceColors,
     contrast: options.contrast,

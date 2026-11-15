@@ -146,6 +146,8 @@ export interface components {
         characterRamp?: string;
         /** @description Selects nearest measured glyph coverage instead of equally spaced ramp positions. Defaults to false. */
         useMeasuredGlyphDensity?: boolean;
+        /** @description Uses local tone and spatial matching with a fixed printable-ASCII photo alphabet. Classic remains the default. */
+        usePhotoStyle?: boolean;
         /** @description Reverses light and dark glyph mapping. */
         invert?: boolean;
         /** @description Uses sampled source colors, composited over white like luminance analysis. */
@@ -444,6 +446,9 @@ export interface operations {
         } & {
           /** @default false */
           useMeasuredGlyphDensity?: boolean;
+        } & {
+          /** @default false */
+          usePhotoStyle?: boolean;
         };
       };
     };

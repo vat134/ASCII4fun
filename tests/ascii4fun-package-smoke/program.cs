@@ -41,6 +41,20 @@ foreach (var glyph in new[] { "@", "█", "𝔸" })
     }
 }
 
+using (var input = new MemoryStream(encoded))
+{
+    var photo = await new StillImageConverter().ConvertAsync(input, new CharacterImageOptions
+    {
+        OutputWidthInCells = 4,
+        UsePhotoStyle = true,
+        SourcePhotoOpacity = 35
+    });
+    if (photo.WidthInCells != 4 || (await PngExporter.ExportAsync(photo)).Length < 24)
+        throw new InvalidDataException("Packaged Photo processing did not produce its canvas and PNG.");
+    if (!File.Exists(Path.Combine(AppContext.BaseDirectory, "notices", "typist-license.txt")))
+        throw new InvalidDataException("The published consumer is missing Photo attribution.");
+}
+
 foreach (var font in FigletConverter.Fonts)
 {
     var canvas = FigletConverter.Convert("ASCII Text", font.Id);

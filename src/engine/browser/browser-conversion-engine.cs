@@ -15,6 +15,7 @@ internal static partial class BrowserConversionEngine
 {
     private static AsciiCanvas? current;
     private static BrowserSourcePhoto? sourcePhoto;
+    private static readonly Lazy<PhotoGlyphMap> photoGlyphs = new(() => PhotoGlyphMap.Create(RenderGlyph, default));
 
     public static void Main() { }
 
@@ -30,6 +31,16 @@ internal static partial class BrowserConversionEngine
 
     [JSExport]
     public static int[] Geometry() => [CharacterCellGeometry.WidthInPixels, CharacterCellGeometry.HeightInPixels];
+
+    [JSExport]
+    public static int[] PhotoSampleSize(int widthInCells, int heightInCells)
+    {
+        var size = PhotoSampleGeometry.Size(widthInCells, heightInCells);
+        return [size.Width, size.Height];
+    }
+
+    [JSExport]
+    public static string PhotoCharacters() => PhotoGlyphMap.Characters;
 
     [JSExport]
     public static int PhotoByteLength(int widthInCells, int heightInCells) => SourcePhotoGeometry.ByteLength(widthInCells, heightInCells);
@@ -72,7 +83,7 @@ internal static partial class BrowserConversionEngine
     }
 
     [JSExport]
-    public static string Convert(byte[] rgba, int width, int height, string optionsJson)
+    public static string Convert(byte[] rgba, int width, int height, string optionsJson, byte[] photoRgba)
     {
         var options = JsonSerializer.Deserialize(optionsJson, BrowserJson.Default.CharacterImageOptions)
             ?? throw new ArgumentException("Conversion settings are required.", nameof(optionsJson));
@@ -87,9 +98,17 @@ internal static partial class BrowserConversionEngine
         {
             throw new InvalidOperationException("Prepare the source photo for this geometry before conversion.");
         }
+        RgbaGrid? photoSamples = null;
+        if (options.UsePhotoStyle)
+        {
+            var size = PhotoSampleGeometry.Size(width, height);
+            if (photoRgba.LongLength != (long)size.Width * size.Height * 4)
+                throw new ArgumentException("Photo sample bytes do not match the requested geometry.", nameof(photoRgba));
+            photoSamples = new RgbaGrid(size.Width, size.Height, photoRgba);
+        }
         current = CharacterImagePipeline.Convert(new RgbaGrid(width, height, rgba), options,
             sourcePhotoRgba: options.SourcePhotoOpacity > 0 ? sourcePhoto?.Rgba : null, sequenceRange: animationRange,
-            renderGlyph: RenderGlyph);
+            renderGlyph: RenderGlyph, photoSamples: photoSamples, photoGlyphs: options.UsePhotoStyle ? photoGlyphs.Value : null);
         return JsonSerializer.Serialize(new BrowserCanvasResult(current.Text, width, height), BrowserJson.Default.BrowserCanvasResult);
     }
 

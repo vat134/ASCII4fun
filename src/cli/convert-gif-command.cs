@@ -18,6 +18,7 @@ internal static class ConvertGifCommand
         var invert = new Option<bool>("--invert");
         var sourceColors = new Option<bool>("--source-colors");
         var density = new Option<bool>("--measured-density") { Description = "Choose glyphs by measured bundled-font density." };
+        var photoStyle = new Option<bool>("--photo-style") { Description = "Use spatial ASCII photo processing instead of Classic." };
         var contrast = new Option<int>("--contrast");
         var brightness = new Option<int>("--brightness");
         var shadowLift = new Option<int>("--shadow-lift");
@@ -29,7 +30,7 @@ internal static class ConvertGifCommand
         var frame = new Option<int?>("--frame") { Description = "Save a zero-based source frame as PNG instead of animated GIF." };
         var command = new Command("convert-gif", "Convert a GIF animation or export one source frame as PNG.")
         {
-            input, output, width, ramp, invert, sourceColors, density, contrast, brightness, shadowLift,
+            input, output, width, ramp, invert, sourceColors, density, photoStyle, contrast, brightness, shadowLift,
             photo, mono, background, speed, fps, frame
         };
         command.SetAction(async (result, cancellationToken) =>
@@ -43,6 +44,7 @@ internal static class ConvertGifCommand
                     Invert = result.GetValue(invert),
                     SourceColors = result.GetValue(sourceColors),
                     UseMeasuredGlyphDensity = result.GetValue(density),
+                    UsePhotoStyle = result.GetValue(photoStyle),
                     Contrast = result.GetValue(contrast),
                     Brightness = result.GetValue(brightness),
                     ShadowLift = result.GetValue(shadowLift),

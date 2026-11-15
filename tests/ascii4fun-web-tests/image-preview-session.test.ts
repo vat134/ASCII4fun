@@ -21,6 +21,7 @@ const defaults: CharacterImageOptions = {
   outputWidthInCells: 80,
   characterRamp: "@ ",
   useMeasuredGlyphDensity: false,
+  usePhotoStyle: false,
   invert: true,
   sourceColors: true,
   contrast: 0,

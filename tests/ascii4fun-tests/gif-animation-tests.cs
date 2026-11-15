@@ -7,15 +7,22 @@ namespace Ascii4Fun.Tests;
 public sealed class GifAnimationTests
 {
     [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task PartialFramesKeepGeometryTimingAndPreviousDisposal(bool measuredDensity)
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public async Task PartialFramesKeepGeometryTimingAndPreviousDisposal(bool measuredDensity, bool photoStyle)
     {
         using var input = CreateFixture();
         using var animation = await GifAnimation.OpenAsync(input);
         Assert.Equal([30, 70, 110], animation.FrameDurationsMs);
         Assert.Equal(3, animation.Iterations);
-        var options = new CharacterImageOptions { OutputWidthInCells = 4, SourceColors = true, UseMeasuredGlyphDensity = measuredDensity };
+        var options = new CharacterImageOptions
+        {
+            OutputWidthInCells = 4,
+            SourceColors = true,
+            UseMeasuredGlyphDensity = measuredDensity,
+            UsePhotoStyle = photoStyle
+        };
         var first = animation.ConvertFrame(0, options);
         var last = animation.ConvertFrame(2, options);
         Assert.Equal(4, last.WidthInCells);

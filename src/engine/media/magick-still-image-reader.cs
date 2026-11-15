@@ -13,6 +13,7 @@ internal static class MagickStillImageReader
         double characterCellAspectRatio,
         ConversionLimits limits,
         bool includeSourcePhoto,
+        bool includePhotoSamples,
         CancellationToken cancellationToken)
     {
         var encodedBytes = await EncodedMediaReader.ReadAsync(encodedImage, limits.MaxEncodedBytes, cancellationToken);
@@ -49,6 +50,17 @@ internal static class MagickStillImageReader
                 SourcePhotoGeometry.ByteLength(outputWidthInCells, outputHeightInCells);
             }
 
+            RgbaGrid? photoSamples = null;
+            if (includePhotoSamples)
+            {
+                var size = PhotoSampleGeometry.Size(outputWidthInCells, outputHeightInCells);
+                using var detail = image.Clone();
+                detail.Resize(new MagickGeometry((uint)size.Width, (uint)size.Height) { IgnoreAspectRatio = true }, FilterType.Box);
+                cancellationToken.ThrowIfCancellationRequested();
+                using var detailPixels = detail.GetPixels();
+                photoSamples = new RgbaGrid(size.Width, size.Height, detailPixels.ToByteArray(PixelMapping.RGBA)
+                    ?? throw new InvalidDataException("Photo samples did not expose RGBA pixels."));
+            }
             using var sampled = includeSourcePhoto ? image.Clone() : null;
             var gridImage = sampled ?? image;
             gridImage.Resize(geometry, FilterType.Box);
@@ -75,7 +87,7 @@ internal static class MagickStillImageReader
                     ?? throw new InvalidDataException("The decoded photo did not expose RGBA pixels.");
             }
 
-            return new PreparedStillImage(new RgbaGrid(sampleWidthInPixels, sampleHeightInPixels, rgba), sourcePhotoRgba);
+            return new PreparedStillImage(new RgbaGrid(sampleWidthInPixels, sampleHeightInPixels, rgba), sourcePhotoRgba, photoSamples);
         }
         catch (MagickException exception)
         {

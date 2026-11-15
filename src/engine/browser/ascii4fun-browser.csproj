@@ -11,6 +11,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="notices/*" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="../notices/*" Link="notices/%(Filename)%(Extension)" CopyToPublishDirectory="PreserveNewest" />
     <PackageReference Include="Magick.NET.Core" GeneratePathProperty="true" />
     <Compile Include="../images/*.cs" Exclude="../images/still-image-converter.cs" LinkBase="images" />
     <Compile Include="../animations/animation-*.cs" LinkBase="animations" />

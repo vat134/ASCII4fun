@@ -19,6 +19,8 @@ The development server exposes `/openapi/v1.json`; production does not. Generati
 
 ## Model boundaries
 
+Media processing adds optional `usePhotoStyle` (false). See [Photo processing](photo-processing.md) for the fixed Photo alphabet, Classic compatibility and sample bounds. HTTP contracts and TypeScript types remain generated from C#.
+
 HTTP models stay with their server capability. The engine and browser-WASM project have no dependency on OpenAPI. UI state and Worker protocols have separate responsibilities: a fully populated editor state is not the same type as an HTTP request with optional defaults.
 
 ASP.NET Core's schema exporter reflects Web JSON's acceptance of quoted numeric input. The server schema transformer preserves that input behavior while describing numeric output as numbers. It also marks properties actually emitted by the current concrete response models and supplies literal event tags from the writer's C# constants. Embedded settings, decoded metadata and event schemas use .NET 10's `GetOrCreateSchemaAsync`; their fields are not copied into a second schema implementation.

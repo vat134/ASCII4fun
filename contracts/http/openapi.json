@@ -137,6 +137,12 @@
                         "default": false
                       }
                     }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "usePhotoStyle": { "type": "boolean", "default": false }
+                    }
                   }
                 ]
               }
@@ -691,6 +697,10 @@
               "useMeasuredGlyphDensity": {
                 "type": "boolean",
                 "description": "Selects nearest measured glyph coverage instead of equally spaced ramp positions. Defaults to false."
+              },
+              "usePhotoStyle": {
+                "type": "boolean",
+                "description": "Uses local tone and spatial matching with a fixed printable-ASCII photo alphabet. Classic remains the default."
               },
               "invert": {
                 "type": "boolean",

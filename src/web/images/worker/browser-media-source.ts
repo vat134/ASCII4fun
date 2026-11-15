@@ -47,9 +47,6 @@ export class BrowserMediaSource {
     if (!this.source) throw new Error("Load media before converting.");
     return this.source instanceof BrowserGifSource
       ? this.source.sample(options, frameIndex)
-      : this.source.sample(
-          options.outputWidthInCells,
-          options.sourcePhotoOpacity > 0
-        );
+      : this.source.sample(options);
   }
 }

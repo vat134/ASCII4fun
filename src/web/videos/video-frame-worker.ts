@@ -27,6 +27,9 @@ export async function renderVideoFrame(
     throw new Error("Invalid video frame dimensions.");
   const columns = data.options.outputWidthInCells;
   const height = engine.Height(data.width, data.height, columns);
+  const photoSize = data.options.usePhotoStyle
+    ? engine.PhotoSampleSize(columns, height)
+    : null;
   const [cellWidth, cellHeight] = engine.Geometry();
   const widthInPixels = columns * cellWidth,
     heightInPixels = height * cellHeight;
@@ -47,6 +50,9 @@ export async function renderVideoFrame(
       image.colorSpace = ColorSpace.sRGB;
       return {
         rgba: sampleRgbaImage(image, columns, height),
+        photoRgba: photoSize
+          ? sampleRgbaImage(image, ...photoSize)
+          : new Uint8Array(),
         photo:
           data.options.sourcePhotoOpacity > 0
             ? sampleRgbaImage(image, widthInPixels, heightInPixels)
@@ -56,17 +62,34 @@ export async function renderVideoFrame(
   );
   engine.SetAnimationRange(0, 1);
   engine.SetSourcePhoto(sampled.photo, columns, height);
-  if (data.options.useMeasuredGlyphDensity)
-    await loadFonts(engine.FontNames(data.options.characterRamp));
+  if (data.options.usePhotoStyle || data.options.useMeasuredGlyphDensity)
+    await loadFonts(
+      engine.FontNames(
+        data.options.usePhotoStyle
+          ? engine.PhotoCharacters()
+          : data.options.characterRamp
+      )
+    );
   const result = JSON.parse(
-    engine.Convert(sampled.rgba, columns, height, JSON.stringify(data.options))
+    engine.Convert(
+      sampled.rgba,
+      columns,
+      height,
+      JSON.stringify(data.options),
+      sampled.photoRgba
+    )
   ) as AsciiCanvasProjection;
   await loadFonts(engine.FontNames(result.text));
   const pixels = rgbToRgba(engine.Rasterize());
   self.postMessage(
     {
       id: data.id,
-      value: { ...result, pixels, widthInPixels, heightInPixels }
+      value: {
+        ...result,
+        pixels,
+        widthInPixels,
+        heightInPixels
+      }
     },
     { transfer: [pixels.buffer] }
   );

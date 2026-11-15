@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button } from "../ui/base/button";
 import { ToneColorSettings } from "./tone-color-settings";
 import { PhotoBackgroundSettings } from "./photo-background-settings";
+import { PhotoProcessingSettings } from "./photo-processing-settings";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/base/tooltip";
 import { RotateCcwIcon, SlidersHorizontalIcon } from "../ui/icons";
 import { CharacterSettings, type CharacterEditor } from "./character-settings";
@@ -66,6 +67,7 @@ export function ImageSettings({
             onChange({ ...options, outputWidthInCells })
           }
         />
+        <PhotoProcessingSettings options={options} onChange={onChange} />
         <CharacterSettings
           defaultRamp={configuration.defaultCharacterRamp}
           editor={editor}
