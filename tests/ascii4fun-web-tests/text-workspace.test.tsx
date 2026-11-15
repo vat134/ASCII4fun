@@ -82,6 +82,9 @@ jest.mock("../../src/web/figlet/browser-text-client", () => ({
 jest.mock("../../src/web/images/browser-image-client", () => ({
   BrowserImageClient: class {}
 }));
+jest.mock("../../src/web/compact/compact-client", () => ({
+  CompactArtClient: class {}
+}));
 jest.mock("../../src/web/rendering/use-raster-preview", () => ({
   useRasterPreview: () => {}
 }));

@@ -46,6 +46,7 @@ SOFTWARE.
 
 - Aldrich: Copyright (c) Matthew Desmond, 2011; SIL Open Font License 1.1.
 - IBM Plex Mono: Copyright 2017 IBM Corp.; SIL Open Font License 1.1.
+- Noto Sans Symbols 2, version 2.008: Copyright 2022 The Noto Project Authors; SIL Open Font License 1.1. Bundled unmodified for Braille raster glyphs; see `noto-symbols-license.txt` and the font provenance record.
 - GNU Unifont / Unifont Upper 17.0.05: Copyright © 1998-2026 Roman Czyborra, Paul Hardy, Qianqian Fang, Andrew Miller, Johnnie Weaver, David Corbett, Ælla Chiana Moskopp, Rebecca Bettencourt, Ho-Seok Ee, et al.; distributed here under SIL Open Font License 1.1, one of its dual licenses. [Upstream](https://unifoundry.com/unifont/).
 
 UI fonts are self-hosted through pinned Fontsource packages. Complete UI font and browser dependency licenses are included in the browser build through its `rel="license"` document. PNG fonts and their full licenses are bundled with the engine and its NuGet content files; see [font provenance](src/engine/rendering/fonts/README.md).
@@ -59,6 +60,8 @@ UI fonts are self-hosted through pinned Fontsource packages. Complete UI font an
 ## Photo processing references
 
 Photo's spatial circle geometry and structure-gated tone/direction matching are adapted from [Typist](https://github.com/winchxyz/typist/tree/f128e782e33de2dcb013eb572a02e236851cc662), Copyright (c) 2026 winch, MIT, and informed by [Alex Harri's rendering article](https://alexharri.com/blog/ascii-rendering). The C# implementation measures the project's own bundled fonts; Typist's font vectors and sample assets are not bundled. The complete MIT notice ships in `src/engine/notices/typist-license.txt`, NuGet content and browser runtime notices.
+
+Mini art's fractional source sampling, Photo/Texture/Sketch/Soft/Poster tone preparation, dithering and destination recommendations are ported from the same pinned MIT Typist source (`js/tone.js` and `js/dither.js`). The shared C# engine is the production implementation; original JavaScript generates the independent test oracle only. The same complete MIT notice covers these ports.
 
 ## FIGlet fonts
 

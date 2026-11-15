@@ -1,3 +1,4 @@
+import type { WorkspaceMode } from "../workspace/ascii-type";
 import { Button } from "../ui/base/button";
 import { AsciiType } from "../workspace/ascii-type";
 import { UploadIcon } from "../ui/icons";
@@ -8,17 +9,17 @@ import { isVideo } from "../videos/prepare-video";
 type ImageSourceProps = {
   selection: SelectedImage | null;
   onBrowse: () => void;
-  onTextMode: () => void;
+  onModeChange: (mode: WorkspaceMode) => void;
 };
 
 export function ImageSource({
   selection,
   onBrowse,
-  onTextMode
+  onModeChange
 }: ImageSourceProps) {
   return (
     <aside aria-label="Source" className="shrink-0 lg:w-48 xl:w-52 2xl:w-56">
-      <AsciiType mode="media" onChange={onTextMode}>
+      <AsciiType mode="media" onChange={onModeChange}>
         <h3 className="font-mono text-xs text-muted-foreground uppercase">
           Source
         </h3>

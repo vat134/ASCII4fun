@@ -31,6 +31,38 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/compact/options": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations["GetCompactOptions"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/compact/convert": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations["ConvertCompact"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/text/fonts": {
     parameters: {
       query?: never;
@@ -222,6 +254,141 @@ export interface components {
          */
         framesPerSecond?: null | number | string;
       };
+    };
+    /** @description Fractional source crop and bounded destination grid, after orientation and quarter turns. Crop edges may extend beyond the source into transparent padding. */
+    CompactArtLayout: {
+      /** Format: int32 */
+      columns: number;
+      /** Format: int32 */
+      rows: number;
+      /** Format: double */
+      cropXInPixels: number;
+      /** Format: double */
+      cropYInPixels: number;
+      /** Format: double */
+      cropWidthInPixels: number;
+      /** Format: double */
+      cropHeightInPixels: number;
+      /**
+       * Format: int32
+       * @description Source sample width: two dots per character.
+       */
+      sampleWidthInPixels: number;
+      /**
+       * Format: int32
+       * @description Source sample height: four dots per character.
+       */
+      sampleHeightInPixels: number;
+    };
+    /** @description Photo preparation and spatial Braille settings for a compact destination. */
+    CompactArtOptions: {
+      /** @description Destination ID from IReadOnlyList&lt;CompactDestination&gt; CompactDestinations.All. */
+      destination?: string;
+      /**
+       * Format: int32
+       * @description Manual columns (4..200), or zero for destination-aware automatic sizing.
+       */
+      columns?: number;
+      /**
+       * Format: double
+       * @description Crop width divided by height; zero retains the full source aspect ratio.
+       */
+      cropAspectRatio?: number;
+      /**
+       * Format: double
+       * @description Horizontal crop center in normalized source coordinates (0..1).
+       */
+      cropX?: number;
+      /**
+       * Format: double
+       * @description Vertical crop center in normalized source coordinates (0..1).
+       */
+      cropY?: number;
+      /**
+       * Format: double
+       * @description Crop magnification from 1 to 6.
+       */
+      cropZoom?: number;
+      /**
+       * Format: int32
+       * @description Clockwise quarter turns before cropping (0..3).
+       */
+      quarterTurns?: number;
+      /** @description Tone treatment: photo, texture, sketch, soft or poster. */
+      look?: string;
+      /** @description Dot quantization: atkinson, floyd, bayer or threshold. */
+      dither?: string;
+      /** @description Invert lightness for light dots on a dark destination. */
+      invert?: boolean;
+      /**
+       * Format: double
+       * @description Brightness from -1 to 1; zero is neutral.
+       */
+      brightness?: number;
+      /**
+       * Format: double
+       * @description Contrast from -1 to 1; zero is neutral.
+       */
+      contrast?: number;
+      /**
+       * Format: double
+       * @description Midtone gamma (.3..3); larger values lighten midtones before inversion.
+       */
+      gamma?: number;
+      /**
+       * Format: double
+       * @description Local detail strength (0..1).
+       */
+      detail?: number;
+      /**
+       * Format: double
+       * @description Thinned edge emphasis (0..1).
+       */
+      edges?: number;
+      /** @description Use percentile levels and automatic target ink coverage. */
+      autoLevels?: boolean;
+    };
+    /** @description Exact destination text, its budget and advisory rendering limits. */
+    CompactArtPayload: {
+      text: string;
+      /** Format: int32 */
+      count: number;
+      /** Format: int32 */
+      limit: null | number;
+      unit: string;
+      fits: boolean;
+      /** Format: int32 */
+      recommendedColumns: number;
+      warnings: string[];
+    };
+    CompactConfiguration: {
+      defaultOptions: components["schemas"]["CompactArtOptions"];
+      destinations: components["schemas"]["CompactDestination"][];
+    };
+    CompactConversionResponse: {
+      text: string;
+      /** Format: int32 */
+      widthInCells: number;
+      /** Format: int32 */
+      heightInCells: number;
+      /** Format: byte */
+      png: string;
+      payload: components["schemas"]["CompactArtPayload"];
+    };
+    /** @description A destination field and its recommended Braille geometry. Widths are estimates, not calibrated device guarantees. */
+    CompactDestination: {
+      id: string;
+      name: string;
+      platform: string;
+      /** Format: int32 */
+      limit: null | number;
+      unit: string;
+      /** Format: int32 */
+      recommendedColumns: number;
+      /** Format: double */
+      cellAspectRatio: number;
+      /** @default false */
+      flow: boolean;
     };
     ExportError: {
       message: string;
@@ -460,6 +627,119 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["ImageConversionResponse"];
+        };
+      };
+      /** @description HTTP 400. Application errors use Problem Details; framework/transport failures may have an empty body. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/problem+json": components["schemas"]["ProblemDetails"];
+        };
+      };
+      /** @description HTTP 413. Application errors use Problem Details; framework/transport failures may have an empty body. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/problem+json": components["schemas"]["ProblemDetails"];
+        };
+      };
+      /** @description HTTP 415. Application errors use Problem Details; framework/transport failures may have an empty body. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/problem+json": components["schemas"]["ProblemDetails"];
+        };
+      };
+      /** @description HTTP 422. Application errors use Problem Details; framework/transport failures may have an empty body. */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/problem+json": components["schemas"]["ProblemDetails"];
+        };
+      };
+      /** @description HTTP 429. Application errors use Problem Details; framework/transport failures may have an empty body. */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/problem+json": components["schemas"]["ProblemDetails"];
+        };
+      };
+      /** @description HTTP 500. Application errors use Problem Details; framework/transport failures may have an empty body. */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/problem+json": components["schemas"]["ProblemDetails"];
+        };
+      };
+      /** @description Request timeout. The response may have no body. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  GetCompactOptions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CompactConfiguration"];
+        };
+      };
+    };
+  };
+  ConvertCompact: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description Use requestToken from GET /api/images/options and retain that response's antiforgery cookie. */
+        "X-CSRF-TOKEN": string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "multipart/form-data": {
+          image: components["schemas"]["IFormFile"];
+        } & {
+          /** @description JSON-encoded CompactArtOptions. Send this form field as a string, not a nested multipart object. */
+          settings: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CompactConversionResponse"];
         };
       };
       /** @description HTTP 400. Application errors use Problem Details; framework/transport failures may have an empty body. */

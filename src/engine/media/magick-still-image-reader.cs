@@ -1,4 +1,5 @@
 using Ascii4Fun.Images;
+using Ascii4Fun.Compact;
 using Ascii4Fun.Rendering;
 using ImageMagick;
 
@@ -14,7 +15,8 @@ internal static class MagickStillImageReader
         ConversionLimits limits,
         bool includeSourcePhoto,
         bool includePhotoSamples,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        CompactArtOptions? compactOptions = null)
     {
         var encodedBytes = await EncodedMediaReader.ReadAsync(encodedImage, limits.MaxEncodedBytes, cancellationToken);
 
@@ -30,6 +32,19 @@ internal static class MagickStillImageReader
             image.AutoOrient();
             ImageGridGeometry.ValidateDimensions(image.Width, image.Height, limits);
             MagickColorNormalizer.Apply(image);
+
+            if (compactOptions is not null)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                if (cancellationToken.CanBeCanceled)
+                    image.Progress += (_, progress) => progress.Cancel = cancellationToken.IsCancellationRequested;
+                if (compactOptions.QuarterTurns != 0) image.Rotate(90 * compactOptions.QuarterTurns);
+                _ = CompactArtGeometry.Plan((int)image.Width, (int)image.Height, compactOptions);
+                using var compactPixels = image.GetPixels();
+                var compactRgba = compactPixels.ToByteArray(PixelMapping.RGBA)
+                    ?? throw new InvalidDataException("The compact source did not expose RGBA pixels.");
+                return new PreparedStillImage(new RgbaGrid((int)image.Width, (int)image.Height, compactRgba), null);
+            }
 
             var outputHeightInCells = ImageGridGeometry.CalculateOutputHeight(
                 image.Width,

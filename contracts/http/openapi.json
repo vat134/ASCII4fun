@@ -215,6 +215,130 @@
         }
       }
     },
+    "/api/compact/options": {
+      "get": {
+        "tags": ["Ascii4Fun.Server"],
+        "operationId": "GetCompactOptions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompactConfiguration"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/compact/convert": {
+      "post": {
+        "tags": ["CompactConversionEndpoints"],
+        "operationId": "ConvertCompact",
+        "parameters": [
+          {
+            "name": "X-CSRF-TOKEN",
+            "in": "header",
+            "description": "Use requestToken from GET /api/images/options and retain that response's antiforgery cookie.",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": ["image", "settings"],
+                "type": "object",
+                "allOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "image": { "$ref": "#/components/schemas/IFormFile" }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "settings": {
+                        "type": "string",
+                        "description": "JSON-encoded CompactArtOptions. Send this form field as a string, not a nested multipart object."
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompactConversionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "HTTP 400. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "413": {
+            "description": "HTTP 413. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "415": {
+            "description": "HTTP 415. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "422": {
+            "description": "HTTP 422. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "429": {
+            "description": "HTTP 429. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "HTTP 500. Application errors use Problem Details; framework/transport failures may have an empty body.",
+            "content": {
+              "application/problem+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request timeout. The response may have no body."
+          }
+        }
+      }
+    },
     "/api/text/fonts": {
       "get": {
         "tags": ["Ascii4Fun.Server"],
@@ -805,6 +929,189 @@
           }
         }
       },
+      "CompactArtLayout": {
+        "required": [
+          "columns",
+          "rows",
+          "cropXInPixels",
+          "cropYInPixels",
+          "cropWidthInPixels",
+          "cropHeightInPixels",
+          "sampleWidthInPixels",
+          "sampleHeightInPixels"
+        ],
+        "type": "object",
+        "properties": {
+          "columns": { "type": "integer", "format": "int32" },
+          "rows": { "type": "integer", "format": "int32" },
+          "cropXInPixels": { "type": "number", "format": "double" },
+          "cropYInPixels": { "type": "number", "format": "double" },
+          "cropWidthInPixels": { "type": "number", "format": "double" },
+          "cropHeightInPixels": { "type": "number", "format": "double" },
+          "sampleWidthInPixels": {
+            "type": "integer",
+            "description": "Source sample width: two dots per character.",
+            "format": "int32"
+          },
+          "sampleHeightInPixels": {
+            "type": "integer",
+            "description": "Source sample height: four dots per character.",
+            "format": "int32"
+          }
+        },
+        "description": "Fractional source crop and bounded destination grid, after orientation and quarter turns. Crop edges may extend beyond the source into transparent padding."
+      },
+      "CompactArtOptions": {
+        "type": "object",
+        "properties": {
+          "destination": {
+            "type": "string",
+            "description": "Destination ID from IReadOnlyList&lt;CompactDestination&gt; CompactDestinations.All."
+          },
+          "columns": {
+            "type": "integer",
+            "description": "Manual columns (4..200), or zero for destination-aware automatic sizing.",
+            "format": "int32"
+          },
+          "cropAspectRatio": {
+            "type": "number",
+            "description": "Crop width divided by height; zero retains the full source aspect ratio.",
+            "format": "double"
+          },
+          "cropX": {
+            "type": "number",
+            "description": "Horizontal crop center in normalized source coordinates (0..1).",
+            "format": "double"
+          },
+          "cropY": {
+            "type": "number",
+            "description": "Vertical crop center in normalized source coordinates (0..1).",
+            "format": "double"
+          },
+          "cropZoom": {
+            "type": "number",
+            "description": "Crop magnification from 1 to 6.",
+            "format": "double"
+          },
+          "quarterTurns": {
+            "type": "integer",
+            "description": "Clockwise quarter turns before cropping (0..3).",
+            "format": "int32"
+          },
+          "look": {
+            "type": "string",
+            "description": "Tone treatment: photo, texture, sketch, soft or poster."
+          },
+          "dither": {
+            "type": "string",
+            "description": "Dot quantization: atkinson, floyd, bayer or threshold."
+          },
+          "invert": {
+            "type": "boolean",
+            "description": "Invert lightness for light dots on a dark destination."
+          },
+          "brightness": {
+            "type": "number",
+            "description": "Brightness from -1 to 1; zero is neutral.",
+            "format": "double"
+          },
+          "contrast": {
+            "type": "number",
+            "description": "Contrast from -1 to 1; zero is neutral.",
+            "format": "double"
+          },
+          "gamma": {
+            "type": "number",
+            "description": "Midtone gamma (.3..3); larger values lighten midtones before inversion.",
+            "format": "double"
+          },
+          "detail": {
+            "type": "number",
+            "description": "Local detail strength (0..1).",
+            "format": "double"
+          },
+          "edges": {
+            "type": "number",
+            "description": "Thinned edge emphasis (0..1).",
+            "format": "double"
+          },
+          "autoLevels": {
+            "type": "boolean",
+            "description": "Use percentile levels and automatic target ink coverage."
+          }
+        },
+        "description": "Photo preparation and spatial Braille settings for a compact destination."
+      },
+      "CompactArtPayload": {
+        "required": [
+          "text",
+          "count",
+          "limit",
+          "unit",
+          "fits",
+          "recommendedColumns",
+          "warnings"
+        ],
+        "type": "object",
+        "properties": {
+          "text": { "type": "string" },
+          "count": { "type": "integer", "format": "int32" },
+          "limit": { "type": ["null", "integer"], "format": "int32" },
+          "unit": { "type": "string" },
+          "fits": { "type": "boolean" },
+          "recommendedColumns": { "type": "integer", "format": "int32" },
+          "warnings": { "type": "array", "items": { "type": "string" } }
+        },
+        "description": "Exact destination text, its budget and advisory rendering limits."
+      },
+      "CompactConfiguration": {
+        "required": ["defaultOptions", "destinations"],
+        "type": "object",
+        "properties": {
+          "defaultOptions": {
+            "$ref": "#/components/schemas/CompactArtOptions"
+          },
+          "destinations": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CompactDestination" }
+          }
+        }
+      },
+      "CompactConversionResponse": {
+        "required": ["text", "widthInCells", "heightInCells", "png", "payload"],
+        "type": "object",
+        "properties": {
+          "text": { "type": "string" },
+          "widthInCells": { "type": "integer", "format": "int32" },
+          "heightInCells": { "type": "integer", "format": "int32" },
+          "png": { "type": "string", "format": "byte" },
+          "payload": { "$ref": "#/components/schemas/CompactArtPayload" }
+        }
+      },
+      "CompactDestination": {
+        "required": [
+          "id",
+          "name",
+          "platform",
+          "limit",
+          "unit",
+          "recommendedColumns",
+          "cellAspectRatio",
+          "flow"
+        ],
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "platform": { "type": "string" },
+          "limit": { "type": ["null", "integer"], "format": "int32" },
+          "unit": { "type": "string" },
+          "recommendedColumns": { "type": "integer", "format": "int32" },
+          "cellAspectRatio": { "type": "number", "format": "double" },
+          "flow": { "type": "boolean", "default": false }
+        },
+        "description": "A destination field and its recommended Braille geometry. Widths are estimates, not calibrated device guarantees."
+      },
       "ExportError": {
         "required": ["message", "type"],
         "type": "object",
@@ -1004,6 +1311,7 @@
   "tags": [
     { "name": "Ascii4Fun.Server" },
     { "name": "ImageConversionEndpoints" },
+    { "name": "CompactConversionEndpoints" },
     { "name": "TextConversionEndpoints" },
     { "name": "AnimationConversionEndpoints" },
     { "name": "VideoConversionEndpoints" }

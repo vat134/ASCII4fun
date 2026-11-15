@@ -5,7 +5,8 @@ export function useRasterPreview(
   result: AsciiPreviewResult | null,
   zoom: number,
   viewportRef: RefObject<HTMLDivElement | null>,
-  canvasRef: RefObject<HTMLCanvasElement | null>
+  canvasRef: RefObject<HTMLCanvasElement | null>,
+  maximumBaseScale = Number.POSITIVE_INFINITY
 ) {
   const sourceRef = useRef<OffscreenCanvas | null>(null);
 
@@ -48,6 +49,7 @@ export function useRasterPreview(
       if (!viewport.clientWidth || !viewport.clientHeight) return;
       const scale =
         (Math.min(
+          maximumBaseScale,
           viewport.clientWidth / source.width,
           viewport.clientHeight / source.height
         ) *
@@ -78,5 +80,5 @@ export function useRasterPreview(
       observer.disconnect();
       cancelAnimationFrame(resizeFrame);
     };
-  }, [result, zoom, viewportRef, canvasRef]);
+  }, [result, zoom, viewportRef, canvasRef, maximumBaseScale]);
 }

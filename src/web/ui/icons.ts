@@ -4,6 +4,7 @@ export {
   CopyIcon,
   ChevronDownIcon,
   ChevronUpIcon,
+  Grid2X2Icon,
   ImageIcon,
   LinkIcon,
   RotateCcwIcon,

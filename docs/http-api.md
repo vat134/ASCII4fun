@@ -9,6 +9,7 @@ The declaration generator is a development tool. It adds no browser runtime clie
 ## Wire formats
 
 - Image conversion uses multipart form fields. Its JSON response and Text's default JSON response share `ImageConversionResponse`; PNG bytes are base64 strings.
+- Mini art uses multipart `image` and a `settings` string containing `CompactArtOptions` JSON. Its response separates rectangular canvas text/PNG from the formatted destination payload. See [Mini art](compact-art.md) for controls, budgets and native entry points.
 - Text conversion's `format` request field selects JSON, UTF-8 text or PNG. `Accept` does not select Text output.
 - GIF/video conversion sends an uploaded `image` and a `settings` **string** containing JSON for `AnimationConversionRequest`. The nested schema is generated from the same C# request used for deserialization. It does not change multipart encoding.
 - Video preparation returns MP4 bytes and an `X-Video-Metadata` **string** containing JSON for the generated `VideoMetadata` schema. Decode the header explicitly.

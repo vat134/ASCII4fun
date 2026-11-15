@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -20,6 +20,7 @@
     <EmbeddedResource Include="fixtures/figlet-selection-goldens.json" LogicalName="Ascii4Fun.Tests.FigletSelectionGoldens.json" />
     <EmbeddedResource Include="fixtures/thedraw-color-goldens.json" LogicalName="Ascii4Fun.Tests.ThedrawColorGoldens.json" />
     <EmbeddedResource Include="fixtures/figlet-font-goldens.json" LogicalName="Ascii4Fun.Tests.FigletFontGoldens.json" />
+    <EmbeddedResource Include="fixtures/compact-reference.json.gz" LogicalName="Ascii4Fun.Tests.CompactReference.json.gz" />
   </ItemGroup>
 
   <ItemGroup>
