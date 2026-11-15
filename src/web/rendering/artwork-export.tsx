@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Button } from "../ui/base/button";
 import { ArrowDownToLineIcon } from "../ui/icons";
 
@@ -5,12 +6,14 @@ export function ArtworkExport({
   canExport,
   error,
   dimensions,
-  onExport
+  onExport,
+  children
 }: {
   canExport: boolean;
   error: string | null;
   dimensions: string;
   onExport: (format: "txt" | "png") => void;
+  children?: ReactNode;
 }) {
   return (
     <footer className="shrink-0 space-y-4 border-t bg-card p-5">
@@ -40,9 +43,11 @@ export function ArtworkExport({
       >
         <ArrowDownToLineIcon aria-hidden="true" /> Download .txt
       </Button>
-      <p className="text-center font-mono text-xs text-muted-foreground">
-        PNG matches preview · TXT saves characters only
-      </p>
+      {children ?? (
+        <p className="text-center font-mono text-xs text-muted-foreground">
+          PNG matches preview · TXT saves characters only
+        </p>
+      )}
     </footer>
   );
 }

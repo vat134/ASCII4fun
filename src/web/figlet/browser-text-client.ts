@@ -1,4 +1,4 @@
-import { browserEngineTimeoutMs } from "../browser-engine/browser-engine";
+import { WorkerRequests } from "../browser-engine/worker-requests";
 import type { AsciiPreviewResult } from "../rendering/ascii-preview-result";
 import type {
   TextFont,
@@ -11,28 +11,19 @@ export class BrowserTextClient {
     new URL("../browser-engine/conversion-worker.ts", import.meta.url),
     { type: "module" }
   );
-  private pending: {
-    resolve: (value: TextFont[] | string[] | AsciiPreviewResult) => void;
-    reject: (error: Error) => void;
-  } | null = null;
-  private timeout: number | undefined;
-  private failure: Error | null = null;
   private nextId = 0;
-
-  constructor() {
-    this.worker.onmessage = ({ data }) => {
-      if (data.id !== this.nextId) return;
-      window.clearTimeout(this.timeout);
-      const pending = this.pending;
-      this.pending = null;
-      if (data.error) pending?.reject(new Error(data.error));
-      else pending?.resolve(data.value);
-    };
-    this.worker.onerror = () =>
-      this.stop(new Error("The text engine stopped. Retry to reopen it."));
-    this.worker.onmessageerror = () =>
-      this.stop(new Error("The text engine returned an unreadable result."));
-  }
+  private readonly requests = new WorkerRequests<
+    TextFont[] | string[] | AsciiPreviewResult
+  >(
+    this.worker,
+    {
+      stopped: "The text engine stopped. Retry to reopen it.",
+      unreadable: "The text engine returned an unreadable result.",
+      busy: "Only one text operation can run at a time.",
+      timeout: "The text engine took too long. Retry to reopen it."
+    },
+    (id) => id === this.nextId
+  );
 
   async fonts(): Promise<TextFont[]> {
     return (await this.send({
@@ -67,35 +58,14 @@ export class BrowserTextClient {
   }
 
   dispose() {
-    this.stop(new DOMException("Text processing cancelled.", "AbortError"));
+    this.requests.stop(
+      new DOMException("Text processing cancelled.", "AbortError")
+    );
   }
 
   private send(
     request: TextCommand
   ): Promise<TextFont[] | string[] | AsciiPreviewResult> {
-    if (this.failure) return Promise.reject(this.failure);
-    if (this.pending)
-      return Promise.reject(
-        new Error("Only one text operation can run at a time.")
-      );
-    return new Promise((resolve, reject) => {
-      this.pending = { resolve, reject };
-      this.timeout = window.setTimeout(
-        () =>
-          this.stop(
-            new Error("The text engine took too long. Retry to reopen it.")
-          ),
-        browserEngineTimeoutMs
-      );
-      this.worker.postMessage({ ...request, id: ++this.nextId });
-    });
-  }
-
-  private stop(error: Error) {
-    this.failure = error;
-    this.worker.terminate();
-    window.clearTimeout(this.timeout);
-    this.pending?.reject(error);
-    this.pending = null;
+    return this.requests.send(() => ({ ...request, id: ++this.nextId }));
   }
 }
